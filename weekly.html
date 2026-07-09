@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TN Weekly Planner Generator</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link rel="stylesheet" href="weekly.css">
+</head>
+<body>
+<button id="menu-toggle" onclick="toggleMenu()">&#9776;</button>
+<div id="menu-backdrop" onclick="toggleMenu()"></div>
+
+<!-- ══ CONFIG ══ -->
+<div id="cfg">
+
+    <!-- Month / Year -->
+    <div class="coll-sec" id="sec-month">
+      <div class="coll-hdr open" onclick="toggleSection('sec-month')">
+        <span class="coll-arrow">&#9654;</span> Month / Year
+      </div>
+      <div class="coll-body open">
+        <div style="display:flex;gap:6px;">
+          <select id="sel-m">
+            <option value="0">January</option><option value="1">February</option>
+            <option value="2">March</option><option value="3">April</option>
+            <option value="4">May</option><option value="5">June</option>
+            <option value="6">July</option><option value="7">August</option>
+            <option value="8">September</option><option value="9">October</option>
+            <option value="10">November</option><option value="11">December</option>
+          </select>
+          <input id="sel-y" type="number" value="2026" min="2020" max="2099" style="width:66px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Habits -->
+    <div class="coll-sec" id="sec-habits">
+      <div class="coll-hdr open" onclick="toggleSection('sec-habits')">
+        <span class="coll-arrow">&#9654;</span> Habits
+      </div>
+      <div class="coll-body open">
+        <div class="add-row">
+          <div class="icon-picker-wrap">
+            <button id="h-icon-btn" class="btn btn-s" onclick="toggleIconPicker(event)" title="Choose icon">
+              <span data-lucide="star" style="width:16px;height:16px;display:block;"></span>
+            </button>
+            <div id="icon-picker-panel"></div>
+          </div>
+          <input id="h-name" type="text" placeholder="Habit name" style="width:100px;">
+          <button class="btn btn-s btn-sm" onclick="addHabit()">+ Add</button>
+        </div>
+        <div class="day-pick" id="day-pick" style="margin-top:6px;"></div>
+        <div id="h-list" style="margin-top:4px;"></div>
+        <div class="toggle-row" style="margin-top:8px;">
+          <label class="toggle-sw"><input type="checkbox" id="opt-coloricons" checked onchange="onOptionChange()"><span class="slider"></span></label>
+          <span style="font-size:12px;">Colored icons</span>
+        </div>
+        <div class="cfg-row" style="margin-top:8px;">
+          <label>Icon size</label>
+          <div class="range-row" style="flex:1;">
+            <input type="range" id="opt-iconsize" min="2" max="6" step="0.5" value="5" oninput="onRangeChange('opt-iconsize','iconsize-val','mm')">
+            <span class="range-val" id="iconsize-val">5mm</span>
+          </div>
+        </div>
+        <div class="cfg-row">
+          <label>Icon spacing</label>
+          <div class="range-row" style="flex:1;">
+            <input type="range" id="opt-icongap" min="0" max="4" step="0.5" value="1.5" oninput="onRangeChange('opt-icongap','icongap-val','mm')">
+            <span class="range-val" id="icongap-val">1.5mm</span>
+          </div>
+        </div>
+        <div class="cfg-row">
+          <label>Stroke weight</label>
+          <div class="range-row" style="flex:1;">
+            <input type="range" id="opt-iconstroke" min="0.5" max="3" step="0.25" value="1.5" oninput="onRangeChange('opt-iconstroke','iconstroke-val','')">
+            <span class="range-val" id="iconstroke-val">1.5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Page -->
+    <div class="coll-sec" id="sec-daily">
+      <div class="coll-hdr" onclick="toggleSection('sec-daily')">
+        <span class="coll-arrow">&#9654;</span> Daily Page
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="cfg-row">
+            <label>Week start</label>
+            <select id="opt-weekstart" onchange="onOptionChange()">
+              <option value="monday" selected>Monday</option>
+              <option value="sunday">Sunday</option>
+            </select>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-mood" checked onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Mood tracker</span>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Mood faces</label>
+            <select id="opt-moodfaces" onchange="onOptionChange()">
+              <option value="3">3-face</option>
+              <option value="5" selected>5-face</option>
+            </select>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Mood spacing</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-moodgap" min="0" max="6" step="0.5" value="2" oninput="onRangeChange('opt-moodgap','moodgap-val','mm')">
+              <span class="range-val" id="moodgap-val">2mm</span>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-weathericons" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Weather icons</span>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Weather size</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-weathericonsize" min="3" max="8" step="0.5" value="3.5" oninput="onRangeChange('opt-weathericonsize','weathericonsize-val','mm')">
+              <span class="range-val" id="weathericonsize-val">3.5mm</span>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-energybattery" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Energy battery</span>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Segments</label>
+            <select id="opt-batterysegs" onchange="onOptionChange()">
+              <option value="4">4</option>
+              <option value="5" selected>5</option>
+              <option value="6">6</option>
+              <option value="8">8</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-moonphase" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Moon phase</span>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Moon size</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-moonsize" min="2" max="6" step="0.5" value="3.5" oninput="onRangeChange('opt-moonsize','moonsize-val','mm')">
+              <span class="range-val" id="moonsize-val">3.5mm</span>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:6px;">Daily Fields</h3>
+            <div id="daily-field-list"></div>
+            <div class="add-row" style="margin-top:4px;">
+              <input id="daily-field-name" type="text" placeholder="Field name" style="width:100px;">
+              <button class="btn btn-s btn-sm" onclick="addDailyField()">+ Add</button>
+            </div>
+          </div>
+          <div class="cfg-row" style="margin-top:8px;">
+            <label>Empty lines</label>
+            <select id="opt-emptylines" onchange="onOptionChange()">
+              <option value="0">0</option>
+              <option value="2">2</option>
+              <option value="4" selected>4</option>
+              <option value="6">6</option>
+              <option value="8">8</option>
+            </select>
+          </div>
+          <div class="cfg-row">
+            <label>Checkbox</label>
+            <select id="opt-checkbox" onchange="onOptionChange()">
+              <option value="square">Square</option>
+              <option value="circle">Circle</option>
+              <option value="rounded">Rounded-square</option>
+              <option value="diamond">Diamond</option>
+            </select>
+          </div>
+          <div class="cfg-row">
+            <label>Checkbox size</label>
+            <select id="opt-cbsize" onchange="onOptionChange()">
+              <option value="3">3mm</option>
+              <option value="4">4mm</option>
+              <option value="5" selected>5mm</option>
+              <option value="6">6mm</option>
+              <option value="7">7mm</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Holidays -->
+    <div class="coll-sec" id="sec-holidays">
+      <div class="coll-hdr" onclick="toggleSection('sec-holidays')">
+        <span class="coll-arrow">&#9654;</span> Holidays
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="toggle-row">
+            <label class="toggle-sw"><input type="checkbox" id="opt-holidays" onchange="onHolidayChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Public holidays</span>
+          </div>
+          <div class="cfg-row" style="margin-top:6px;">
+            <label>Country</label>
+            <select id="opt-holidaycountry" onchange="onHolidayCountryChange()" style="flex:1;">
+              <option value="US">United States</option>
+              <option value="GB">United Kingdom</option>
+              <option value="CA">Canada</option>
+              <option value="AU">Australia</option>
+            </select>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>State / region</label>
+            <select id="opt-holidaystate" onchange="onOptionChange()" style="flex:1;display:none;">
+              <option value="">— Whole country —</option>
+            </select>
+          </div>
+          <div id="holiday-lib-status" style="font-size:9px;opacity:.5;margin-top:3px;">200+ countries loaded on demand. Offline: US, UK, Canada, Australia built in.</div>
+          <div style="margin-top:10px;">
+            <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:6px;">Your Holidays &amp; Events</h3>
+            <div id="holiday-list"></div>
+            <div class="add-row" style="margin-top:4px;flex-wrap:wrap;gap:4px;">
+              <input id="holiday-name" type="text" placeholder="Name" style="width:96px;">
+              <select id="holiday-month" style="width:auto;">
+                <option value="0">Jan</option><option value="1">Feb</option>
+                <option value="2">Mar</option><option value="3">Apr</option>
+                <option value="4">May</option><option value="5">Jun</option>
+                <option value="6">Jul</option><option value="7">Aug</option>
+                <option value="8">Sep</option><option value="9">Oct</option>
+                <option value="10">Nov</option><option value="11">Dec</option>
+              </select>
+              <input id="holiday-day" type="number" min="1" max="31" value="1" style="width:46px;">
+              <button class="btn btn-s btn-sm" onclick="addHoliday()">+ Add</button>
+            </div>
+            <div style="font-size:9px;opacity:.5;margin-top:3px;">Repeats every year. Shown on the calendar and under the weekday on daily pages.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typography -->
+    <div class="coll-sec" id="sec-typo">
+      <div class="coll-hdr" onclick="toggleSection('sec-typo')">
+        <span class="coll-arrow">&#9654;</span> Typography
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="cfg-row">
+            <label>Week header</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-weekhdr" min="4" max="12" step="0.5" value="6" oninput="onRangeChange('opt-fz-weekhdr','fzweekhdr-val','pt')">
+              <span class="range-val" id="fzweekhdr-val">6pt</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Day name</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-dow" min="4" max="10" step="0.5" value="6" oninput="onRangeChange('opt-fz-dow','fzdow-val','pt')">
+              <span class="range-val" id="fzdow-val">6pt</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Day number</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-daynum" min="10" max="28" step="1" value="18" oninput="onRangeChange('opt-fz-daynum','fzdaynum-val','pt')">
+              <span class="range-val" id="fzdaynum-val">18pt</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Habit name</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-habit" min="4" max="10" step="0.5" value="6" oninput="onRangeChange('opt-fz-habit','fzhabit-val','pt')">
+              <span class="range-val" id="fzhabit-val">6pt</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Field label</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-fieldlbl" min="3" max="8" step="0.5" value="4.5" oninput="onRangeChange('opt-fz-fieldlbl','fzfieldlbl-val','pt')">
+              <span class="range-val" id="fzfieldlbl-val">4.5pt</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Mood icons</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-fz-moodsz" min="3" max="8" step="0.5" value="5" oninput="onRangeChange('opt-fz-moodsz','fzmoodsz-val','mm')">
+              <span class="range-val" id="fzmoodsz-val">5mm</span>
+            </div>
+          </div>
+          <div class="cfg-row">
+            <label>Row spacing</label>
+            <div class="range-row" style="flex:1;">
+              <input type="range" id="opt-habrowgap" min="0.5" max="4" step="0.5" value="1.5" oninput="onRangeChange('opt-habrowgap','habrowgap-val','mm')">
+              <span class="range-val" id="habrowgap-val">1.5mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Style -->
+    <div class="coll-sec" id="sec-style">
+      <div class="coll-hdr" onclick="toggleSection('sec-style')">
+        <span class="coll-arrow">&#9654;</span> Page Style
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <h3>Theme</h3>
+          <div class="theme-grid" id="theme-grid"></div>
+          <div style="margin-top:6px;">
+            <h3>Custom Colors</h3>
+            <div class="color-grid" id="color-overrides"></div>
+          </div>
+          <div style="margin-top:8px;">
+            <h3>Font</h3>
+            <select id="opt-font" onchange="onOptionChange()" style="width:100%;">
+              <option value="Georgia">Georgia</option>
+              <option value="Garamond">Garamond</option>
+              <option value="Palatino">Palatino</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Inter">Inter</option>
+              <option value="Courier New">Courier New</option>
+            </select>
+            <input id="opt-customfont" type="text" placeholder="Custom font name..." style="width:100%;margin-top:4px;" oninput="onOptionChange()">
+            <div style="font-size:9px;opacity:.5;margin-top:2px;">Overrides preset if filled. Must be installed on your system.</div>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="cfg-row">
+              <label>Fill pattern</label>
+              <select id="opt-fillpattern" onchange="onOptionChange()">
+                <option value="dots">Dot grid</option>
+                <option value="grid">Square grid</option>
+                <option value="lines">Ruled lines</option>
+                <option value="hex">Hex dots</option>
+                <option value="empty">Empty</option>
+              </select>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Grid spacing</label>
+              <select id="opt-dotgrid" onchange="onOptionChange()">
+                <option value="3">3mm</option>
+                <option value="4">4mm</option>
+                <option value="5" selected>5mm</option>
+                <option value="6">6mm</option>
+              </select>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Line style</label>
+              <select id="opt-linestyle" onchange="onOptionChange()">
+                <option value="solid">Solid</option>
+                <option value="dashed">Dashed</option>
+                <option value="dotted">Dotted</option>
+                <option value="none">None</option>
+              </select>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Margins</label>
+              <select id="opt-margin" onchange="onOptionChange()">
+                <option value="4">Tight (4mm)</option>
+                <option value="6" selected>Normal (6mm)</option>
+                <option value="8">Wide (8mm)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cover & Extras -->
+    <div class="coll-sec" id="sec-extras">
+      <div class="coll-hdr" onclick="toggleSection('sec-extras')">
+        <span class="coll-arrow">&#9654;</span> Cover &amp; Extras
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="toggle-row">
+            <label class="toggle-sw"><input type="checkbox" id="opt-cover" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Cover page</span>
+          </div>
+          <div class="toggle-row" style="margin-top:4px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-coversheet" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:11px;opacity:.7;">Separate sheet (for cardstock)</span>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Cover design</label>
+            <select id="opt-coverdesign" onchange="onOptionChange()">
+              <option value="framed">Framed</option>
+              <option value="simple">Simple</option>
+              <option value="minimal">Minimal</option>
+              <option value="banner">Banner</option>
+              <option value="vintage">Vintage</option>
+              <option value="custom">Custom Image</option>
+            </select>
+          </div>
+          <div class="cfg-row stacked" style="margin-top:4px;">
+            <label>Cover title</label>
+            <textarea id="opt-covertitle" placeholder="My Journal" rows="2" style="width:100%;resize:vertical;font-size:11px;" oninput="onOptionChange()"></textarea>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Title size</label>
+            <select id="opt-coverfontsize" onchange="onOptionChange()">
+              <option value="8">8pt</option>
+              <option value="10">10pt</option>
+              <option value="12" selected>12pt (default)</option>
+              <option value="14">14pt</option>
+              <option value="16">16pt</option>
+              <option value="18">18pt</option>
+            </select>
+          </div>
+          <div class="cfg-row" style="margin-top:4px;">
+            <label>Accent color</label>
+            <select id="opt-coveraccent" onchange="onOptionChange()">
+              <option value="gold">Gold</option>
+              <option value="silver">Silver</option>
+              <option value="copper">Copper</option>
+              <option value="white">White</option>
+            </select>
+          </div>
+          <div class="cfg-row stacked" style="margin-top:4px;">
+            <label style="font-size:11px;">Cover image</label>
+            <div style="display:flex;gap:4px;align-items:center;width:100%;">
+              <input type="file" id="cover-img-input" accept="image/*" style="font-size:10px;flex:1;min-width:0;" onchange="handleImageUpload('cover-img-input','coverImage')">
+              <button class="btn btn-d" onclick="clearImage('coverImage','cover-img-input')" title="Remove image">&#10005;</button>
+            </div>
+            <div style="font-size:9px;opacity:.5;">Used with "Custom Image" design. Other designs ignore this.</div>
+          </div>
+          <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.06);padding-top:6px;">
+            <div class="toggle-row">
+              <label class="toggle-sw"><input type="checkbox" id="opt-backcover" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Back cover</span>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Back design</label>
+              <select id="opt-backcoverdesign" onchange="onOptionChange()">
+                <option value="simple">Simple</option>
+                <option value="framed">Framed</option>
+                <option value="minimal">Minimal</option>
+                <option value="banner">Banner</option>
+                <option value="vintage">Vintage</option>
+                <option value="custom">Custom Image</option>
+              </select>
+            </div>
+            <div class="cfg-row stacked" style="margin-top:4px;">
+              <label style="font-size:11px;">Back cover image</label>
+              <div style="display:flex;gap:4px;align-items:center;width:100%;">
+                <input type="file" id="backcover-img-input" accept="image/*" style="font-size:10px;flex:1;min-width:0;" onchange="handleImageUpload('backcover-img-input','backCoverImage')">
+                <button class="btn btn-d" onclick="clearImage('backCoverImage','backcover-img-input')" title="Remove image">&#10005;</button>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;">
+            <div class="toggle-row">
+              <label class="toggle-sw"><input type="checkbox" id="opt-calendar" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Monthly calendar</span>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-calspread" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Calendar 2-page spread</span>
+            </div>
+            <div class="cfg-row" style="margin-top:6px;">
+              <label>Spread date size</label>
+              <div class="range-row" style="flex:1;">
+                <input type="range" id="opt-cal-numsz" min="4" max="11" step="0.5" value="6.5" oninput="onRangeChange('opt-cal-numsz','calnumsz-val','pt')">
+                <span class="range-val" id="calnumsz-val">6.5pt</span>
+              </div>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Spread holiday size</label>
+              <div class="range-row" style="flex:1;">
+                <input type="range" id="opt-cal-holsz" min="3" max="8" step="0.5" value="4.5" oninput="onRangeChange('opt-cal-holsz','calholsz-val','pt')">
+                <span class="range-val" id="calholsz-val">4.5pt</span>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;">
+            <div class="cfg-row">
+              <label>Notes pages</label>
+              <select id="opt-notes" onchange="onOptionChange()">
+                <option value="0">0</option>
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+              </select>
+            </div>
+            <div class="cfg-row" style="margin-top:4px;">
+              <label>Notes position</label>
+              <select id="opt-notespos" onchange="onOptionChange()">
+                <option value="front" selected>Front only</option>
+                <option value="back">Back only</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Pages -->
+    <div class="coll-sec" id="sec-monthly">
+      <div class="coll-hdr" onclick="toggleSection('sec-monthly')">
+        <span class="coll-arrow">&#9654;</span> Monthly Pages
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="toggle-row">
+            <label class="toggle-sw"><input type="checkbox" id="opt-goalspage" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Goals page</span>
+          </div>
+          <div class="toggle-row" style="margin-top:4px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-habitmap" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Circle habit tracker</span>
+          </div>
+          <div style="margin-top:5px;padding-left:2px;">
+            <div id="box-list" style="margin-bottom:3px;"></div>
+            <div class="add-row">
+              <input id="box-title-inp" type="text" placeholder="Box title…" style="width:108px;font-size:11px;">
+              <button class="btn btn-s btn-sm" onclick="addBottomBox()">+</button>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-moodcal" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Mood calendar</span>
+          </div>
+          <div class="toggle-row" style="margin-top:4px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-expenses" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Expense tracker</span>
+          </div>
+          <div class="toggle-row" style="margin-top:4px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-reflection" onchange="onOptionChange()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Reflection page</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphs -->
+    <div class="coll-sec" id="sec-graphs">
+      <div class="coll-hdr" onclick="toggleSection('sec-graphs')">
+        <span class="coll-arrow">&#9654;</span> Graphs
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="toggle-row" style="margin-bottom:6px;">
+            <label class="toggle-sw"><input type="checkbox" id="opt-linkfg" checked onchange="toggleLink()"><span class="slider"></span></label>
+            <span style="font-size:12px;">Link to daily fields</span>
+          </div>
+          <div id="metric-section">
+            <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Metrics</h3>
+            <div id="metric-list"></div>
+            <div class="add-row" style="margin-top:4px;">
+              <input id="metric-name" type="text" placeholder="Metric name" style="width:120px;">
+              <button class="btn btn-s btn-sm" onclick="addMetric()">+ Add</button>
+            </div>
+          </div>
+          <div style="margin-top:8px;">
+            <div class="cfg-row">
+              <label>Col density</label>
+              <select id="opt-graphcol" onchange="onOptionChange()">
+                <option value="0.5">Fine (0.5mm)</option>
+                <option value="1" selected>Normal (1mm)</option>
+                <option value="2">Wide (2mm)</option>
+              </select>
+            </div>
+            <div class="toggle-row" style="margin-top:6px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-graphborders" checked onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Top &amp; bottom borders</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notebook & Print -->
+    <div class="coll-sec" id="sec-print">
+      <div class="coll-hdr" onclick="toggleSection('sec-print')">
+        <span class="coll-arrow">&#9654;</span> Notebook &amp; Print
+      </div>
+      <div class="coll-body">
+        <div class="cfg-sec">
+          <div class="cfg-row">
+            <label>Paper size</label>
+            <select id="opt-papersize" onchange="onOptionChange()" style="flex:1;">
+              <option value="a4">A4 (297&#215;210mm)</option>
+              <option value="letter">US Letter (279&#215;216mm)</option>
+              <option value="legal">US Legal (356&#215;216mm)</option>
+              <option value="a3">A3 (420&#215;297mm)</option>
+            </select>
+          </div>
+          <div class="cfg-row">
+            <label>Notebook size</label>
+            <select id="opt-tnsize" onchange="onOptionChange()" style="flex:1;">
+              <option value="passport">Passport (89&#215;124mm)</option>
+              <option value="b6slim">B6 Slim (91&#215;182mm)</option>
+              <option value="personal">Personal (95&#215;171mm)</option>
+              <option value="a5slim">A5 Slim (105&#215;210mm)</option>
+              <option value="regular">Regular (110&#215;210mm)</option>
+              <option value="custom">Custom...</option>
+            </select>
+          </div>
+          <div class="cfg-row" id="custom-tn-row" style="display:none;gap:4px;">
+            <label>W&#215;H (mm)</label>
+            <input type="number" id="opt-custom-tn-w" value="89" min="40" max="200" style="width:60px;" onchange="onOptionChange()">
+            <span style="opacity:.5;">&#215;</span>
+            <input type="number" id="opt-custom-tn-h" value="124" min="60" max="300" style="width:60px;" onchange="onOptionChange()">
+          </div>
+          <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;">
+            <div class="toggle-row">
+              <label class="toggle-sw"><input type="checkbox" id="opt-cropmarks" checked onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Crop marks</span>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-foldline" checked onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Fold line</span>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-savepaper" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Save paper</span>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-pagenums" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Page numbers</span>
+            </div>
+            <div class="toggle-row" style="margin-top:4px;">
+              <label class="toggle-sw"><input type="checkbox" id="opt-printguide" onchange="onOptionChange()"><span class="slider"></span></label>
+              <span style="font-size:12px;">Assembly guide page</span>
+            </div>
+          </div>
+          <div style="margin-top:6px;">
+            <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Duplex Flip</h3>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
+              <input type="radio" name="flip" id="flip-long" value="long" checked onchange="onOptionChange()">
+              Long edge
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-top:4px;">
+              <input type="radio" name="flip" id="flip-short" value="short" onchange="onOptionChange()">
+              Short edge
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
+      <button class="btn btn-p" onclick="generate()">&#8635; Generate</button>
+      <button class="btn btn-s" id="view-btn" onclick="setView('pages')">&#8862; Pages</button>
+      <button class="btn btn-s" id="book-btn" onclick="setView('book')">&#9701; Book</button>
+      <button class="btn btn-s" id="print-btn" onclick="setView('print')">&#9776; Print Layout</button>
+      <button class="btn btn-s" onclick="window.print()">&#9112; Print / PDF</button>
+    </div>
+
+    <!-- Export / Import / Reset -->
+    <div style="margin-top:auto;padding-top:12px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.1);">
+      <button class="btn btn-s btn-sm" onclick="exportSettings()">Export Settings</button>
+      <button class="btn btn-s btn-sm" onclick="document.getElementById('import-file').click()">Import Settings</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importSettings(event)">
+      <button class="btn btn-w btn-sm" onclick="resetAll()">Reset All</button>
+    </div>
+</div>
+
+<!-- ══ PREVIEW ══ -->
+<div id="preview">
+  <div id="preview-hdr">
+    <strong id="pg-count">0</strong>
+    <span class="tip" id="paper-tip">A4 landscape &middot; duplex &middot; fold &middot; staple spine &middot; trim edges</span>
+    <div class="zoom-ctrl">
+      <button class="zoom-btn" onclick="adjustZoom(-0.1)" title="Zoom out">−</button>
+      <span id="zoom-level">100%</span>
+      <button class="zoom-btn" onclick="adjustZoom(0.1)" title="Zoom in">+</button>
+    </div>
+  </div>
+  <div id="print-area"></div>
+  <div id="page-preview"></div>
+  <div id="book-view"></div>
+</div>
+
+<!-- ══ INSPECTOR ══ -->
+<div id="inspector" class="insp-hidden">
+  <div id="insp-empty">
+    <span data-lucide="mouse-pointer-click" style="width:28px;height:28px;display:block;"></span>
+    <p>Click any element<br>in the preview<br>to inspect it</p>
+  </div>
+  <div id="insp-content" style="display:none;">
+    <div id="insp-header"></div>
+    <div id="insp-props"></div>
+  </div>
+  <button id="insp-close-btn" class="btn btn-s btn-sm" onclick="closeMobileInspector()">&#10005; Close</button>
+</div>
+
+<script src="weekly.js"></script>
+</body>
+</html>
