@@ -41,3 +41,9 @@ function bookletPages(list, ctx){
     return type.expand(Object.assign({}, ctx, entry.config||{}));
   });
 }
+
+// TEMPORARY (Plan 2b replaces this with the sidebar UI): render a collection.
+function renderBooklet(list){
+  const ctx={ year:parseInt($('sel-y').value), month:parseInt($('sel-m').value), monthCount:1, colors:getColors() };
+  imposeAndRender(bookletPages(list, ctx));
+}
