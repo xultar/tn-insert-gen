@@ -2080,7 +2080,7 @@ function reflectionBody(colors){
     titleRow.appendChild(t);
     block.appendChild(titleRow);
     const linesArea=el('div','');
-    linesArea.style.cssText=`flex:1;background-image:linear-gradient(to bottom,${colors.line} 0,${colors.line} .3pt,transparent .3pt);background-size:100% 6mm;`;
+    linesArea.style.cssText='flex:1;'+getFillStyle(colors);
     block.appendChild(linesArea);
     wrap.appendChild(block);
   });
@@ -2862,7 +2862,7 @@ function mkTimeBlockDay(y,m,d,c){
     p.appendChild(habList);
   }
 
-  const ruled=`background-image:linear-gradient(to bottom,${colors.line} 0,${colors.line} .3pt,transparent .3pt);background-size:100% 7mm;`;
+  const ruled=getFillStyle(colors);
 
   // Top Priorities — three lines.
   const prioLbl=el('div','tb-label','Top Priorities');
