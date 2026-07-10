@@ -386,7 +386,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 /* 7 day columns (blank headers) + # (date) + bullet + wide ACTION/EVENT area.
    The fill pattern is painted across the whole body so the user's ruling
    choice (dots/lined/grid/hex/blank) drives where they write. */
-.bd-grid{display:grid;grid-template-columns:repeat(7,4mm) 6mm 5mm 1fr;}
+.bd-grid{display:grid;grid-template-columns:repeat(9,4mm) 1fr;}
 .bd-head{border-bottom:.3pt solid;}
 .bd-head .bd-cell{font-size:3.6pt;text-align:center;padding:.4mm 0 .7mm;text-transform:uppercase;letter-spacing:.02em;overflow:hidden;}
 .bd-head .bd-action-head{text-align:left;padding-left:1mm;}
