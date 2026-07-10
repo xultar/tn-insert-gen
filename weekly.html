@@ -6,6 +6,7 @@
 <title>TN Weekly Planner Generator</title>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="stylesheet" href="weekly.css">
+<script src="core.js"></script>
 </head>
 <body>
 <button id="menu-toggle" onclick="toggleMenu()">&#9776;</button>
@@ -589,11 +590,13 @@
           <div class="cfg-row">
             <label>Notebook size</label>
             <select id="opt-tnsize" onchange="onOptionChange()" style="flex:1;">
+              <option value="pocket">Pocket (89&#215;140mm)</option>
               <option value="passport">Passport (89&#215;124mm)</option>
               <option value="b6slim">B6 Slim (91&#215;182mm)</option>
               <option value="personal">Personal (95&#215;171mm)</option>
               <option value="a5slim">A5 Slim (105&#215;210mm)</option>
               <option value="regular">Regular (110&#215;210mm)</option>
+              <option value="a5">A5 (148&#215;210mm)</option>
               <option value="custom">Custom...</option>
             </select>
           </div>

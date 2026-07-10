@@ -139,11 +139,13 @@ const OPT_DEFAULTS = {
 
 /* ── Constants ── */
 const TN_SIZES = {
+  'pocket':    { label:'Pocket',      w:89,  h:140 },
   'passport':  { label:'Passport',    w:89,  h:124 },
   'b6slim':    { label:'B6 Slim',     w:91,  h:182 },
   'personal':  { label:'Personal',    w:95,  h:171 },
   'a5slim':    { label:'A5 Slim',     w:105, h:210 },
   'regular':   { label:'Regular',     w:110, h:210 },
+  'a5':        { label:'A5',          w:148, h:210 },
 };
 
 const PAPER_SIZES = {
