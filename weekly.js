@@ -2523,6 +2523,37 @@ function mkPlain(y,m,c){
   return p;
 }
 
+function mkMonthList(y,m,c){
+  const colors=c||getColors();
+  const p=pg('month-list',colors);
+  p.classList.add('fcol');
+  const hdr=el('div','sh',`${MONTHS[m]} ${y}`);
+  hdr.style.cssText=`text-align:center;color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+  p.appendChild(hdr);
+  const body=el('div','ml-body');
+  const labels=el('div','ml-labels');
+  const dim=daysInMonth(y,m);
+  const WK=['S','M','T','W','T','F','S'];
+  for(let d=1;d<=dim;d++){
+    const w=dow(y,m,d);
+    const row=el('div','ml-row');
+    if(w===0||w===6) row.classList.add('ml-weekend');
+    const num=el('span','ml-num',String(d));
+    num.style.color=colors.ink;
+    const wd=el('span','ml-wd',WK[w]);
+    wd.style.color=colors.dim;
+    row.appendChild(num);
+    row.appendChild(wd);
+    labels.appendChild(row);
+  }
+  const write=el('div','ml-write');
+  write.style.cssText+=getFillStyle(colors);
+  body.appendChild(labels);
+  body.appendChild(write);
+  p.appendChild(body);
+  return p;
+}
+
 function mkMonthGraphs(y,m,c){
   const colors=c||getColors();
   const p=pg('monthly-graphs',colors);

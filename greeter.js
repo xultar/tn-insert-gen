@@ -22,6 +22,7 @@ const PAGE_TYPES = {
   cover:      { label:'Cover',              expand:(c)=>[mkCover(c.year,c.month,c.colors)] },
   futureLog:  { label:'Future Log',         expand:(c)=>mkFutureLog(c.year,c.month,c.colors) },
   monthly:    { label:'Monthly',            expand:(c)=>monthsOf(c).flatMap(mm=>mkCalendar(mm.year,mm.month,c.colors)) },
+  monthlog:   { label:'Monthly Log',        expand:(c)=>monthsOf(c).map(mm=>mkMonthList(mm.year,mm.month,c.colors)) },
   habit:      { label:'Habit tracker',      expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)) },
   masterlist: { label:'Master Action List', expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)) },
   reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)) },
