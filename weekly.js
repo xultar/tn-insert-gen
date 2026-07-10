@@ -2527,12 +2527,15 @@ function mkMonthListPage(y,m,colors,days,rows,headerText){
   const WK=['S','M','T','W','T','F','S'];
   const p=pg('month-list',colors);
   p.classList.add('fcol');
-  const hdr=el('div','sh',headerText);
-  hdr.style.cssText=`text-align:center;color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
-  p.appendChild(hdr);
+  let used=0;
+  if(headerText){
+    const hdr=el('div','sh',headerText);
+    hdr.style.cssText=`text-align:center;color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+    p.appendChild(hdr);
+  }
   const body=el('div','ml-body');
   const labels=el('div','ml-labels');
-  labels.appendChild(el('div','ml-row'));            // skip a row after the header
+  if(headerText){ labels.appendChild(el('div','ml-row')); used++; }   // skip a row after the header
   days.forEach(d=>{
     const w=dow(y,m,d);
     const row=el('div','ml-row');
@@ -2545,7 +2548,8 @@ function mkMonthListPage(y,m,colors,days,rows,headerText){
     row.appendChild(wd);
     labels.appendChild(row);
   });
-  for(let i=1+days.length;i<rows;i++) labels.appendChild(el('div','ml-row'));  // blank filler rows
+  used+=days.length;
+  for(let i=used;i<rows;i++) labels.appendChild(el('div','ml-row'));  // blank filler rows
   const write=el('div','ml-write');
   write.style.cssText+=getFillStyle(colors);
   body.appendChild(labels);
@@ -2570,7 +2574,7 @@ function mkMonthList(y,m,c){
   const half=Math.ceil(dim/2);
   return [
     mkMonthListPage(y,m,colors,allDays.slice(0,half),rows,title),
-    mkMonthListPage(y,m,colors,allDays.slice(half),rows,title)
+    mkMonthListPage(y,m,colors,allDays.slice(half),rows,'')
   ];
 }
 
