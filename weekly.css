@@ -394,3 +394,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 .bd-body .bd-cell{border-right:.3pt solid;}
 .bd-body .bd-cell:last-child{border-right:none;}
 .bd-shade{background-color:rgba(120,120,120,.09);}
+
+/* ── DAILY: time-block layout ── */
+.tb-label{font-size:5pt;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin:1.8mm 0 .8mm;}
+.tb-prio{border:.3pt solid;display:flex;flex-direction:column;}
+.tb-prio-row{height:4.5mm;border-bottom:.3pt solid;}
+.tb-prio-row:last-child{border-bottom:none;}
+.tb-sched{flex:2;display:grid;grid-template-columns:8mm 1fr;grid-template-rows:1fr;border:.3pt solid;min-height:0;}
+.tb-braindump{flex:1;min-height:0;}

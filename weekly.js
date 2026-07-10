@@ -70,6 +70,7 @@ let opts = {
   daylbl: 7,
   graphborders: true,
   weekstart: 'monday',
+  dailyLayout: 'standard',
   mood: true,
   moodfaces: 5,
   notes: 1,
@@ -599,6 +600,7 @@ function applyOptsToUI(){
   $('opt-graphcol').value=opts.graphcol;
   $('opt-graphborders').checked=opts.graphborders;
   $('opt-weekstart').value=opts.weekstart;
+  $('opt-dailylayout').value=opts.dailyLayout;
   $('opt-mood').checked=opts.mood;
   $('opt-moodfaces').value=opts.moodfaces;
   $('opt-notes').value=opts.notes;
@@ -677,6 +679,7 @@ function readOptsFromUI(){
   opts.graphcol=parseFloat($('opt-graphcol').value);
   opts.graphborders=$('opt-graphborders').checked;
   opts.weekstart=$('opt-weekstart').value;
+  opts.dailyLayout=$('opt-dailylayout').value;
   opts.mood=$('opt-mood').checked;
   opts.moodfaces=parseInt($('opt-moodfaces').value);
   opts.notes=parseInt($('opt-notes').value);
@@ -2638,6 +2641,24 @@ function moonPhaseSVG(phase,sz,ink){
   return `<svg viewBox="0 0 ${d} ${d}" width="${sz}" height="${sz}" style="flex-shrink:0;display:block;">${circle}<path d="${path}" fill="${ink}"/></svg>`;
 }
 
+function mkHabitRow(h,colors){
+  const row=el('div','d-hab-row');
+  row.dataset.habitId=h.id;
+  const box=el('div','d-box');
+  box.style.cssText=`border:.5pt solid ${colors.dim};${getCheckboxStyle()}`;
+  row.appendChild(box);
+  const ico=el('span','d-hab-icon');
+  ico.style.color=getHabitIconColor(h,colors);
+  ico.appendChild(lucideEl(h.icon,(opts.iconSize??3.5)+'mm',(opts.iconSize??3.5)+'mm'));
+  row.appendChild(ico);
+  const name=el('span','d-hab-name',h.name);
+  name.style.color=getHabitNameColor(h,colors);
+  const hf=getHabitFont(h);
+  if(hf) name.style.fontFamily=`'${hf}',serif`;
+  row.appendChild(name);
+  return row;
+}
+
 function mkDay(y,m,d,c){
   const colors=c||getColors();
   const p=pg(`${m+1}/${d}`,colors);
@@ -2779,23 +2800,7 @@ function mkDay(y,m,d,c){
 
   const habList=el('div','d-hab-list');
   const todayHabits=habits.filter(h=>!h.days||h.days.includes(wdayIdx));
-  todayHabits.forEach(h=>{
-    const row=el('div','d-hab-row');
-    row.dataset.habitId=h.id;
-    const box=el('div','d-box');
-    box.style.cssText=`border:.5pt solid ${colors.dim};${getCheckboxStyle()}`;
-    row.appendChild(box);
-    const ico=el('span','d-hab-icon');
-    ico.style.color=getHabitIconColor(h,colors);
-    ico.appendChild(lucideEl(h.icon,(opts.iconSize??3.5)+'mm',(opts.iconSize??3.5)+'mm'));
-    row.appendChild(ico);
-    const name=el('span','d-hab-name',h.name);
-    name.style.color=getHabitNameColor(h,colors);
-    const hf=getHabitFont(h);
-    if(hf) name.style.fontFamily=`'${hf}',serif`;
-    row.appendChild(name);
-    habList.appendChild(row);
-  });
+  todayHabits.forEach(h=>habList.appendChild(mkHabitRow(h,colors)));
   for(let i=0;i<opts.emptyLines;i++){
     const row=el('div','d-hab-row');
     const box=el('div','d-box');
@@ -2813,6 +2818,82 @@ function mkDay(y,m,d,c){
   const fill=el('div','d-fill');
   fill.style.cssText=getFillStyle(colors);
   p.appendChild(fill);
+  return p;
+}
+
+function mkTimeBlockDay(y,m,d,c){
+  const colors=c||getColors();
+  const p=pg(`${m+1}/${d}`,colors);
+  p.classList.add('fcol','tb-page');
+  const w=dow(y,m,d);
+  const wdayIdx=opts.weekstart==='sunday' ? w : (w+6)%7;
+
+  // Header — weekday + day number (same look as the standard daily page).
+  const hdr=el('div','d-hdr');
+  hdr.style.cssText=`border-bottom:.3pt solid ${colors.line};`;
+  const dowWrap=el('div','d-dow-wrap');
+  const dowEl=el('span','d-dow',DOW_FULL[w]);
+  dowEl.style.color=getElemColor('dayName',colors.dim);
+  dowWrap.appendChild(dowEl);
+  const dayHols=holidayMap(y,m)[d];
+  if(dayHols&&dayHols.length){
+    const holEl=el('span','d-hol',dayHols.join(' · '));
+    holEl.style.color=colors.dim;
+    dowWrap.appendChild(holEl);
+  }
+  hdr.appendChild(dowWrap);
+  const numEl=el('span','d-num',d);
+  numEl.style.color=getElemColor('dayNum',colors.line);
+  hdr.appendChild(numEl);
+  p.appendChild(hdr);
+
+  // Curated trackers: mood faces + today's habits (reuse the daily helpers).
+  if(opts.mood){
+    const faces=el('div','d-faces');
+    faces.style.cssText='flex:0 0 auto;color:'+getElemColor('moodIcons',colors.dim)+';margin-top:1mm;';
+    (opts.moodfaces===3?MOOD_ICONS3:MOOD_ICONS5).forEach(name=>faces.appendChild(lucideEl(name,(opts.fzMoodSz??5)+'mm',(opts.fzMoodSz??5)+'mm')));
+    p.appendChild(faces);
+  }
+  const todayHabits=habits.filter(h=>!h.days||h.days.includes(wdayIdx));
+  if(todayHabits.length){
+    const habList=el('div','d-hab-list');
+    habList.style.marginTop='1mm';
+    todayHabits.forEach(h=>habList.appendChild(mkHabitRow(h,colors)));
+    p.appendChild(habList);
+  }
+
+  const ruled=`background-image:linear-gradient(to bottom,${colors.line} 0,${colors.line} .3pt,transparent .3pt);background-size:100% 7mm;`;
+
+  // Top Priorities — three lines.
+  const prioLbl=el('div','tb-label','Top Priorities');
+  prioLbl.style.color=getElemColor('sectionHdr',colors.dim);
+  p.appendChild(prioLbl);
+  const prio=el('div','tb-prio');
+  prio.style.borderColor=colors.line;
+  for(let i=0;i<3;i++){ const r=el('div','tb-prio-row'); r.style.borderColor=colors.line; prio.appendChild(r); }
+  p.appendChild(prio);
+
+  // Schedule — blank time column + activity, ruled rows (the hero).
+  const schedLbl=el('div','tb-label','Schedule');
+  schedLbl.style.color=getElemColor('sectionHdr',colors.dim);
+  p.appendChild(schedLbl);
+  const sched=el('div','tb-sched');
+  sched.style.borderColor=colors.line;
+  const timeCol=el('div','tb-time');
+  timeCol.style.cssText=`border-right:.3pt solid ${colors.line};${ruled}`;
+  const actCol=el('div','tb-act');
+  actCol.style.cssText=ruled;
+  sched.appendChild(timeCol);
+  sched.appendChild(actCol);
+  p.appendChild(sched);
+
+  // Brain Dump — follows the page fill pattern.
+  const bdLbl=el('div','tb-label','Brain Dump');
+  bdLbl.style.color=getElemColor('sectionHdr',colors.dim);
+  p.appendChild(bdLbl);
+  const bd=el('div','tb-braindump');
+  bd.style.cssText=`border:.3pt solid ${colors.line};`+getFillStyle(colors);
+  p.appendChild(bd);
   return p;
 }
 
@@ -2922,7 +3003,7 @@ function generate(){
   if(graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
   buildWeeks(y,m).forEach((wdays,wi)=>{
     els.push(mkWeekSummary(y,m,wi+1,wdays,colors));
-    wdays.forEach(d=>{if(d>0)els.push(mkDay(y,m,d,colors));});
+    wdays.forEach(d=>{if(d>0)els.push(opts.dailyLayout==='timeblock'?mkTimeBlockDay(y,m,d,colors):mkDay(y,m,d,colors));});
     if(opts.weeklyReflection) els.push(mkWeekReflection(wi+1,colors));
   });
   if(opts.expenseTracker) els.push(mkExpenseTracker(y,m,colors));
