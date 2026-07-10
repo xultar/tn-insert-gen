@@ -352,3 +352,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
   #inspector.insp-hidden{display:none!important;}
   #insp-close-btn{display:flex;position:absolute;top:10px;right:12px;}
 }
+
+/* ── FUTURE LOG: mini-month ─────────────── */
+.mini-month{display:flex;flex-direction:column;}
+.mini-month-cap{font-size:5pt;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.4mm;}
+.mini-month-grid{display:grid;grid-template-columns:repeat(7,1fr);column-gap:.2mm;row-gap:.1mm;}
+.mini-month-dow{font-size:3pt;text-align:center;font-weight:600;opacity:.8;}
+.mini-month-day{font-size:3.6pt;text-align:center;line-height:1.3;}

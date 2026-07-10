@@ -2238,6 +2238,29 @@ function mkCalendarGrid(page,colors,wdayLabels,weeks){
   page.appendChild(grid);
 }
 
+function mkMiniMonth(y, m, c){
+  const colors = c || getColors();
+  const wrap = el('div','mini-month');
+  const cap = el('div','mini-month-cap', MONTHS[m]);
+  cap.style.color = getElemColor('sectionHdr', colors.dim);
+  wrap.appendChild(cap);
+  const grid = el('div','mini-month-grid');
+  getWdayLabels().forEach(lbl=>{
+    const h = el('div','mini-month-dow', lbl.charAt(0));
+    h.style.color = colors.dot;
+    grid.appendChild(h);
+  });
+  TNCore.monthMatrix(y, m, opts.weekstart).forEach(week=>{
+    week.forEach(d=>{
+      const cell = el('div','mini-month-day', d==null ? '' : String(d));
+      cell.style.color = colors.ink;
+      grid.appendChild(cell);
+    });
+  });
+  wrap.appendChild(grid);
+  return wrap;
+}
+
 function mkCalendar(y,m,c){
   const colors=c||getColors();
   const wdayLabels=getWdayLabels();
