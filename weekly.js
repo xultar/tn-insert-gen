@@ -2523,10 +2523,17 @@ function mkPlain(y,m,c){
   return p;
 }
 
-function mkMonthListPage(y,m,colors,days,rows,headerText){
+function mkMonthListPage(y,m,colors,days,rows,rowMm,headerText){
   const WK=['S','M','T','W','T','F','S'];
+  const onLines=opts.fillPattern==='lines';   // seat the day on the line for ruled paper
   const p=pg('month-list',colors);
   p.classList.add('fcol');
+  // Each row is exactly one ruling-unit tall so the days lock onto the dot/line rows.
+  const mkRow=(extra)=>{
+    const r=el('div','ml-row'+(extra?' '+extra:''));
+    r.style.cssText=`flex:0 0 ${rowMm}mm;height:${rowMm}mm;${onLines?'align-items:flex-end;':''}`;
+    return r;
+  };
   let used=0;
   if(headerText){
     const hdr=el('div','sh',headerText);
@@ -2535,11 +2542,10 @@ function mkMonthListPage(y,m,colors,days,rows,headerText){
   }
   const body=el('div','ml-body');
   const labels=el('div','ml-labels');
-  if(headerText){ labels.appendChild(el('div','ml-row')); used++; }   // skip a row after the header
+  if(headerText){ labels.appendChild(mkRow('')); used++; }   // skip a row after the header
   days.forEach(d=>{
     const w=dow(y,m,d);
-    const row=el('div','ml-row');
-    if(w===0||w===6) row.classList.add('ml-weekend');
+    const row=mkRow(w===0||w===6?'ml-weekend':'');
     const num=el('span','ml-num',String(d));
     num.style.color=colors.ink;
     const wd=el('span','ml-wd',WK[w]);
@@ -2549,7 +2555,7 @@ function mkMonthListPage(y,m,colors,days,rows,headerText){
     labels.appendChild(row);
   });
   used+=days.length;
-  for(let i=used;i<rows;i++) labels.appendChild(el('div','ml-row'));  // blank filler rows
+  for(let i=used;i<rows;i++) labels.appendChild(mkRow(''));   // blank filler rows
   const write=el('div','ml-write');
   write.style.cssText+=getFillStyle(colors);
   body.appendChild(labels);
@@ -2558,23 +2564,27 @@ function mkMonthListPage(y,m,colors,days,rows,headerText){
   return p;
 }
 
-// Returns an array of 1 page (fits) or 2 pages (spread, e.g. Passport).
+// One row per day, aligned to the page ruling (row height = the Page-Style grid
+// spacing). Returns 1 page, or a 2-page spread when the days don't fit (e.g. Passport).
 function mkMonthList(y,m,c){
   const colors=c||getColors();
   const sz=tnSize();
   const dim=daysInMonth(y,m);
-  // Fixed row density calibrated so Passport (124mm) ~= 24 rows and a standard TN (210mm) ~= 41 rows.
-  const rows=Math.max(10, Math.round(24 + (sz.h - 124) * (17/86)));
+  const g=opts.dotgrid||5;                 // row height tracks the ruling spacing
+  const margin=opts.margin||6;
+  const rowsFor=(hasHeader)=>Math.max(4, Math.floor((sz.h - margin*2 - (hasHeader?10:1))/g));
   const title=`${MONTHS[m]} ${y}`;
   const allDays=[];
   for(let d=1;d<=dim;d++) allDays.push(d);
-  if(1+dim<=rows){
-    return [ mkMonthListPage(y,m,colors,allDays,rows,title) ];
+  const rows1=rowsFor(true);
+  if(1+dim<=rows1){
+    return [ mkMonthListPage(y,m,colors,allDays,rows1,g,title) ];
   }
+  const rows2=rowsFor(false);
   const half=Math.ceil(dim/2);
   return [
-    mkMonthListPage(y,m,colors,allDays.slice(0,half),rows,title),
-    mkMonthListPage(y,m,colors,allDays.slice(half),rows,'')
+    mkMonthListPage(y,m,colors,allDays.slice(0,half),rows1,g,title),
+    mkMonthListPage(y,m,colors,allDays.slice(half),rows2,g,'')
   ];
 }
 

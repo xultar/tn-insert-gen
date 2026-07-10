@@ -406,7 +406,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 /* ── MONTHLY: month log (days list) ── */
 .ml-body{flex:1;display:flex;min-height:0;}
 .ml-labels{flex:0 0 13mm;display:flex;flex-direction:column;}
-.ml-row{flex:1;display:flex;align-items:center;gap:1.5mm;min-height:0;padding-left:.5mm;}
+.ml-row{display:flex;align-items:center;gap:1.5mm;min-height:0;padding-left:.5mm;}
 .ml-num{font-size:7pt;font-weight:600;min-width:5mm;text-align:left;}
 .ml-wd{font-size:6.5pt;font-weight:700;}
 .ml-weekend .ml-num,.ml-weekend .ml-wd{opacity:.55;}
