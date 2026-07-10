@@ -2523,18 +2523,17 @@ function mkPlain(y,m,c){
   return p;
 }
 
-function mkMonthList(y,m,c){
-  const colors=c||getColors();
+function mkMonthListPage(y,m,colors,days,rows,headerText){
+  const WK=['S','M','T','W','T','F','S'];
   const p=pg('month-list',colors);
   p.classList.add('fcol');
-  const hdr=el('div','sh',`${MONTHS[m]} ${y}`);
+  const hdr=el('div','sh',headerText);
   hdr.style.cssText=`text-align:center;color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
   p.appendChild(hdr);
   const body=el('div','ml-body');
   const labels=el('div','ml-labels');
-  const dim=daysInMonth(y,m);
-  const WK=['S','M','T','W','T','F','S'];
-  for(let d=1;d<=dim;d++){
+  labels.appendChild(el('div','ml-row'));            // skip a row after the header
+  days.forEach(d=>{
     const w=dow(y,m,d);
     const row=el('div','ml-row');
     if(w===0||w===6) row.classList.add('ml-weekend');
@@ -2545,13 +2544,34 @@ function mkMonthList(y,m,c){
     row.appendChild(num);
     row.appendChild(wd);
     labels.appendChild(row);
-  }
+  });
+  for(let i=1+days.length;i<rows;i++) labels.appendChild(el('div','ml-row'));  // blank filler rows
   const write=el('div','ml-write');
   write.style.cssText+=getFillStyle(colors);
   body.appendChild(labels);
   body.appendChild(write);
   p.appendChild(body);
   return p;
+}
+
+// Returns an array of 1 page (fits) or 2 pages (spread, e.g. Passport).
+function mkMonthList(y,m,c){
+  const colors=c||getColors();
+  const sz=tnSize();
+  const dim=daysInMonth(y,m);
+  // Fixed row density calibrated so Passport (124mm) ~= 24 rows and a standard TN (210mm) ~= 41 rows.
+  const rows=Math.max(10, Math.round(24 + (sz.h - 124) * (17/86)));
+  const title=`${MONTHS[m]} ${y}`;
+  const allDays=[];
+  for(let d=1;d<=dim;d++) allDays.push(d);
+  if(1+dim<=rows){
+    return [ mkMonthListPage(y,m,colors,allDays,rows,title) ];
+  }
+  const half=Math.ceil(dim/2);
+  return [
+    mkMonthListPage(y,m,colors,allDays.slice(0,half),rows,title),
+    mkMonthListPage(y,m,colors,allDays.slice(half),rows,title)
+  ];
 }
 
 function mkMonthGraphs(y,m,c){
