@@ -103,6 +103,7 @@ let opts = {
   moodCal: false,
   expenseTracker: false,
   reflectionPage: false,
+  braindump: false,
   moonPhase: false,
   weatherIcons: false,
   weatherIconSize: 3.5,
@@ -624,6 +625,7 @@ function applyOptsToUI(){
   $('opt-moodcal').checked=opts.moodCal;
   $('opt-expenses').checked=opts.expenseTracker;
   $('opt-reflection').checked=opts.reflectionPage;
+  $('opt-braindump').checked=opts.braindump;
   $('opt-linkfg').checked=opts.linkFieldsGraphs;
   $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
   $('opt-savepaper').checked=opts.savePaper;
@@ -702,6 +704,7 @@ function readOptsFromUI(){
   opts.moodCal=$('opt-moodcal').checked;
   opts.expenseTracker=$('opt-expenses').checked;
   opts.reflectionPage=$('opt-reflection').checked;
+  opts.braindump=$('opt-braindump').checked;
   opts.linkFieldsGraphs=$('opt-linkfg').checked;
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
   opts.savePaper=$('opt-savepaper').checked;
@@ -2086,6 +2089,38 @@ function mkReflection(y,m,c){
   return p;
 }
 
+function mkMonthBrainDump(y,m,c){
+  const colors=c||getColors();
+  const p=pg('braindump',colors);
+  p.classList.add('fcol');
+  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Master Action List`);
+  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+  p.appendChild(hdr);
+
+  // Column header row: 7 blank day cells (user writes S/M/T… in any order),
+  // then the # (date), the bullet dot, and the ACTION / EVENT label.
+  const head=el('div','bd-grid bd-head');
+  head.style.borderColor=colors.line;
+  for(let i=0;i<7;i++) head.appendChild(el('div','bd-cell'));
+  head.appendChild(el('div','bd-cell','#'));
+  head.appendChild(el('div','bd-cell','•'));
+  head.appendChild(el('div','bd-cell bd-action-head','ACTION / EVENT'));
+  head.querySelectorAll('.bd-cell').forEach(cell=>{ cell.style.color=colors.dim; });
+  p.appendChild(head);
+
+  // Body: same column grid, page fill pattern behind everything, vertical
+  // separators between columns so the day/#/bullet lanes stay aligned.
+  const body=el('div','bd-grid bd-body');
+  body.style.cssText+=getFillStyle(colors);
+  for(let i=0;i<10;i++){
+    const cell=el('div','bd-cell');
+    cell.style.borderColor=colors.line;
+    body.appendChild(cell);
+  }
+  p.appendChild(body);
+  return p;
+}
+
 function mkPrintGuide(pageCount,sheetCount){
   const sz=tnSize();
   const d=document.createElement('div');
@@ -2854,6 +2889,7 @@ function generate(){
   }
 
   if(opts.goalsPage) els.push(mkGoalsPage(y,m,colors));
+  if(opts.braindump) els.push(mkMonthBrainDump(y,m,colors));
   if(opts.calendar) els.push(...mkCalendar(y,m,colors));
   if(opts.habitMap) els.push(mkHabitMap(y,m,colors));
   if(opts.moodCal) els.push(mkMoodCalendar(y,m,colors));
