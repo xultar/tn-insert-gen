@@ -103,6 +103,7 @@ let opts = {
   moodCal: false,
   expenseTracker: false,
   reflectionPage: false,
+  weeklyReflection: false,
   braindump: false,
   moonPhase: false,
   weatherIcons: false,
@@ -625,6 +626,7 @@ function applyOptsToUI(){
   $('opt-moodcal').checked=opts.moodCal;
   $('opt-expenses').checked=opts.expenseTracker;
   $('opt-reflection').checked=opts.reflectionPage;
+  $('opt-weekly-reflection').checked=opts.weeklyReflection;
   $('opt-braindump').checked=opts.braindump;
   $('opt-linkfg').checked=opts.linkFieldsGraphs;
   $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
@@ -704,6 +706,7 @@ function readOptsFromUI(){
   opts.moodCal=$('opt-moodcal').checked;
   opts.expenseTracker=$('opt-expenses').checked;
   opts.reflectionPage=$('opt-reflection').checked;
+  opts.weeklyReflection=$('opt-weekly-reflection').checked;
   opts.braindump=$('opt-braindump').checked;
   opts.linkFieldsGraphs=$('opt-linkfg').checked;
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
@@ -2051,14 +2054,7 @@ function mkExpenseTracker(y,m,c){
   return p;
 }
 
-function mkReflection(y,m,c){
-  const colors=c||getColors();
-  const p=pg('reflection',colors);
-  p.classList.add('fcol');
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Reflection`);
-  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
-  p.appendChild(hdr);
-
+function reflectionBody(colors){
   const sections=[
     {title:'Grateful for…',icon:'heart'},
     {title:'Kudos for…',icon:'thumbs-up'},
@@ -2085,7 +2081,28 @@ function mkReflection(y,m,c){
     block.appendChild(linesArea);
     wrap.appendChild(block);
   });
-  p.appendChild(wrap);
+  return wrap;
+}
+
+function mkReflection(y,m,c){
+  const colors=c||getColors();
+  const p=pg('reflection',colors);
+  p.classList.add('fcol');
+  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Reflection`);
+  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+  p.appendChild(hdr);
+  p.appendChild(reflectionBody(colors));
+  return p;
+}
+
+function mkWeekReflection(wn,c){
+  const colors=c||getColors();
+  const p=pg('week-reflection',colors);
+  p.classList.add('fcol');
+  const hdr=el('div','sh',`Week ${wn} — Reflection`);
+  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+  p.appendChild(hdr);
+  p.appendChild(reflectionBody(colors));
   return p;
 }
 
@@ -2906,6 +2923,7 @@ function generate(){
   buildWeeks(y,m).forEach((wdays,wi)=>{
     els.push(mkWeekSummary(y,m,wi+1,wdays,colors));
     wdays.forEach(d=>{if(d>0)els.push(mkDay(y,m,d,colors));});
+    if(opts.weeklyReflection) els.push(mkWeekReflection(wi+1,colors));
   });
   if(opts.expenseTracker) els.push(mkExpenseTracker(y,m,colors));
   if(noteCount>0 && (opts.notespos==='back'||opts.notespos==='both')){
