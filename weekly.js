@@ -2100,17 +2100,9 @@ function mkMonthBrainDump(y,m,c){
   const gridded = (opts.fillPattern==='dots'||opts.fillPattern==='grid'||opts.fillPattern==='hex');
   p.style.setProperty('--bd-col', (gridded ? opts.dotgrid : 5) + 'mm');
 
-  // Title: a blank write-line for the user to fill in the month & year by hand,
-  // then the printed page label.
-  const title=el('div','bd-title');
-  title.style.borderColor=colors.line;
-  const write=el('span','bd-title-write');
-  write.style.borderColor=colors.line;
-  title.appendChild(write);
-  const label=el('span','bd-title-label','MASTER ACTION LIST');
-  label.style.color=getElemColor('sectionHdr',colors.dim);
-  title.appendChild(label);
-  p.appendChild(title);
+  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Master Action List`);
+  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
+  p.appendChild(hdr);
 
   // Column header row: 7 blank day cells (user writes S/M/T… in any order),
   // then the # (date), the bullet dot, and the ACTION / EVENT label.
