@@ -2094,12 +2094,6 @@ function mkMonthBrainDump(y,m,c){
   const p=pg('braindump',colors);
   p.classList.add('fcol');
 
-  // Narrow-column width tracks the ruling's grid spacing so the vertical lanes
-  // line up with the dots/grid. Patterns without a vertical rhythm (ruled lines
-  // or blank) have no axis to match, so fall back to a 5mm column.
-  const gridded = (opts.fillPattern==='dots'||opts.fillPattern==='grid'||opts.fillPattern==='hex');
-  p.style.setProperty('--bd-col', (gridded ? opts.dotgrid : 5) + 'mm');
-
   const hdr=el('div','sh',`${MONTHS[m]} ${y} — Master Action List`);
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
   p.appendChild(hdr);
@@ -2115,14 +2109,15 @@ function mkMonthBrainDump(y,m,c){
   head.querySelectorAll('.bd-cell').forEach(cell=>{ cell.style.color=colors.dim; });
   p.appendChild(head);
 
-  // Body: same column grid, page fill pattern behind everything, vertical
-  // separators between columns, and every other narrow lane lightly shaded.
+  // Body: narrow lanes stay plain (alternate shading + separators); only the
+  // ACTION / EVENT column carries the ruling the user chose for the page.
   const body=el('div','bd-grid bd-body');
-  body.style.cssText+=getFillStyle(colors);
+  const fill=getFillStyle(colors);
   for(let i=0;i<10;i++){
     const cell=el('div','bd-cell');
     cell.style.borderColor=colors.line;
     if(i<9 && i%2===0) cell.classList.add('bd-shade');
+    if(i===9) cell.style.cssText+=fill;
     body.appendChild(cell);
   }
   p.appendChild(body);
