@@ -38,3 +38,22 @@ test('monthMatrix: Feb 2026 (28 days, non-leap) Monday start', () => {
   assert.strictEqual(flat.length, 28);
   assert.strictEqual(weeks.flat().length % 7, 0);
 });
+
+test('paginateMonths: 12 months from Jan 2026, 3 per page', () => {
+  const pages = core.paginateMonths(2026, 0, 12, 3);
+  assert.strictEqual(pages.length, 4);
+  assert.deepStrictEqual(pages[0], [
+    { year: 2026, month: 0 }, { year: 2026, month: 1 }, { year: 2026, month: 2 }
+  ]);
+  assert.deepStrictEqual(pages[3], [
+    { year: 2026, month: 9 }, { year: 2026, month: 10 }, { year: 2026, month: 11 }
+  ]);
+});
+
+test('paginateMonths: rolls over the year boundary', () => {
+  const pages = core.paginateMonths(2026, 10, 4, 2); // Nov26, Dec26, Jan27, Feb27
+  assert.deepStrictEqual(pages, [
+    [{ year: 2026, month: 10 }, { year: 2026, month: 11 }],
+    [{ year: 2027, month: 0 }, { year: 2027, month: 1 }]
+  ]);
+});

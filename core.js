@@ -31,10 +31,23 @@
     return weeks;
   }
 
+  // Expand a start month + count into pages of {year, month}, perPage each.
+  function paginateMonths(startYear, startMonth, count, perPage) {
+    var months = [];
+    for (var i = 0; i < count; i++) {
+      var idx = startMonth + i;
+      months.push({ year: startYear + Math.floor(idx / 12), month: ((idx % 12) + 12) % 12 });
+    }
+    var pages = [];
+    for (var p = 0; p < months.length; p += perPage) pages.push(months.slice(p, p + perPage));
+    return pages;
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     futureLogBandCount: futureLogBandCount,
-    monthMatrix: monthMatrix
+    monthMatrix: monthMatrix,
+    paginateMonths: paginateMonths
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
