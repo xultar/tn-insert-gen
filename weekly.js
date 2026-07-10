@@ -1901,38 +1901,38 @@ function mkGoalsPage(y,m,c){
   const colors=c||getColors();
   const p=pg('goals',colors);
   p.classList.add('fcol');
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Goals`);
+  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Intentions / Goals`);
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
   p.appendChild(hdr);
 
   const goals=el('div','');
-  goals.style.cssText='display:flex;flex-direction:column;gap:2mm;flex:1;';
+  goals.style.cssText='display:flex;flex-direction:column;flex:1;';
   for(let i=0;i<5;i++){
     const goal=el('div','');
-    goal.style.cssText=`padding:1.5mm 0;${i<4?'border-bottom:.3pt solid '+colors.line+';':''}`;
+    goal.style.cssText=`flex:1;display:flex;flex-direction:column;padding:1.5mm 0;${i<4?'border-bottom:.3pt solid '+colors.line+';':''}`;
     const row=el('div','');
     row.style.cssText=`display:flex;align-items:center;gap:1.5mm;margin-bottom:1.5mm;`;
     const num=el('span','',`${i+1}.`);
     num.style.cssText=`font-size:7pt;font-weight:700;color:${colors.dim};min-width:3mm;`;
     row.appendChild(num);
-    const box=el('div','');
-    box.style.cssText=`width:3.5mm;height:3.5mm;border:.4pt solid ${colors.dim};flex-shrink:0;${getCheckboxStyle(3.5)}`;
-    row.appendChild(box);
     const line=el('div','');
     line.style.cssText=`flex:1;border-bottom:.3pt solid ${colors.dim};height:3mm;`;
     row.appendChild(line);
     goal.appendChild(row);
-    for(let a=0;a<2;a++){
+    const steps=el('div','');
+    steps.style.cssText='flex:1;display:flex;flex-direction:column;justify-content:space-around;';
+    for(let a=0;a<3;a++){
       const step=el('div','');
-      step.style.cssText=`display:flex;align-items:center;gap:1mm;margin-left:6mm;margin-bottom:1mm;`;
+      step.style.cssText=`display:flex;align-items:center;gap:1mm;margin-left:6mm;`;
       const bullet=el('span','','·');
       bullet.style.cssText=`font-size:6pt;color:${colors.dot};`;
       step.appendChild(bullet);
       const sl=el('div','');
       sl.style.cssText=`flex:1;border-bottom:.2pt dotted ${colors.line};height:2.5mm;`;
       step.appendChild(sl);
-      goal.appendChild(step);
+      steps.appendChild(step);
     }
+    goal.appendChild(steps);
     goals.appendChild(goal);
   }
   p.appendChild(goals);
