@@ -2286,11 +2286,9 @@ function mkFutureLogStacked(y, m, colors){
     p.classList.add('fl-stacked');
     monthsOnPage.forEach(mm=>{
       const band = el('div','fl-band');
+      band.style.cssText += getFillStyle(colors);
       band.style.borderColor = colors.line;
       band.appendChild(mkMiniMonth(mm.year, mm.month, colors));
-      const write = el('div','fl-write');
-      write.style.cssText = getFillStyle(colors);
-      band.appendChild(write);
       p.appendChild(band);
     });
     return p;
