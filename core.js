@@ -43,11 +43,36 @@
     return pages;
   }
 
+  function bookletAdd(list, entry) {
+    return list.concat([entry]);
+  }
+
+  function bookletRemove(list, id) {
+    return list.filter(function (e) { return e.id !== id; });
+  }
+
+  function bookletMove(list, id, dir) {
+    var i = list.findIndex(function (e) { return e.id === id; });
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return list.slice();
+    var out = list.slice();
+    var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+    return out;
+  }
+
+  function bookletTotalPages(list) {
+    return list.reduce(function (n, e) { return n + (e.pageCount || 0); }, 0);
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     futureLogBandCount: futureLogBandCount,
     monthMatrix: monthMatrix,
-    paginateMonths: paginateMonths
+    paginateMonths: paginateMonths,
+    bookletAdd: bookletAdd,
+    bookletRemove: bookletRemove,
+    bookletMove: bookletMove,
+    bookletTotalPages: bookletTotalPages
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

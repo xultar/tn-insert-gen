@@ -65,3 +65,31 @@ test('paginateMonths: rolls over the year boundary', () => {
     [{ year: 2027, month: 0 }, { year: 2027, month: 1 }]
   ]);
 });
+
+test('bookletAdd appends an entry immutably', () => {
+  const a = [];
+  const b = core.bookletAdd(a, { id: '1', type: 'cover', config: {}, pageCount: 1 });
+  assert.strictEqual(a.length, 0);
+  assert.strictEqual(b.length, 1);
+  assert.strictEqual(b[0].type, 'cover');
+});
+
+test('bookletRemove drops the matching id', () => {
+  const list = [{ id: '1', type: 'cover', config: {}, pageCount: 1 },
+                { id: '2', type: 'daily', config: {}, pageCount: 31 }];
+  const out = core.bookletRemove(list, '1');
+  assert.deepStrictEqual(out.map((e) => e.id), ['2']);
+});
+
+test('bookletMove shifts an entry up and down within bounds', () => {
+  const list = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+  assert.deepStrictEqual(core.bookletMove(list, 'b', -1).map((e) => e.id), ['b', 'a', 'c']);
+  assert.deepStrictEqual(core.bookletMove(list, 'b', 1).map((e) => e.id), ['a', 'c', 'b']);
+  assert.deepStrictEqual(core.bookletMove(list, 'a', -1).map((e) => e.id), ['a', 'b', 'c']);
+  assert.deepStrictEqual(core.bookletMove(list, 'c', 1).map((e) => e.id), ['a', 'b', 'c']);
+});
+
+test('bookletTotalPages sums pageCount', () => {
+  const list = [{ pageCount: 1 }, { pageCount: 31 }, { pageCount: 4 }];
+  assert.strictEqual(core.bookletTotalPages(list), 36);
+});
