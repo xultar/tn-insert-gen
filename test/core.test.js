@@ -4,7 +4,7 @@ const assert = require('node:assert');
 const core = require('../core.js');
 
 test('NOTEBOOK_SIZES includes Pocket and regular A5 with correct mm', () => {
-  assert.deepStrictEqual(core.NOTEBOOK_SIZES.pocket, { label: 'Pocket (3.5×5.5")', w: 89, h: 140 });
+  assert.deepStrictEqual(core.NOTEBOOK_SIZES.pocket, { label: 'Pocket', w: 89, h: 140 });
   assert.deepStrictEqual(core.NOTEBOOK_SIZES.a5, { label: 'A5', w: 148, h: 210 });
 });
 
@@ -37,6 +37,14 @@ test('monthMatrix: Feb 2026 (28 days, non-leap) Monday start', () => {
   const flat = weeks.flat().filter((d) => d !== null);
   assert.strictEqual(flat.length, 28);
   assert.strictEqual(weeks.flat().length % 7, 0);
+});
+
+test('monthMatrix: 6-week month (Aug 2026, Sat start, Monday weeks)', () => {
+  // 2026-08-01 is a Saturday; 31 days + Monday-start offset spills to 6 rows
+  const weeks = core.monthMatrix(2026, 7, 'monday');
+  assert.strictEqual(weeks.length, 6);
+  assert.deepStrictEqual(weeks[0], [null, null, null, null, null, 1, 2]);
+  assert.strictEqual(weeks.flat().filter((d) => d !== null).length, 31);
 });
 
 test('paginateMonths: 12 months from Jan 2026, 3 per page', () => {

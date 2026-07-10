@@ -138,15 +138,10 @@ const OPT_DEFAULTS = {
 };
 
 /* ── Constants ── */
-const TN_SIZES = {
-  'pocket':    { label:'Pocket',      w:89,  h:140 },
-  'passport':  { label:'Passport',    w:89,  h:124 },
-  'b6slim':    { label:'B6 Slim',     w:91,  h:182 },
-  'personal':  { label:'Personal',    w:95,  h:171 },
-  'a5slim':    { label:'A5 Slim',     w:105, h:210 },
-  'regular':   { label:'Regular',     w:110, h:210 },
-  'a5':        { label:'A5',          w:148, h:210 },
-};
+// Notebook sizes are owned by core.js (TNCore) so there is a single, unit-tested
+// source of truth shared by the engine and the pure logic. core.js is loaded
+// before weekly.js in weekly.html, so TNCore exists here.
+const TN_SIZES = TNCore.NOTEBOOK_SIZES;
 
 const PAPER_SIZES = {
   'a4':     { label:'A4',        w:297,   h:210,   page:'A4 landscape' },
@@ -2334,11 +2329,7 @@ function mkFutureLogColumns(y, m, colors){
 
 function mkFutureLogYear(y, m, colors){
   const count = opts.flMonthCount || 12;
-  const months = [];
-  for(let i=0;i<count;i++){
-    const idx = m + i;
-    months.push({ year: y + Math.floor(idx/12), month: ((idx%12)+12)%12 });
-  }
+  const months = TNCore.paginateMonths(y, m, count, count)[0];
   const p = pg('future-log', colors);
   p.classList.add('fl-year');
   const hdr = el('div','sh', 'Future Log — ' + y);

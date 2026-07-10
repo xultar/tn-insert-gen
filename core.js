@@ -1,7 +1,7 @@
 'use strict';
 (function (root) {
   var NOTEBOOK_SIZES = {
-    pocket:   { label: 'Pocket (3.5×5.5")', w: 89,  h: 140 },
+    pocket:   { label: 'Pocket',            w: 89,  h: 140 },
     passport: { label: 'Passport',          w: 89,  h: 124 },
     b6slim:   { label: 'B6 Slim',           w: 91,  h: 182 },
     personal: { label: 'Personal',          w: 95,  h: 171 },
