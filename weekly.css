@@ -368,3 +368,9 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 .fl-events{flex:1;display:flex;flex-direction:column;justify-content:center;}
 .fl-events-lbl{font-size:4pt;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1mm;}
 .fl-line{border-bottom:.3pt solid;height:0;margin:1.6mm 0;}
+
+/* ── FUTURE LOG: columns ────────────────── */
+.pg.fl-columns{display:flex;gap:2mm;}
+.fl-col{flex:1;display:flex;flex-direction:column;border-right:.3pt solid;padding-right:1.5mm;}
+.fl-col:last-child{border-right:none;padding-right:0;}
+.fl-col-lines{flex:1;display:flex;flex-direction:column;margin-top:1.5mm;}

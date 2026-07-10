@@ -2309,6 +2309,29 @@ function mkFutureLogStacked(y, m, colors){
   });
 }
 
+function mkFutureLogColumns(y, m, colors){
+  const perPage = opts.flColsPerPage || 3;
+  const count = opts.flMonthCount || 12;
+  return TNCore.paginateMonths(y, m, count, perPage).map(monthsOnPage=>{
+    const p = pg('future-log', colors);
+    p.classList.add('fl-columns');
+    monthsOnPage.forEach(mm=>{
+      const col = el('div','fl-col');
+      col.style.borderColor = colors.line;
+      col.appendChild(mkMiniMonth(mm.year, mm.month, colors));
+      const lines = el('div','fl-col-lines');
+      for(let i=0;i<8;i++){
+        const ln = el('div','fl-line');
+        ln.style.borderColor = colors.line;
+        lines.appendChild(ln);
+      }
+      col.appendChild(lines);
+      p.appendChild(col);
+    });
+    return p;
+  });
+}
+
 function generateFutureLog(){
   saveState();
   const m = parseInt($('sel-m').value);
