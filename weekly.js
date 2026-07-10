@@ -2516,6 +2516,13 @@ function mkMonthNotes(y,m,c){
   return p;
 }
 
+function mkPlain(y,m,c){
+  const colors=c||getColors();
+  const p=pg('plain',colors);
+  p.style.cssText+=getFillStyle(colors);
+  return p;
+}
+
 function mkMonthGraphs(y,m,c){
   const colors=c||getColors();
   const p=pg('monthly-graphs',colors);
