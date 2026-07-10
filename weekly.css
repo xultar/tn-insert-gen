@@ -365,15 +365,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 .fl-band{flex:1;display:flex;gap:2.5mm;border-bottom:.3pt solid;padding-bottom:1.5mm;}
 .fl-band:last-child{border-bottom:none;padding-bottom:0;}
 .fl-band .mini-month{flex:0 0 34%;}
-.fl-events{flex:1;display:flex;flex-direction:column;justify-content:center;}
-.fl-events-lbl{font-size:4pt;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1mm;}
-.fl-line{border-bottom:.3pt solid;height:0;margin:1.6mm 0;}
+/* Writing area adopts the page fill pattern (dots/grid/lines/hex/blank) so the
+   user's pattern choice drives where they write — maximizing space. */
+.fl-write{flex:1;}
 
 /* ── FUTURE LOG: columns ────────────────── */
 .pg.fl-columns{display:flex;gap:2mm;}
 .fl-col{flex:1;display:flex;flex-direction:column;border-right:.3pt solid;padding-right:1.5mm;}
 .fl-col:last-child{border-right:none;padding-right:0;}
-.fl-col-lines{flex:1;display:flex;flex-direction:column;margin-top:1.5mm;}
+.fl-col .fl-write{margin-top:1.5mm;}
 
 /* ── FUTURE LOG: year-at-a-glance ───────── */
 .pg.fl-year{display:flex;flex-direction:column;}

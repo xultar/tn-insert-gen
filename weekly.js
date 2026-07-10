@@ -2288,16 +2288,9 @@ function mkFutureLogStacked(y, m, colors){
       const band = el('div','fl-band');
       band.style.borderColor = colors.line;
       band.appendChild(mkMiniMonth(mm.year, mm.month, colors));
-      const events = el('div','fl-events');
-      const lbl = el('div','fl-events-lbl', MONTHS[mm.month] + ' ' + mm.year);
-      lbl.style.color = colors.dim;
-      events.appendChild(lbl);
-      for(let i=0;i<5;i++){
-        const ln = el('div','fl-line');
-        ln.style.borderColor = colors.line;
-        events.appendChild(ln);
-      }
-      band.appendChild(events);
+      const write = el('div','fl-write');
+      write.style.cssText = getFillStyle(colors);
+      band.appendChild(write);
       p.appendChild(band);
     });
     return p;
@@ -2314,13 +2307,9 @@ function mkFutureLogColumns(y, m, colors){
       const col = el('div','fl-col');
       col.style.borderColor = colors.line;
       col.appendChild(mkMiniMonth(mm.year, mm.month, colors));
-      const lines = el('div','fl-col-lines');
-      for(let i=0;i<8;i++){
-        const ln = el('div','fl-line');
-        ln.style.borderColor = colors.line;
-        lines.appendChild(ln);
-      }
-      col.appendChild(lines);
+      const write = el('div','fl-write');
+      write.style.cssText = getFillStyle(colors);
+      col.appendChild(write);
       p.appendChild(col);
     });
     return p;
