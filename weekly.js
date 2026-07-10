@@ -2093,9 +2093,24 @@ function mkMonthBrainDump(y,m,c){
   const colors=c||getColors();
   const p=pg('braindump',colors);
   p.classList.add('fcol');
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Master Action List`);
-  hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
-  p.appendChild(hdr);
+
+  // Narrow-column width tracks the ruling's grid spacing so the vertical lanes
+  // line up with the dots/grid. Patterns without a vertical rhythm (ruled lines
+  // or blank) have no axis to match, so fall back to a 5mm column.
+  const gridded = (opts.fillPattern==='dots'||opts.fillPattern==='grid'||opts.fillPattern==='hex');
+  p.style.setProperty('--bd-col', (gridded ? opts.dotgrid : 5) + 'mm');
+
+  // Title: a blank write-line for the user to fill in the month & year by hand,
+  // then the printed page label.
+  const title=el('div','bd-title');
+  title.style.borderColor=colors.line;
+  const write=el('span','bd-title-write');
+  write.style.borderColor=colors.line;
+  title.appendChild(write);
+  const label=el('span','bd-title-label','MASTER ACTION LIST');
+  label.style.color=getElemColor('sectionHdr',colors.dim);
+  title.appendChild(label);
+  p.appendChild(title);
 
   // Column header row: 7 blank day cells (user writes S/M/T… in any order),
   // then the # (date), the bullet dot, and the ACTION / EVENT label.
@@ -2109,12 +2124,13 @@ function mkMonthBrainDump(y,m,c){
   p.appendChild(head);
 
   // Body: same column grid, page fill pattern behind everything, vertical
-  // separators between columns so the day/#/bullet lanes stay aligned.
+  // separators between columns, and every other narrow lane lightly shaded.
   const body=el('div','bd-grid bd-body');
   body.style.cssText+=getFillStyle(colors);
   for(let i=0;i<10;i++){
     const cell=el('div','bd-cell');
     cell.style.borderColor=colors.line;
+    if(i<9 && i%2===0) cell.classList.add('bd-shade');
     body.appendChild(cell);
   }
   p.appendChild(body);
