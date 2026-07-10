@@ -58,7 +58,7 @@ let opts = {
   paperSize: 'a4',
   customTnW: 89,
   customTnH: 124,
-  theme: 'Classic Warm',
+  theme: 'Minimal B&W',
   colors: {},
   font: 'Georgia',
   margin: 6,
