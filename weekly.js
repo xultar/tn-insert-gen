@@ -2332,6 +2332,29 @@ function mkFutureLogColumns(y, m, colors){
   });
 }
 
+function mkFutureLogYear(y, m, colors){
+  const count = opts.flMonthCount || 12;
+  const months = [];
+  for(let i=0;i<count;i++){
+    const idx = m + i;
+    months.push({ year: y + Math.floor(idx/12), month: ((idx%12)+12)%12 });
+  }
+  const p = pg('future-log', colors);
+  p.classList.add('fl-year');
+  const hdr = el('div','sh', 'Future Log — ' + y);
+  hdr.style.cssText = `color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};background:${colors.page};`;
+  p.appendChild(hdr);
+  const grid = el('div','fl-year-grid');
+  months.forEach(mm=>{
+    const cell = el('div','fl-year-cell');
+    cell.style.borderColor = colors.line;
+    cell.appendChild(mkMiniMonth(mm.year, mm.month, colors));
+    grid.appendChild(cell);
+  });
+  p.appendChild(grid);
+  return [p];
+}
+
 function generateFutureLog(){
   saveState();
   const m = parseInt($('sel-m').value);
