@@ -2932,7 +2932,39 @@ function generate(){
   const m=parseInt($('sel-m').value);
   const y=parseInt($('sel-y').value);
   const colors=getColors();
+  const els=[];
 
+  if(opts.cover) els.push(mkCover(y,m,colors));
+  if(opts.goalsPage) els.push(mkGoalsPage(y,m,colors));
+  if(opts.braindump) els.push(mkMonthBrainDump(y,m,colors));
+  if(opts.calendar) els.push(...mkCalendar(y,m,colors));
+  if(opts.habitMap) els.push(mkHabitMap(y,m,colors));
+  if(opts.moodCal) els.push(mkMoodCalendar(y,m,colors));
+  const noteCount=opts.notes;
+  if(noteCount>0 && (opts.notespos==='front'||opts.notespos==='both')){
+    const frontNotes=opts.notespos==='both'?Math.ceil(noteCount/2):noteCount;
+    for(let i=0;i<frontNotes;i++) els.push(mkMonthNotes(y,m,colors));
+  }
+  if(opts.linkFieldsGraphs){ graphMetrics=dailyFields.map(f=>({id:f.id,title:f.label})); }
+  if(graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
+  buildWeeks(y,m).forEach((wdays,wi)=>{
+    els.push(mkWeekSummary(y,m,wi+1,wdays,colors));
+    wdays.forEach(d=>{if(d>0)els.push(opts.dailyLayout==='timeblock'?mkTimeBlockDay(y,m,d,colors):mkDay(y,m,d,colors));});
+    if(opts.weeklyReflection) els.push(mkWeekReflection(wi+1,colors));
+  });
+  if(opts.expenseTracker) els.push(mkExpenseTracker(y,m,colors));
+  if(noteCount>0 && (opts.notespos==='back'||opts.notespos==='both')){
+    const backNotes=opts.notespos==='both'?Math.floor(noteCount/2):noteCount;
+    for(let i=0;i<backNotes;i++) els.push(mkMonthNotes(y,m,colors));
+  }
+  if(opts.reflectionPage) els.push(mkReflection(y,m,colors));
+  if(opts.backCover) els.push(mkBackCover(y,m,colors));
+
+  imposeAndRender(els);
+}
+
+function imposeAndRender(pageEls){
+  const colors=getColors();
   const root=document.documentElement;
   COLOR_VARS.forEach(k=>root.style.setProperty('--'+k,colors[k]));
   const sz=tnSize();
@@ -2983,39 +3015,7 @@ function generate(){
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · duplex · fold · staple spine · trim edges';
   document.body.style.fontFamily=`'${activeFont()}',serif`;
 
-  const els=[];
-
-  if(opts.cover){
-    els.push(mkCover(y,m,colors));
-  }
-
-  if(opts.goalsPage) els.push(mkGoalsPage(y,m,colors));
-  if(opts.braindump) els.push(mkMonthBrainDump(y,m,colors));
-  if(opts.calendar) els.push(...mkCalendar(y,m,colors));
-  if(opts.habitMap) els.push(mkHabitMap(y,m,colors));
-  if(opts.moodCal) els.push(mkMoodCalendar(y,m,colors));
-  const noteCount=opts.notes;
-  if(noteCount>0 && (opts.notespos==='front'||opts.notespos==='both')){
-    const frontNotes=opts.notespos==='both'?Math.ceil(noteCount/2):noteCount;
-    for(let i=0;i<frontNotes;i++) els.push(mkMonthNotes(y,m,colors));
-  }
-  if(opts.linkFieldsGraphs){ graphMetrics=dailyFields.map(f=>({id:f.id,title:f.label})); }
-  if(graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
-  buildWeeks(y,m).forEach((wdays,wi)=>{
-    els.push(mkWeekSummary(y,m,wi+1,wdays,colors));
-    wdays.forEach(d=>{if(d>0)els.push(opts.dailyLayout==='timeblock'?mkTimeBlockDay(y,m,d,colors):mkDay(y,m,d,colors));});
-    if(opts.weeklyReflection) els.push(mkWeekReflection(wi+1,colors));
-  });
-  if(opts.expenseTracker) els.push(mkExpenseTracker(y,m,colors));
-  if(noteCount>0 && (opts.notespos==='back'||opts.notespos==='both')){
-    const backNotes=opts.notespos==='both'?Math.floor(noteCount/2):noteCount;
-    for(let i=0;i<backNotes;i++) els.push(mkMonthNotes(y,m,colors));
-  }
-  if(opts.reflectionPage) els.push(mkReflection(y,m,colors));
-
-  if(opts.backCover){
-    els.push(mkBackCover(y,m,colors));
-  }
+  const els = pageEls;
 
   if(opts.pagenums){
     let pgNum=1;
