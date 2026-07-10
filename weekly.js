@@ -2060,9 +2060,11 @@ function mkReflection(y,m,c){
   p.appendChild(hdr);
 
   const sections=[
-    {title:'Wins & Achievements',icon:'trophy',lines:4},
-    {title:'Areas to Improve',icon:'target',lines:4},
-    {title:'Focus for Next Month',icon:'compass',lines:3}
+    {title:'Grateful for…',icon:'heart'},
+    {title:'Kudos for…',icon:'thumbs-up'},
+    {title:'Effective in…',icon:'zap'},
+    {title:'Aligned with goals by…',icon:'target'},
+    {title:'Growth areas…',icon:'trending-up'}
   ];
   const wrap=el('div','');
   wrap.style.cssText='display:flex;flex-direction:column;gap:2mm;flex:1;';
@@ -2078,11 +2080,9 @@ function mkReflection(y,m,c){
     t.style.cssText=`font-size:6pt;font-weight:700;color:${colors.dim};text-transform:uppercase;letter-spacing:.06em;`;
     titleRow.appendChild(t);
     block.appendChild(titleRow);
-    for(let l=0;l<sec.lines;l++){
-      const line=el('div','');
-      line.style.cssText=`border-bottom:.2pt ${l===sec.lines-1?'dotted':'solid'} ${colors.line};height:4mm;`;
-      block.appendChild(line);
-    }
+    const linesArea=el('div','');
+    linesArea.style.cssText=`flex:1;background-image:linear-gradient(to bottom,${colors.line} 0,${colors.line} .3pt,transparent .3pt);background-size:100% 6mm;`;
+    block.appendChild(linesArea);
     wrap.appendChild(block);
   });
   p.appendChild(wrap);
