@@ -2261,6 +2261,61 @@ function mkMiniMonth(y, m, c){
   return wrap;
 }
 
+function renderSinglePage(pageEls){
+  const els = Array.isArray(pageEls) ? pageEls : [pageEls];
+  const prev = $('page-preview');
+  prev.innerHTML = '';
+  els.forEach(e=>{
+    e.style.boxShadow = '2px 3px 10px rgba(0,0,0,.18)';
+    prev.appendChild(e);
+  });
+  lucide.createIcons();
+  setView('pages');
+  $('pg-count').textContent = els.length;
+}
+
+function mkFutureLog(y, m, c){
+  const colors = c || getColors();
+  const layout = opts.flLayout || 'stacked';
+  if(layout === 'columns') return mkFutureLogColumns(y, m, colors);
+  if(layout === 'year')    return mkFutureLogYear(y, m, colors);
+  return mkFutureLogStacked(y, m, colors);
+}
+
+function mkFutureLogStacked(y, m, colors){
+  const sz = tnSize();
+  const perPage = opts.flPerPage || TNCore.futureLogBandCount(sz.h);
+  const count = opts.flMonthCount || 12;
+  return TNCore.paginateMonths(y, m, count, perPage).map(monthsOnPage=>{
+    const p = pg('future-log', colors);
+    p.classList.add('fl-stacked');
+    monthsOnPage.forEach(mm=>{
+      const band = el('div','fl-band');
+      band.style.borderColor = colors.line;
+      band.appendChild(mkMiniMonth(mm.year, mm.month, colors));
+      const events = el('div','fl-events');
+      const lbl = el('div','fl-events-lbl', MONTHS[mm.month] + ' ' + mm.year);
+      lbl.style.color = colors.dim;
+      events.appendChild(lbl);
+      for(let i=0;i<5;i++){
+        const ln = el('div','fl-line');
+        ln.style.borderColor = colors.line;
+        events.appendChild(ln);
+      }
+      band.appendChild(events);
+      p.appendChild(band);
+    });
+    return p;
+  });
+}
+
+function generateFutureLog(){
+  saveState();
+  const m = parseInt($('sel-m').value);
+  const y = parseInt($('sel-y').value);
+  renderSinglePage(mkFutureLog(y, m, getColors()));
+}
+
 function mkCalendar(y,m,c){
   const colors=c||getColors();
   const wdayLabels=getWdayLabels();
