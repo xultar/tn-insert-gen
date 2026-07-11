@@ -898,6 +898,10 @@ function addHabit(){
   if(!name) return;
   habits.push({icon:selectedIcon,name,days:[...selectedDays],id:Date.now()});
   $('h-name').value='';
+  // Reset the day schedule to every-day so the next habit doesn't silently inherit
+  // a narrowed selection; rebuild the picker so the UI reflects the reset.
+  selectedDays=[0,1,2,3,4,5,6];
+  buildDayPick();
   renderHabits(); generate();
 }
 function removeHabit(id){habits=habits.filter(h=>h.id!==id);renderHabits();generate();}
