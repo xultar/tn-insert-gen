@@ -71,6 +71,7 @@ let opts = {
   graphborders: true,
   weekstart: 'monday',
   dailyLayout: 'standard',
+  flLayout: 'stacked',
   mood: true,
   moodfaces: 5,
   notes: 1,
