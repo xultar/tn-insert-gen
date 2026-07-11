@@ -72,6 +72,7 @@ let opts = {
   weekstart: 'monday',
   dailyLayout: 'standard',
   flLayout: 'stacked',
+  dailyFacingNotes: false,
   mood: true,
   moodfaces: 5,
   notes: 1,
@@ -2534,6 +2535,18 @@ function mkPlain(y,m,c){
   const colors=c||getColors();
   const p=pg('plain',colors);
   p.style.cssText+=getFillStyle(colors);
+  return p;
+}
+
+function mkFacingNotes(dateLabel, c){
+  const colors=c||getColors();
+  const p=pg('facing-notes',colors);           // dataset.lbl='facing-notes' marks it for alignment
+  p.style.cssText+=getFillStyle(colors);        // inherit the user's ruling
+  if(dateLabel){
+    const d=el('div','facing-date',dateLabel);
+    d.style.cssText=`position:absolute;top:2mm;right:3mm;font-size:6pt;letter-spacing:.02em;color:${colors.dim};`;
+    p.appendChild(d);
+  }
   return p;
 }
 
