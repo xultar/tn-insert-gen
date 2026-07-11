@@ -70,6 +70,13 @@ function grToggleTools(){
   // if called from the wall's back link, the checkbox is still checked → force off
   if(document.body.classList.contains('show-tools')) cb.checked=false;
   document.body.classList.toggle('show-tools', cb.checked);
+  // The greeter and wall share the global `opts`. Reseed whichever panel we're switching
+  // TO from `opts` so neither silently reverts the other's choices.
+  if(cb.checked){
+    applyOptsToUI();                                 // wall inputs ← opts
+  }else{
+    grInitSize(); grRenderGuided(); grPreview();     // greeter ← opts
+  }
 }
 
 function grRenderTypes(){
@@ -113,9 +120,11 @@ function grGenerate(){
   const pages=booklet.flatMap(entry=>{
     const g=(PAGE_TYPES[entry.type].guided||[]);
     const saved={}; g.forEach(spec=>{ saved[spec.opt]=opts[spec.opt]; opts[spec.opt]=entry.config[spec.opt]; });
-    const out=PAGE_TYPES[entry.type].expand(Object.assign({}, ctx, entry.config||{}));
-    g.forEach(spec=>{ opts[spec.opt]=saved[spec.opt]; });
-    return out;
+    try{
+      return PAGE_TYPES[entry.type].expand(Object.assign({}, ctx, entry.config||{}));
+    }finally{
+      g.forEach(spec=>{ opts[spec.opt]=saved[spec.opt]; });  // restore even if expand throws
+    }
   });
   imposeAndRender(pages);
 }

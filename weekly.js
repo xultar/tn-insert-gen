@@ -2956,7 +2956,7 @@ function mkTimeBlockDay(y,m,d,c){
   p.appendChild(prio);
 
   // Schedule — blank time column + activity, ruled rows (the hero).
-  const schedLbl=el('div','tb-label','Schedule');
+  const schedLbl=el('div','tb-label','Schedule/Time Block');
   schedLbl.style.color=getElemColor('sectionHdr',colors.dim);
   p.appendChild(schedLbl);
   const sched=el('div','tb-sched');
