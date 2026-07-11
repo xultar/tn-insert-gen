@@ -65,6 +65,13 @@ function grInitSize(){
 function grOnSizeChange(){ opts.tnsize=$('gr-size').value; grPreview(); }
 function grOnMonthsChange(){ grPreview(); }
 
+function grToggleTools(){
+  const cb=$('gr-tools');
+  // if called from the wall's back link, the checkbox is still checked → force off
+  if(document.body.classList.contains('show-tools')) cb.checked=false;
+  document.body.classList.toggle('show-tools', cb.checked);
+}
+
 function grRenderTypes(){
   const grid=$('gr-types'); grid.innerHTML='';
   Object.keys(PAGE_TYPES).forEach(type=>{
