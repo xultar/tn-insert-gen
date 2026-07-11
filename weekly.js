@@ -559,10 +559,20 @@ function addHoliday(){
    ══════════════════════════════════════════════ */
 function saveState(){
   try{
+    // `booklet` lives in greeter.js, which loads AFTER this file's init generate()->saveState().
+    // When it isn't defined yet, preserve whatever collection is already persisted so init doesn't wipe it.
+    let bk;
+    if(typeof booklet!=='undefined'){
+      bk = booklet;
+    }else{
+      let prev=null; try{ prev=JSON.parse(localStorage.getItem(STORAGE_KEY)); }catch(e){}
+      bk = (prev && Array.isArray(prev.booklet)) ? prev.booklet : [];
+    }
     localStorage.setItem(STORAGE_KEY,JSON.stringify({
       habits, bottomBoxes, selectedIcon, selectedDays,
       month:parseInt($('sel-m').value), year:parseInt($('sel-y').value),
-      opts, graphMetrics, dailyFields, customHolidays
+      opts, graphMetrics, dailyFields, customHolidays,
+      booklet: bk
     }));
   }catch(e){}
 }

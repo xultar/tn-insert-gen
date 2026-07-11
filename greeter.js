@@ -160,6 +160,11 @@ function grRenderTray(){
 }
 
 function initGreeter(){
+  // loadState() ran during weekly.js init, before this file defined `booklet`,
+  // so restore the persisted collection here (first point where `booklet` exists).
+  try{ const s=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(s && Array.isArray(s.booklet)) booklet=s.booklet; }catch(e){}
+  // Avoid id collisions with restored entries (ids look like 'e3').
+  booklet.forEach(e=>{ const n=parseInt(String(e.id).replace(/\D/g,''))||0; if(n>grUid) grUid=n; });
   grInitSize(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
 }
 
