@@ -641,6 +641,7 @@ function applyOptsToUI(){
   $('opt-expenses').checked=opts.expenseTracker;
   $('opt-reflection').checked=opts.reflectionPage;
   $('opt-weekly-reflection').checked=opts.weeklyReflection;
+  $('opt-dailyfacingnotes').checked=opts.dailyFacingNotes;
   $('opt-braindump').checked=opts.braindump;
   $('opt-linkfg').checked=opts.linkFieldsGraphs;
   $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
@@ -722,6 +723,7 @@ function readOptsFromUI(){
   opts.expenseTracker=$('opt-expenses').checked;
   opts.reflectionPage=$('opt-reflection').checked;
   opts.weeklyReflection=$('opt-weekly-reflection').checked;
+  opts.dailyFacingNotes=$('opt-dailyfacingnotes').checked;
   opts.braindump=$('opt-braindump').checked;
   opts.linkFieldsGraphs=$('opt-linkfg').checked;
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
@@ -3026,6 +3028,17 @@ function getSavePaperLayout(sz,paper){
   return {cols:cP,rows:rP,portrait:true,spreadsPerSide:nP};
 }
 
+// Push a daily-context content page; when facing notes are on, mark it and add its
+// facing page (dateLabel is the small corner date for day pages, null for summary/reflection).
+function pushDaily(els, page, dateLabel, colors){
+  if(opts.dailyFacingNotes){
+    page.dataset.facingPair='1';
+    els.push(page, mkFacingNotes(dateLabel, colors));
+  }else{
+    els.push(page);
+  }
+}
+
 function generate(){
   saveState();
   const m=parseInt($('sel-m').value);
@@ -3047,9 +3060,12 @@ function generate(){
   if(opts.linkFieldsGraphs){ graphMetrics=dailyFields.map(f=>({id:f.id,title:f.label})); }
   if(graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
   buildWeeks(y,m).forEach((wdays,wi)=>{
-    els.push(mkWeekSummary(y,m,wi+1,wdays,colors));
-    wdays.forEach(d=>{if(d>0)els.push(opts.dailyLayout==='timeblock'?mkTimeBlockDay(y,m,d,colors):mkDay(y,m,d,colors));});
-    if(opts.weeklyReflection) els.push(mkWeekReflection(wi+1,colors));
+    pushDaily(els, mkWeekSummary(y,m,wi+1,wdays,colors), null, colors);
+    wdays.forEach(d=>{ if(d>0){
+      const page = opts.dailyLayout==='timeblock'?mkTimeBlockDay(y,m,d,colors):mkDay(y,m,d,colors);
+      pushDaily(els, page, DOW_ABB3[dow(y,m,d)]+' '+d, colors);
+    }});
+    if(opts.weeklyReflection) pushDaily(els, mkWeekReflection(wi+1,colors), null, colors);
   });
   if(opts.expenseTracker) els.push(mkExpenseTracker(y,m,colors));
   if(noteCount>0 && (opts.notespos==='back'||opts.notespos==='both')){
