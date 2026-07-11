@@ -99,6 +99,20 @@ function grPreview(){
   renderSinglePage(pages);
 }
 
+function grGenerate(){
+  if(!booklet.length){ grPreview(); return; }
+  const ctx=grCtx();
+  // apply each entry's opts-based guided choices around its expansion, so mixed entries render with their own settings
+  const pages=booklet.flatMap(entry=>{
+    const g=(PAGE_TYPES[entry.type].guided||[]);
+    const saved={}; g.forEach(spec=>{ saved[spec.opt]=opts[spec.opt]; opts[spec.opt]=entry.config[spec.opt]; });
+    const out=PAGE_TYPES[entry.type].expand(Object.assign({}, ctx, entry.config||{}));
+    g.forEach(spec=>{ opts[spec.opt]=saved[spec.opt]; });
+    return out;
+  });
+  imposeAndRender(pages);
+}
+
 function grAdd(){
   const ctx=grCtx();
   const cfg=Object.assign({}, greeterSel.config||{});
