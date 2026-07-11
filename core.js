@@ -64,6 +64,19 @@
     return list.reduce(function (n, e) { return n + (e.pageCount || 0); }, 0);
   }
 
+  function facingAlignInserts(roles) {
+    var inserts = [];
+    var shift = 0;
+    for (var i = 0; i < roles.length; i++) {
+      var isRunStart = roles[i] === 'content' && (i === 0 || roles[i - 1] === 'other');
+      if (isRunStart && ((i + shift) % 2 === 1)) {
+        inserts.push(i);
+        shift++;
+      }
+    }
+    return inserts;
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     futureLogBandCount: futureLogBandCount,
@@ -72,7 +85,8 @@
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,
     bookletMove: bookletMove,
-    bookletTotalPages: bookletTotalPages
+    bookletTotalPages: bookletTotalPages,
+    facingAlignInserts: facingAlignInserts
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

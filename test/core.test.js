@@ -93,3 +93,30 @@ test('bookletTotalPages sums pageCount', () => {
   const list = [{ pageCount: 1 }, { pageCount: 31 }, { pageCount: 4 }];
   assert.strictEqual(core.bookletTotalPages(list), 36);
 });
+
+test('facingAlignInserts: no paired pages -> no inserts', () => {
+  assert.deepStrictEqual(core.facingAlignInserts(['other', 'other', 'other']), []);
+});
+
+test('facingAlignInserts: run starting at even index -> no insert', () => {
+  assert.deepStrictEqual(core.facingAlignInserts(['content', 'facing', 'content', 'facing']), []);
+});
+
+test('facingAlignInserts: run starting at odd index -> insert before it', () => {
+  assert.deepStrictEqual(core.facingAlignInserts(['other', 'content', 'facing']), [1]);
+});
+
+test('facingAlignInserts: two runs separated by other, shift accounted', () => {
+  assert.deepStrictEqual(
+    core.facingAlignInserts(['other', 'content', 'facing', 'other', 'content', 'facing']),
+    [1, 4]
+  );
+});
+
+test('facingAlignInserts: back-to-back pairs are a single run (no extra insert)', () => {
+  assert.deepStrictEqual(core.facingAlignInserts(['content', 'facing', 'content', 'facing']), []);
+});
+
+test('facingAlignInserts: even leading others keep the run on the left', () => {
+  assert.deepStrictEqual(core.facingAlignInserts(['other', 'other', 'content', 'facing']), []);
+});
