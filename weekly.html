@@ -12,8 +12,40 @@
 <button id="menu-toggle" onclick="toggleMenu()">&#9776;</button>
 <div id="menu-backdrop" onclick="toggleMenu()"></div>
 
+<!-- ══ GREETER ══ -->
+<div id="greeter">
+  <div class="gr-title">◆ Build a page</div>
+
+  <label class="gr-lbl">Notebook</label>
+  <select id="gr-size" onchange="grOnSizeChange()"></select>
+
+  <label class="gr-lbl">Date range (from Month/Year above)</label>
+  <div class="gr-row">
+    <span style="font-size:11px;opacity:.7;">Months</span>
+    <input id="gr-months" type="number" min="1" max="12" value="1" style="width:56px;" onchange="grOnMonthsChange()">
+  </div>
+
+  <label class="gr-lbl">Page type</label>
+  <div id="gr-types" class="gr-types"></div>
+
+  <div id="gr-guided" class="gr-guided"></div>
+
+  <button id="gr-add" class="btn btn-p" onclick="grAdd()">+ Add to booklet</button>
+
+  <div class="gr-tray-hd"><span>Booklet</span><span id="gr-total">0 pages</span></div>
+  <div id="gr-tray" class="gr-tray"></div>
+
+  <button id="gr-generate" class="btn btn-s" onclick="grGenerate()">&#9112; Generate / Print</button>
+
+  <div class="gr-toggle">
+    <label class="toggle-sw"><input type="checkbox" id="gr-tools" onchange="grToggleTools()"><span class="slider"></span></label>
+    <span style="font-size:12px;">Show all tools</span>
+  </div>
+</div>
+
 <!-- ══ CONFIG ══ -->
 <div id="cfg">
+    <div id="cfg-back" onclick="grToggleTools()" style="cursor:pointer;font-size:12px;padding:6px 0;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);">&#8249; Back to greeter</div>
 
     <!-- Month / Year -->
     <div class="coll-sec" id="sec-month">
