@@ -42,15 +42,6 @@ const PAGE_TYPES = {
   notes:      { label:'Notes',              expand:(c)=>{ const n=c.count||1; const out=[]; for(let i=0;i<n;i++) out.push(mkMonthNotes(c.year,c.month,c.colors)); return out; } }
 };
 
-// Expand a whole collection into a flat page array.
-function bookletPages(list, ctx){
-  return list.flatMap(function(entry){
-    const type=PAGE_TYPES[entry.type];
-    if(!type) return [];
-    return type.expand(Object.assign({}, ctx, entry.config||{}));
-  });
-}
-
 let booklet = [];
 let greeterSel = { type: 'futureLog' };
 let grUid = 0;
@@ -185,6 +176,9 @@ function initGreeter(){
   // loadState() ran during weekly.js init, before this file defined `booklet`,
   // so restore the persisted collection here (first point where `booklet` exists).
   try{ const s=JSON.parse(localStorage.getItem(STORAGE_KEY)); if(s && Array.isArray(s.booklet)) booklet=s.booklet; }catch(e){}
+  // Drop any persisted entry whose page type no longer exists (renamed/removed),
+  // so a stale saved booklet can't crash tray render / generate.
+  booklet = booklet.filter(e=>e && PAGE_TYPES[e.type]);
   // Avoid id collisions with restored entries (ids look like 'e3').
   booklet.forEach(e=>{ const n=parseInt(String(e.id).replace(/\D/g,''))||0; if(n>grUid) grUid=n; });
   grInitSize(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
