@@ -99,8 +99,44 @@ function grPreview(){
   renderSinglePage(pages);
 }
 
-// Temporary stub — replaced by the full tray renderer in Task 3.
-function grRenderTray(){}
+function grAdd(){
+  const ctx=grCtx();
+  const cfg=Object.assign({}, greeterSel.config||{});
+  const type=greeterSel.type;
+  // snapshot the opts-based guided choices onto the entry so the label + count reflect them
+  const g=(PAGE_TYPES[type].guided||[]);
+  g.forEach(spec=>{ cfg[spec.opt]=opts[spec.opt]; });
+  const pageCount=PAGE_TYPES[type].expand(Object.assign({}, ctx, cfg)).length;
+  const entry={ id:'e'+(++grUid), type, config:cfg, pageCount };
+  booklet=TNCore.bookletAdd(booklet, entry);
+  grRenderTray(); saveState();
+}
+
+function grEntryLabel(entry){
+  let l=PAGE_TYPES[entry.type].label;
+  const g=(PAGE_TYPES[entry.type].guided||[]);
+  const parts=g.map(spec=>entry.config[spec.opt]).filter(Boolean);
+  if(parts.length) l+=' · '+parts.join(' ');
+  return l;
+}
+
+function grRenderTray(){
+  const tray=$('gr-tray'); tray.innerHTML='';
+  booklet.forEach(entry=>{
+    const row=document.createElement('div'); row.className='gr-trow';
+    const up=document.createElement('button'); up.textContent='▲'; up.title='Move up';
+    up.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,-1); grRenderTray(); saveState(); };
+    const dn=document.createElement('button'); dn.textContent='▼'; dn.title='Move down';
+    dn.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,1); grRenderTray(); saveState(); };
+    const lab=document.createElement('span'); lab.className='gr-tlabel'; lab.textContent=grEntryLabel(entry);
+    const ct=document.createElement('span'); ct.className='gr-tct'; ct.textContent=entry.pageCount+'p';
+    const rm=document.createElement('button'); rm.textContent='✕'; rm.title='Remove';
+    rm.onclick=()=>{ booklet=TNCore.bookletRemove(booklet,entry.id); grRenderTray(); saveState(); };
+    row.appendChild(up); row.appendChild(dn); row.appendChild(lab); row.appendChild(ct); row.appendChild(rm);
+    tray.appendChild(row);
+  });
+  $('gr-total').textContent=TNCore.bookletTotalPages(booklet)+' pages';
+}
 
 function initGreeter(){
   grInitSize(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
