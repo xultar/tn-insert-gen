@@ -28,8 +28,16 @@ const PAGE_TYPES = {
   reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)) },
   daily:      { label:'Daily',              expand:(c)=>monthsOf(c).flatMap(mm=>{
                  const out=[]; const dim=new Date(mm.year,mm.month+1,0).getDate();
-                 for(let d=1;d<=dim;d++) out.push(opts.dailyLayout==='timeblock'?mkTimeBlockDay(mm.year,mm.month,d,c.colors):mkDay(mm.year,mm.month,d,c.colors));
-                 return out; }), guided:[{opt:'dailyLayout',label:'Layout',choices:[['standard','Standard'],['timeblock','Time-block']]}] },
+                 for(let d=1;d<=dim;d++){
+                   const page=opts.dailyLayout==='timeblock'?mkTimeBlockDay(mm.year,mm.month,d,c.colors):mkDay(mm.year,mm.month,d,c.colors);
+                   if(opts.dailyFacingNotes){ page.dataset.facingPair='1'; out.push(page, mkFacingNotes(DOW_ABB3[dow(mm.year,mm.month,d)]+' '+d, c.colors)); }
+                   else out.push(page);
+                 }
+                 return out; }),
+                 guided:[
+                   {opt:'dailyLayout',label:'Layout',choices:[['standard','Standard'],['timeblock','Time-block']]},
+                   {opt:'dailyFacingNotes',label:'Facing notes',choices:[[false,'Off'],[true,'On']]}
+                 ] },
   plain:      { label:'Plain',              expand:(c)=>[mkPlain(c.year,c.month,c.colors)], guided:[{opt:'fillPattern',label:'Ruling',choices:[['dots','Dotted'],['grid','Squared'],['lines','Ruled'],['hex','Hex'],['empty','Blank']]}] },
   notes:      { label:'Notes',              expand:(c)=>{ const n=c.count||1; const out=[]; for(let i=0;i<n;i++) out.push(mkMonthNotes(c.year,c.month,c.colors)); return out; } }
 };
@@ -145,8 +153,13 @@ function grAdd(){
 function grEntryLabel(entry){
   let l=PAGE_TYPES[entry.type].label;
   const g=(PAGE_TYPES[entry.type].guided||[]);
-  const parts=g.map(spec=>entry.config[spec.opt]).filter(Boolean);
-  if(parts.length) l+=' · '+parts.join(' ');
+  const parts=g.map(spec=>{
+    const v=entry.config[spec.opt];
+    if(v===false || v==null || v==='') return null;         // skip off/unset (e.g. Facing notes Off)
+    const choice=(spec.choices||[]).find(ch=>ch[0]===v);
+    return choice?choice[1]:v;                              // display text, fallback to raw value
+  }).filter(Boolean);
+  if(parts.length) l+=' · '+parts.join(' · ');
   return l;
 }
 
