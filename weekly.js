@@ -3062,6 +3062,23 @@ function generate(){
   imposeAndRender(els);
 }
 
+// Insert one blank page before any paired daily "run" that would start on a right
+// slot, so every content page lands on the left with its facing page on the right.
+function alignFacingRuns(els, colors){
+  const roles = els.map(e=>{
+    if(e.dataset && e.dataset.facingPair==='1') return 'content';
+    if(e.dataset && e.dataset.lbl==='facing-notes') return 'facing';
+    return 'other';
+  });
+  const inserts = TNCore.facingAlignInserts(roles);   // ascending original indices
+  if(!inserts.length) return els;
+  const out = els.slice();
+  for(let k=inserts.length-1; k>=0; k--){              // splice high->low to keep indices valid
+    out.splice(inserts[k], 0, mkFacingNotes(null, colors));
+  }
+  return out;
+}
+
 function imposeAndRender(pageEls){
   const colors=getColors();
   const root=document.documentElement;
@@ -3114,7 +3131,7 @@ function imposeAndRender(pageEls){
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · duplex · fold · staple spine · trim edges';
   document.body.style.fontFamily=`'${activeFont()}',serif`;
 
-  const els = pageEls;
+  const els = alignFacingRuns(pageEls, getColors());
 
   if(opts.pagenums){
     let pgNum=1;
