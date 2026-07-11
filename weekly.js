@@ -1401,14 +1401,13 @@ function buildInspector(entry){
 function showMobileInspector(){
   document.getElementById('inspector').classList.add('insp-open');
 }
-function closeMobileInspector(){
-  document.getElementById('inspector').classList.remove('insp-open');
-}
 function showInspector(){
   document.getElementById('inspector').classList.remove('insp-hidden');
 }
 function closeInspector(){
-  document.getElementById('inspector').classList.add('insp-hidden');
+  const insp=document.getElementById('inspector');
+  insp.classList.add('insp-hidden');
+  insp.classList.remove('insp-open');   // also reset the mobile slide-up state, so every close path is consistent
   $('insp-content').style.display='none';
   $('insp-empty').style.display='flex';
 }
