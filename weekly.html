@@ -600,8 +600,15 @@
             <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Metrics</h3>
             <div id="metric-list"></div>
             <div class="add-row" style="margin-top:4px;">
-              <input id="metric-name" type="text" placeholder="Metric name" style="width:120px;">
-              <button class="btn btn-s btn-sm" onclick="addMetric()">+ Add</button>
+              <select id="tracker-preset" onchange="addTrackerPreset(this.value); this.value='';">
+                <option value="">+ Add tracker…</option>
+                <option value="sleep">Sleep (0–12)</option>
+                <option value="water">Water (0–8)</option>
+                <option value="mood">Mood (1–5)</option>
+                <option value="steps">Steps (0–15k)</option>
+                <option value="weight">Weight (50–100)</option>
+                <option value="custom">Custom…</option>
+              </select>
             </div>
           </div>
           <div style="margin-top:8px;">

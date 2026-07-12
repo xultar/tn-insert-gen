@@ -498,11 +498,17 @@ function renderMetrics(){
     list.appendChild(row);
   });
 }
-function addMetric(){
-  const name=$('metric-name').value.trim();
-  if(!name)return;
-  graphMetrics.push({id:Date.now(),title:name,min:null,max:null,step:null});
-  $('metric-name').value='';
+function addTrackerPreset(kind){
+  const P={
+    sleep:{title:'Sleep',min:0,max:12,step:2},
+    water:{title:'Water',min:0,max:8,step:1},
+    mood:{title:'Mood',min:1,max:5,step:1},
+    steps:{title:'Steps',min:0,max:15000,step:5000},
+    weight:{title:'Weight',min:50,max:100,step:10},
+    custom:{title:'Metric',min:null,max:null,step:null}
+  };
+  const p=P[kind]; if(!p) return;
+  graphMetrics.push({id:Date.now(),title:p.title,min:p.min,max:p.max,step:p.step,labels:null});
   renderMetrics(); onOptionChange();
 }
 
@@ -785,7 +791,6 @@ function orderCfgSections(){
   ['sec-month','sec-holidays','sec-style','sec-typo','sec-extras','sec-futurelog','sec-monthly','sec-daily','sec-habits','sec-graphs','sec-print']
     .forEach(id=>{ const s=$(id); if(s) cfg.insertBefore(s, anchor); });
 }
-
 
 /* ── Import / Export / Reset ── */
 function exportSettings(){
@@ -3430,7 +3435,6 @@ $('sel-m').addEventListener('change',()=>generate());
 $('sel-y').addEventListener('change',()=>generate());
 $('h-name').addEventListener('keydown',e=>{if(e.key==='Enter')addHabit();});
 $('box-title-inp').addEventListener('keydown',e=>{if(e.key==='Enter')addBottomBox();});
-$('metric-name').addEventListener('keydown',e=>{if(e.key==='Enter')addMetric();});
 $('daily-field-name').addEventListener('keydown',e=>{if(e.key==='Enter')addDailyField();});
 if($('holiday-name')) $('holiday-name').addEventListener('keydown',e=>{if(e.key==='Enter')addHoliday();});
 
