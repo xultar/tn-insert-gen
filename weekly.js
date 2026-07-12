@@ -765,6 +765,7 @@ function syncOutputModeUI(){
   const flat = opts.outputMode!=='booklet';
   $('row-foldline').style.display  = flat ? 'none' : '';
   $('row-savepaper').style.display = flat ? 'none' : '';
+  $('row-printguide').style.display = flat ? 'none' : '';   // guide text is booklet-specific
   $('row-duplexflip').style.display = (opts.outputMode==='flatSingle') ? 'none' : '';
 }
 
@@ -3369,7 +3370,7 @@ function imposeAndRender(pageEls){
     container.appendChild(div);
   }
 
-  if(opts.printGuide){
+  if(opts.printGuide && opts.outputMode==='booklet'){   // guide content is booklet-specific
     container.appendChild(mkPrintGuide(n, sides.length));
   }
 
