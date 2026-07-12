@@ -2674,7 +2674,7 @@ function mkMonthGraphs(y,m,c){
   const colors=c||getColors();
   const p=pg('monthly-graphs',colors);
   p.classList.add('fcol');
-  const metrics=graphMetrics.length>0?graphMetrics:[{id:0,title:'Weight'},{id:0,title:'Steps'}];
+  const metrics=graphMetrics;
   const titleList=metrics.map(mt=>mt.title).join(' & ');
   const hdr=el('div','sh',`${MONTHS[m]} ${y} — ${titleList}`);
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
