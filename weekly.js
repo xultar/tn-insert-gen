@@ -783,7 +783,7 @@ function syncOutputModeUI(){
 function orderCfgSections(){
   const cfg=$('cfg'), anchor=$('cfg-actions');
   if(!cfg || !anchor) return;
-  ['sec-month','sec-holidays','sec-extras','sec-futurelog','sec-monthly','sec-daily','sec-habits','sec-graphs','sec-style','sec-typo','sec-print']
+  ['sec-month','sec-holidays','sec-style','sec-typo','sec-extras','sec-futurelog','sec-monthly','sec-daily','sec-habits','sec-graphs','sec-print']
     .forEach(id=>{ const s=$(id); if(s) cfg.insertBefore(s, anchor); });
 }
 
