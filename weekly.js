@@ -3156,7 +3156,10 @@ function imposeAndRender(pageEls){
   ps.textContent='@page{size:'+pageSize+';margin:0;}';
   const orientStr=layout2up?.portrait?'portrait':'landscape';
   const upLabel=layout2up?` · ${layout2up.spreadsPerSide}-up`:'';
-  $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · duplex · fold · staple spine · trim edges';
+  const tipAssembly = opts.outputMode==='booklet' ? 'duplex · fold · staple spine · trim edges'
+                    : opts.outputMode==='flatSingle' ? 'single-sided · cut · stack · trim edges'
+                    : 'duplex · cut · stack · trim edges';
+  $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · '+tipAssembly;
   document.body.style.fontFamily=`'${activeFont()}',serif`;
 
   const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, getColors()) : pageEls;
