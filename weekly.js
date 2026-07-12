@@ -127,6 +127,7 @@ let opts = {
   moodGap: 2,
   moonSize: 3.5,
   savePaper: false,
+  outputMode: 'booklet',
   holidays: false,
   holidayCountry: 'US',
   holidayState: '',
@@ -646,6 +647,7 @@ function applyOptsToUI(){
   $('opt-linkfg').checked=opts.linkFieldsGraphs;
   $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
   $('opt-savepaper').checked=opts.savePaper;
+  $('opt-outputmode').value=opts.outputMode;
   if($('opt-holidays')) $('opt-holidays').checked=opts.holidays;
   if($('opt-holidaycountry')) $('opt-holidaycountry').value=opts.holidayCountry||'US';
   if($('opt-holidaystate')){ const ss=$('opt-holidaystate'); if([...ss.options].some(o=>o.value===opts.holidayState)) ss.value=opts.holidayState||''; }
@@ -675,6 +677,7 @@ function applyOptsToUI(){
   rangeFields.forEach(([inpId,spanId,val,unit])=>{
     const inp=$(inpId); if(inp){inp.value=val; $(spanId).textContent=val+unit;}
   });
+  syncOutputModeUI();
 }
 
 function readOptsFromUI(){
@@ -728,6 +731,7 @@ function readOptsFromUI(){
   opts.linkFieldsGraphs=$('opt-linkfg').checked;
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
   opts.savePaper=$('opt-savepaper').checked;
+  opts.outputMode=$('opt-outputmode').value;
   opts.holidays=$('opt-holidays')?.checked||false;
   opts.holidayCountry=$('opt-holidaycountry')?.value||'US';
   opts.holidayState=$('opt-holidaystate')?.value||'';
@@ -753,7 +757,15 @@ function readOptsFromUI(){
 
 function onOptionChange(){
   readOptsFromUI();
+  syncOutputModeUI();
   generate();
+}
+
+function syncOutputModeUI(){
+  const flat = opts.outputMode!=='booklet';
+  $('row-foldline').style.display  = flat ? 'none' : '';
+  $('row-savepaper').style.display = flat ? 'none' : '';
+  $('row-duplexflip').style.display = (opts.outputMode==='flatSingle') ? 'none' : '';
 }
 
 function toggleLink(){

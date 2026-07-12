@@ -658,15 +658,23 @@
             <input type="number" id="opt-custom-tn-h" value="124" min="60" max="300" style="width:60px;" onchange="onOptionChange()">
           </div>
           <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;">
+            <div class="cfg-row" style="margin-bottom:6px;">
+              <label>Output mode</label>
+              <select id="opt-outputmode" onchange="onOptionChange()">
+                <option value="booklet" selected>Booklet (fold &amp; staple)</option>
+                <option value="flatDouble">Double-sided flat (cut &amp; stack)</option>
+                <option value="flatSingle">Single-sided flat</option>
+              </select>
+            </div>
             <div class="toggle-row">
               <label class="toggle-sw"><input type="checkbox" id="opt-cropmarks" checked onchange="onOptionChange()"><span class="slider"></span></label>
               <span style="font-size:12px;">Crop marks</span>
             </div>
-            <div class="toggle-row" style="margin-top:4px;">
+            <div class="toggle-row" id="row-foldline" style="margin-top:4px;">
               <label class="toggle-sw"><input type="checkbox" id="opt-foldline" checked onchange="onOptionChange()"><span class="slider"></span></label>
               <span style="font-size:12px;">Fold line</span>
             </div>
-            <div class="toggle-row" style="margin-top:4px;">
+            <div class="toggle-row" id="row-savepaper" style="margin-top:4px;">
               <label class="toggle-sw"><input type="checkbox" id="opt-savepaper" onchange="onOptionChange()"><span class="slider"></span></label>
               <span style="font-size:12px;">Save paper</span>
             </div>
@@ -679,7 +687,7 @@
               <span style="font-size:12px;">Assembly guide page</span>
             </div>
           </div>
-          <div style="margin-top:6px;">
+          <div id="row-duplexflip" style="margin-top:6px;">
             <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Duplex Flip</h3>
             <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;">
               <input type="radio" name="flip" id="flip-long" value="long" checked onchange="onOptionChange()">
