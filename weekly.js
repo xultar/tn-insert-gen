@@ -44,7 +44,7 @@ const COLOR_VARS = ['ink','dim','bg','page','dot','line','acc'];
 const COLOR_LABELS = { ink:'Ink', dim:'Dim text', bg:'Background', page:'Page', dot:'Dot grid', line:'Lines', acc:'Accent' };
 
 /* ── Graph metrics ── */
-let graphMetrics = [{id:1,title:'Weight',min:null,max:null,step:null},{id:2,title:'Steps',min:null,max:null,step:null}];
+let graphMetrics = [{id:1,title:'Sleep',min:0,max:12,step:2,labels:null},{id:2,title:'Water',min:0,max:8,step:1,labels:null},{id:3,title:'Mood',min:1,max:5,step:1,labels:null}];
 
 /* ── Daily fields ── */
 let dailyFields = [{id:1,label:'Steps'},{id:2,label:'Wt'}];
@@ -89,7 +89,7 @@ let opts = {
   pagenums: false,
   flip: 'long',
   colorIcons: true,
-  linkFieldsGraphs: true,
+  trackers: false,
   emptyLines: 4,
   calSpread: false,
   calNumSz: 6.5,
@@ -646,8 +646,7 @@ function applyOptsToUI(){
   $('opt-weekly-reflection').checked=opts.weeklyReflection;
   $('opt-dailyfacingnotes').checked=opts.dailyFacingNotes;
   $('opt-braindump').checked=opts.braindump;
-  $('opt-linkfg').checked=opts.linkFieldsGraphs;
-  $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
+  $('opt-trackers').checked=opts.trackers;
   $('opt-savepaper').checked=opts.savePaper;
   $('opt-outputmode').value=opts.outputMode;
   $('opt-futurelog').checked=opts.futureLog;
@@ -733,7 +732,7 @@ function readOptsFromUI(){
   opts.weeklyReflection=$('opt-weekly-reflection').checked;
   opts.dailyFacingNotes=$('opt-dailyfacingnotes').checked;
   opts.braindump=$('opt-braindump').checked;
-  opts.linkFieldsGraphs=$('opt-linkfg').checked;
+  opts.trackers=$('opt-trackers').checked;
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
   opts.savePaper=$('opt-savepaper').checked;
   opts.outputMode=$('opt-outputmode').value;
@@ -787,15 +786,6 @@ function orderCfgSections(){
     .forEach(id=>{ const s=$(id); if(s) cfg.insertBefore(s, anchor); });
 }
 
-function toggleLink(){
-  opts.linkFieldsGraphs=$('opt-linkfg').checked;
-  $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
-  if(opts.linkFieldsGraphs){
-    graphMetrics=dailyFields.map(f=>({id:f.id,title:f.label,min:null,max:null,step:null}));
-    renderMetrics();
-  }
-  generate();
-}
 
 /* ── Import / Export / Reset ── */
 function exportSettings(){
@@ -3096,8 +3086,7 @@ function generate(){
     const frontNotes=opts.notespos==='both'?Math.ceil(noteCount/2):noteCount;
     for(let i=0;i<frontNotes;i++) els.push(mkMonthNotes(y,m,colors));
   }
-  if(opts.linkFieldsGraphs){ graphMetrics=dailyFields.map(f=>({id:f.id,title:f.label})); }
-  if(graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
+  if(opts.trackers && graphMetrics.length>0) els.push(mkMonthGraphs(y,m,colors));
   buildWeeks(y,m).forEach((wdays,wi)=>{
     pushDaily(els, mkWeekSummary(y,m,wi+1,wdays,colors), null, colors);
     wdays.forEach(d=>{ if(d>0){
