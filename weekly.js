@@ -72,6 +72,8 @@ let opts = {
   weekstart: 'monday',
   dailyLayout: 'standard',
   flLayout: 'stacked',
+  futureLog: false,
+  flMonthCount: 12,
   dailyFacingNotes: false,
   mood: true,
   moodfaces: 5,
@@ -648,6 +650,9 @@ function applyOptsToUI(){
   $('metric-section').style.display=opts.linkFieldsGraphs?'none':'';
   $('opt-savepaper').checked=opts.savePaper;
   $('opt-outputmode').value=opts.outputMode;
+  $('opt-futurelog').checked=opts.futureLog;
+  $('opt-fllayout').value=opts.flLayout;
+  $('opt-flmonthcount').value=opts.flMonthCount;
   if($('opt-holidays')) $('opt-holidays').checked=opts.holidays;
   if($('opt-holidaycountry')) $('opt-holidaycountry').value=opts.holidayCountry||'US';
   if($('opt-holidaystate')){ const ss=$('opt-holidaystate'); if([...ss.options].some(o=>o.value===opts.holidayState)) ss.value=opts.holidayState||''; }
@@ -732,6 +737,9 @@ function readOptsFromUI(){
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
   opts.savePaper=$('opt-savepaper').checked;
   opts.outputMode=$('opt-outputmode').value;
+  opts.futureLog=$('opt-futurelog').checked;
+  opts.flLayout=$('opt-fllayout').value;
+  opts.flMonthCount=parseInt($('opt-flmonthcount').value)||12;
   opts.holidays=$('opt-holidays')?.checked||false;
   opts.holidayCountry=$('opt-holidaycountry')?.value||'US';
   opts.holidayState=$('opt-holidaystate')?.value||'';
@@ -767,6 +775,16 @@ function syncOutputModeUI(){
   $('row-savepaper').style.display = flat ? 'none' : '';
   $('row-printguide').style.display = flat ? 'none' : '';   // guide text is booklet-specific
   $('row-duplexflip').style.display = (opts.outputMode==='flatSingle') ? 'none' : '';
+}
+
+// Canonical wall section order: setup -> booklet pages (front-to-back) -> look -> output.
+// Reordered at runtime (via insertBefore) so we don't have to shuffle the big HTML blocks;
+// #cfg is hidden on load, so there is no visible reflow.
+function orderCfgSections(){
+  const cfg=$('cfg'), anchor=$('cfg-actions');
+  if(!cfg || !anchor) return;
+  ['sec-month','sec-holidays','sec-extras','sec-futurelog','sec-monthly','sec-daily','sec-habits','sec-graphs','sec-style','sec-typo','sec-print']
+    .forEach(id=>{ const s=$(id); if(s) cfg.insertBefore(s, anchor); });
 }
 
 function toggleLink(){
@@ -3067,6 +3085,7 @@ function generate(){
   const els=[];
 
   if(opts.cover) els.push(mkCover(y,m,colors));
+  if(opts.futureLog) els.push(...mkFutureLog(y,m,colors));   // front matter, right after the cover
   if(opts.goalsPage) els.push(mkGoalsPage(y,m,colors));
   if(opts.braindump) els.push(mkMonthBrainDump(y,m,colors));
   if(opts.calendar) els.push(...mkCalendar(y,m,colors));
@@ -3407,6 +3426,7 @@ if(!loadState()){
 }
 
 applyOptsToUI();
+orderCfgSections();
 buildThemeGrid();
 buildColorOverrides();
 renderMetrics();
