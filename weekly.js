@@ -3113,7 +3113,7 @@ function imposeAndRender(pageEls){
   COLOR_VARS.forEach(k=>root.style.setProperty('--'+k,colors[k]));
   const sz=tnSize();
   const paper=getPaperSize();
-  const layout2up=opts.savePaper?getSavePaperLayout(sz,paper):null;
+  const layout2up=(opts.outputMode==='booklet' && opts.savePaper)?getSavePaperLayout(sz,paper):null;
   const sheetW=layout2up?.portrait?paper.h:paper.w;
   const sheetH=layout2up?.portrait?paper.w:paper.h;
   root.style.setProperty('--tn-w',sz.w+'mm');
@@ -3159,7 +3159,7 @@ function imposeAndRender(pageEls){
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · duplex · fold · staple spine · trim edges';
   document.body.style.fontFamily=`'${activeFont()}',serif`;
 
-  const els = alignFacingRuns(pageEls, getColors());
+  const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, getColors()) : pageEls;
 
   if(opts.pagenums){
     let pgNum=1;
@@ -3218,22 +3218,34 @@ function imposeAndRender(pageEls){
     pages=kept;
   }
 
-  const padTarget=opts.savePaper?(layout2up?layout2up.spreadsPerSide*4:2):4;
-  while(pages.length%padTarget!==0){
+  const blankPad=()=>{
     const dotStyle=getFillStyle(colors);
-    pages.push(`<div class="pg" style="width:${sz.w}mm;height:${sz.h}mm;background-color:${colors.page};font-family:'${activeFont()}',serif;${getPagePadding()}${dotStyle}"><div class="sh" style="background:${colors.page};color:${colors.dim};border-bottom:.3pt solid ${colors.line}">Notes</div></div>`);
-  }
-  const n=pages.length;
+    return `<div class="pg" style="width:${sz.w}mm;height:${sz.h}mm;background-color:${colors.page};font-family:'${activeFont()}',serif;${getPagePadding()}${dotStyle}"><div class="sh" style="background:${colors.page};color:${colors.dim};border-bottom:.3pt solid ${colors.line}">Notes</div></div>`;
+  };
 
-  const sides=[];
-  let L=0,R=n-1,sn=1;
-  while(L<R){
-    sides.push({l:pages[R],r:pages[L],lbl:`Sheet ${sn} Front (pp ${R+1} & ${L+1})`});
-    L++;R--;
-    if(L<R){
-      sides.push({l:pages[L],r:pages[R],lbl:`Sheet ${sn} Back (pp ${L+1} & ${R+1})`});
-      L++;R--;sn++;
+  let n; const sides=[];
+  if(opts.outputMode==='booklet'){
+    const padTarget=opts.savePaper?(layout2up?layout2up.spreadsPerSide*4:2):4;
+    while(pages.length%padTarget!==0){ pages.push(blankPad()); }
+    n=pages.length;
+    let L=0,R=n-1,sn=1;
+    while(L<R){
+      sides.push({l:pages[R],r:pages[L],lbl:`Sheet ${sn} Front (pp ${R+1} & ${L+1})`});
+      L++;R--;
+      if(L<R){
+        sides.push({l:pages[L],r:pages[R],lbl:`Sheet ${sn} Back (pp ${L+1} & ${R+1})`});
+        L++;R--;sn++;
+      }
     }
+  }else{
+    const dbl=opts.outputMode!=='flatSingle';
+    const imp=TNCore.flatImposition(pages.length, dbl?'double':'single');
+    n=imp.pad;
+    const pageAt=idx=>(idx==null || idx>=pages.length)?blankPad():pages[idx];
+    imp.sheets.forEach((sheet,i)=>{
+      sides.push({l:pageAt(sheet.front[0]), r:pageAt(sheet.front[1]), lbl:`Sheet ${i+1} Front`});
+      if(dbl) sides.push({l:pageAt(sheet.back[0]), r:pageAt(sheet.back[1]), lbl:`Sheet ${i+1} Back`});
+    });
   }
 
   const flipShort=opts.flip==='short';
@@ -3312,7 +3324,7 @@ function imposeAndRender(pageEls){
           <div class="crop-mark h-mark" style="right:-10mm;top:-.2mm;"></div>
           <div class="crop-mark h-mark" style="right:-10mm;bottom:-.2mm;"></div>`;
       }
-      const foldLine=opts.foldline?'<div class="fold-line"></div>':'';
+      const foldLine=(opts.outputMode!=='booklet' || opts.foldline)?'<div class="fold-line"></div>':'';
       div.innerHTML=`
         <div class="sheet-label">${s.lbl}</div>
         ${foldLine}
@@ -3361,7 +3373,10 @@ function imposeAndRender(pageEls){
   const physSides=layout2up?Math.ceil(sides.length/layout2up.spreadsPerSide):sides.length;
   const coverNote=separateCovers.length>0?' + 1 cover sheet':'';
   const upNote=layout2up?` · ${layout2up.spreadsPerSide}-up`:'';
-  $('pg-count').textContent=`${n+separateCovers.length} pages · ${physSides} print sides${upNote}${coverNote} · fold · staple spine · trim`;
+  const assembly = opts.outputMode==='booklet' ? 'fold · staple spine · trim'
+                 : opts.outputMode==='flatSingle' ? 'cut · stack (single-sided) · trim'
+                 : 'cut · stack · trim';
+  $('pg-count').textContent=`${n+separateCovers.length} pages · ${physSides} print sides${upNote}${coverNote} · ${assembly}`;
 }
 
 /* ══════════════════════════════════════════════
