@@ -494,6 +494,18 @@ function renderMetrics(){
     mkNum('Min',m.min,v=>{m.min=v;});
     mkNum('Max',m.max,v=>{m.max=v;});
     mkNum('Step',m.step,v=>{m.step=v;});
+    det.appendChild(el('span','metric-det-lbl','Labels'));
+    const li=document.createElement('input');
+    li.type='text'; li.placeholder='S,M,T,W,T,F,S'; li.value=(m.labels||[]).join(',');
+    li.style.cssText='width:96px;font-size:10px;padding:2px 4px;';
+    li.onchange=function(){ const v=this.value.trim(); m.labels=v?v.split(',').map(s=>s.trim()).filter(Boolean):null; onOptionChange(); };
+    det.appendChild(li);
+    const qWk=el('button','btn btn-d','Wk'); qWk.title='Weekdays';
+    qWk.onclick=()=>{ m.labels=['S','M','T','W','T','F','S']; li.value='S,M,T,W,T,F,S'; onOptionChange(); };
+    det.appendChild(qWk);
+    const q15=el('button','btn btn-d','1-5'); q15.title='1 to 5';
+    q15.onclick=()=>{ m.labels=['1','2','3','4','5']; li.value='1,2,3,4,5'; onOptionChange(); };
+    det.appendChild(q15);
     row.appendChild(det);
     list.appendChild(row);
   });
@@ -1464,9 +1476,10 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
   const c=colors||getColors();
   const title = typeof metric==='string' ? metric : metric.title;
   const hasRange = typeof metric!=='string' && metric.min!=null && metric.max!=null && metric.step!=null && metric.step>0 && metric.max>metric.min;
+  const hasLabels = typeof metric!=='string' && Array.isArray(metric.labels) && metric.labels.length>0;
   const colW=opts.graphcol;
   const titleW=4, lblW=4;
-  const headerH = hasRange ? 4 : 0;
+  const headerH = (hasRange||hasLabels) ? 4 : 0;
   const plotW= graphW ? +(graphW - titleW - lblW).toFixed(2) : Math.max(10, Math.floor(28/colW)*colW);
   const nCols=Math.round(plotW/colW);
   const W=+(titleW+plotW+lblW).toFixed(2);
@@ -1485,7 +1498,16 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
   let s=`<svg width="100%" height="100%" viewBox="0 0 ${W} ${totalH}" preserveAspectRatio="none">`;
 
   // Value axis header
-  if(hasRange){
+  if(hasLabels){
+    const labs=metric.labels;
+    s+=`<line x1="${plotX}" y1="${headerH}" x2="${plotX+plotW}" y2="${headerH}" stroke="${c.dim}" stroke-width=".4"/>`;
+    labs.forEach((lab,i)=>{
+      const xRatio = labs.length===1 ? 0.5 : i/(labs.length-1);
+      const lx=+(plotX+xRatio*plotW).toFixed(2);
+      s+=`<line x1="${lx}" y1="${headerH-1}" x2="${lx}" y2="${headerH}" stroke="${c.dim}" stroke-width=".3"/>`;
+      s+=`<text x="${lx}" y="${+(headerH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="2.8" fill="${c.dim}">${lab}</text>`;
+    });
+  } else if(hasRange){
     const {min,max,step}=metric;
     s+=`<line x1="${plotX}" y1="${headerH}" x2="${plotX+plotW}" y2="${headerH}" stroke="${c.dim}" stroke-width=".4"/>`;
     const numSteps=Math.round((max-min)/step);
