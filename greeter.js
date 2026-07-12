@@ -30,7 +30,7 @@ const PAGE_TYPES = {
                  const out=[]; const dim=new Date(mm.year,mm.month+1,0).getDate();
                  for(let d=1;d<=dim;d++){
                    const page=opts.dailyLayout==='timeblock'?mkTimeBlockDay(mm.year,mm.month,d,c.colors):mkDay(mm.year,mm.month,d,c.colors);
-                   if(opts.dailyFacingNotes){ page.dataset.facingPair='1'; out.push(page, mkFacingNotes(DOW_ABB3[dow(mm.year,mm.month,d)]+' '+d, c.colors)); }
+                   if(opts.dailyFacingNotes){ out.push(...facingPair(page, DOW_ABB3[dow(mm.year,mm.month,d)]+' '+d, c.colors)); }
                    else out.push(page);
                  }
                  return out; }),
@@ -108,7 +108,7 @@ function grRenderGuided(){
 
 function grPreview(){
   const ctx=grCtx();
-  const pages=PAGE_TYPES[greeterSel.type].expand(Object.assign({}, ctx, greeterSel.config||{}));
+  const pages=PAGE_TYPES[greeterSel.type].expand(Object.assign({}, ctx));
   renderSinglePage(pages);
 }
 
@@ -130,7 +130,7 @@ function grGenerate(){
 
 function grAdd(){
   const ctx=grCtx();
-  const cfg=Object.assign({}, greeterSel.config||{});
+  const cfg={};
   const type=greeterSel.type;
   // snapshot the opts-based guided choices onto the entry so the label + count reflect them
   const g=(PAGE_TYPES[type].guided||[]);

@@ -783,6 +783,7 @@ function toggleLink(){
 function exportSettings(){
   readOptsFromUI();
   const data={habits,bottomBoxes,selectedIcon,selectedDays,opts,graphMetrics,dailyFields,customHolidays,
+    booklet:(typeof booklet!=='undefined'?booklet:[]),
     month:parseInt($('sel-m').value),year:parseInt($('sel-y').value)};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -807,6 +808,10 @@ function importSettings(e){
       if(data.graphMetrics) graphMetrics=data.graphMetrics;
       if(data.dailyFields) dailyFields=data.dailyFields;
       if(data.customHolidays) customHolidays=data.customHolidays;
+      if(Array.isArray(data.booklet) && typeof booklet!=='undefined'){
+        booklet=data.booklet.filter(en=>en && PAGE_TYPES[en.type]);   // drop unknown page types
+        if(typeof grRenderTray==='function') grRenderTray();
+      }
       if(data.month!=null) $('sel-m').value=data.month;
       if(data.year!=null) $('sel-y').value=data.year;
       applyOptsToUI();
@@ -3043,13 +3048,15 @@ function getSavePaperLayout(sz,paper){
 
 // Push a daily-context content page; when facing notes are on, mark it and add its
 // facing page (dateLabel is the small corner date for day pages, null for summary/reflection).
+// Pair a daily-context content page with its facing notes page (shared by the wall
+// loop and the greeter daily expand, so the pairing logic can't drift between them).
+function facingPair(page, dateLabel, colors){
+  page.dataset.facingPair='1';
+  return [page, mkFacingNotes(dateLabel, colors)];
+}
 function pushDaily(els, page, dateLabel, colors){
-  if(opts.dailyFacingNotes){
-    page.dataset.facingPair='1';
-    els.push(page, mkFacingNotes(dateLabel, colors));
-  }else{
-    els.push(page);
-  }
+  if(opts.dailyFacingNotes) els.push(...facingPair(page, dateLabel, colors));
+  else els.push(page);
 }
 
 function generate(){
@@ -3163,7 +3170,7 @@ function imposeAndRender(pageEls){
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · '+tipAssembly;
   document.body.style.fontFamily=`'${activeFont()}',serif`;
 
-  const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, getColors()) : pageEls;
+  const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, colors) : pageEls;
 
   if(opts.pagenums){
     let pgNum=1;
@@ -3359,7 +3366,7 @@ function imposeAndRender(pageEls){
         <div class="crop-mark h-mark" style="right:-10mm;top:-.2mm;"></div>
         <div class="crop-mark h-mark" style="right:-10mm;bottom:-.2mm;"></div>`;
     }
-    const foldLine=opts.foldline?'<div class="fold-line"></div>':'';
+    const foldLine=(opts.outputMode==='booklet' && opts.foldline)?'<div class="fold-line"></div>':'';
     div.innerHTML=`
       <div class="sheet-label">Cover Sheet (separate — print on cardstock)</div>
       ${foldLine}
