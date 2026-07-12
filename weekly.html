@@ -732,6 +732,7 @@
             <label>Months ahead</label>
             <input id="opt-flmonthcount" type="number" min="1" max="24" value="12" style="width:60px;" onchange="onOptionChange()">
           </div>
+          <button class="btn btn-s btn-sm" style="margin-top:8px;" onclick="generateFutureLog()">&#9635; Preview this page</button>
         </div>
       </div>
     </div>
@@ -739,7 +740,6 @@
     <!-- Actions -->
     <div id="cfg-actions" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
       <button class="btn btn-p" onclick="generate()">&#8635; Generate</button>
-      <button class="btn btn-s" onclick="generateFutureLog()">&#9635; Future Log (preview)</button>
       <button class="btn btn-s" id="view-btn" onclick="setView('pages')">&#8862; Pages</button>
       <button class="btn btn-s" id="book-btn" onclick="setView('book')">&#9701; Book</button>
       <button class="btn btn-s" id="print-btn" onclick="setView('print')">&#9776; Print Layout</button>
