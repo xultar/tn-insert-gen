@@ -77,6 +77,23 @@
     return inserts;
   }
 
+  function flatImposition(n, sides) {
+    var doubleSided = sides !== 'single';
+    var mult = doubleSided ? 4 : 2;
+    var nn = Math.ceil(n / mult) * mult;
+    var half = nn / 2;
+    var S = doubleSided ? nn / 4 : nn / 2;
+    var sheets = [];
+    for (var i = 0; i < S; i++) {
+      if (doubleSided) {
+        sheets.push({ front: [2 * i, 2 * i + half], back: [2 * i + 1, 2 * i + 1 + half] });
+      } else {
+        sheets.push({ front: [i, i + half], back: null });
+      }
+    }
+    return { pad: nn, sheets: sheets };
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     futureLogBandCount: futureLogBandCount,
@@ -86,7 +103,8 @@
     bookletRemove: bookletRemove,
     bookletMove: bookletMove,
     bookletTotalPages: bookletTotalPages,
-    facingAlignInserts: facingAlignInserts
+    facingAlignInserts: facingAlignInserts,
+    flatImposition: flatImposition
   };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

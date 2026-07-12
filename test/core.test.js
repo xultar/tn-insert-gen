@@ -120,3 +120,57 @@ test('facingAlignInserts: back-to-back pairs are a single run (no extra insert)'
 test('facingAlignInserts: even leading others keep the run on the left', () => {
   assert.deepStrictEqual(core.facingAlignInserts(['other', 'other', 'content', 'facing']), []);
 });
+
+test('flatImposition double n=8: two sheets, cut-and-stack order', () => {
+  assert.deepStrictEqual(core.flatImposition(8, 'double'), {
+    pad: 8,
+    sheets: [
+      { front: [0, 4], back: [1, 5] },
+      { front: [2, 6], back: [3, 7] }
+    ]
+  });
+});
+
+test('flatImposition double n=6 pads to 8 (indices >=6 are blanks)', () => {
+  assert.deepStrictEqual(core.flatImposition(6, 'double'), {
+    pad: 8,
+    sheets: [
+      { front: [0, 4], back: [1, 5] },
+      { front: [2, 6], back: [3, 7] }
+    ]
+  });
+});
+
+test('flatImposition double n=4: one sheet', () => {
+  assert.deepStrictEqual(core.flatImposition(4, 'double'), {
+    pad: 4,
+    sheets: [ { front: [0, 2], back: [1, 3] } ]
+  });
+});
+
+test('flatImposition single n=8: four fronts, blank backs', () => {
+  assert.deepStrictEqual(core.flatImposition(8, 'single'), {
+    pad: 8,
+    sheets: [
+      { front: [0, 4], back: null },
+      { front: [1, 5], back: null },
+      { front: [2, 6], back: null },
+      { front: [3, 7], back: null }
+    ]
+  });
+});
+
+test('flatImposition single n=5 pads to 6', () => {
+  assert.deepStrictEqual(core.flatImposition(5, 'single'), {
+    pad: 6,
+    sheets: [
+      { front: [0, 3], back: null },
+      { front: [1, 4], back: null },
+      { front: [2, 5], back: null }
+    ]
+  });
+});
+
+test('flatImposition n=0: no sheets', () => {
+  assert.deepStrictEqual(core.flatImposition(0, 'double'), { pad: 0, sheets: [] });
+});
