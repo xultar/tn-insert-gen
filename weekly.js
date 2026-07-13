@@ -3234,6 +3234,15 @@ function generate(){
   if(opts.backCover) els.push(mkBackCover(y,m,colors));
 
   imposeAndRender(els);
+  updateTrackersHint();
+}
+
+// Explain the "toggled on but nothing appears" case: the trackers page only
+// renders when at least one metric exists (generate() gates on it), so surface
+// a hint when the include-toggle is on but the metric list is empty.
+function updateTrackersHint(){
+  const h=$('trackers-empty-hint');
+  if(h) h.style.display=(opts.trackers && graphMetrics.length===0)?'':'none';
 }
 
 // Insert one blank page before any paired daily "run" that would start on a right

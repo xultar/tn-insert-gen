@@ -35,7 +35,8 @@
   <div class="gr-tray-hd"><span>Booklet</span><span id="gr-total">0 pages</span></div>
   <div id="gr-tray" class="gr-tray"></div>
 
-  <button id="gr-generate" class="btn btn-s" onclick="grGenerate()">&#9112; Generate / Print</button>
+  <button id="gr-generate" class="btn btn-s" onclick="grGenerate()">&#8862; Generate booklet</button>
+  <button id="gr-print" class="btn btn-s" onclick="grPrint()">&#9112; Print / PDF</button>
 
   <div class="gr-toggle">
     <label class="toggle-sw"><input type="checkbox" id="gr-tools" onchange="grToggleTools()"><span class="slider"></span></label>
@@ -608,6 +609,7 @@
             <span style="font-size:12px;">Include trackers page</span>
             <button class="btn btn-s btn-sm" style="margin-left:auto;" onclick="previewPage('trackers')" title="Preview this page">&#9635;</button>
           </div>
+          <div id="trackers-empty-hint" style="display:none;font-size:11px;opacity:.75;margin:-2px 0 6px;">Add a tracker below to include this page.</div>
           <div id="metric-section">
             <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Metrics</h3>
             <div id="metric-list"></div>
@@ -751,7 +753,7 @@
 
     <!-- Actions -->
     <div id="cfg-actions" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">
-      <button class="btn btn-p" onclick="generate()">&#8635; Generate</button>
+      <button class="btn btn-s" onclick="generate()">&#8635; Refresh preview</button>
       <button class="btn btn-s" id="view-btn" onclick="setView('pages')">&#8862; Pages</button>
       <button class="btn btn-s" id="book-btn" onclick="setView('book')">&#9701; Book</button>
       <button class="btn btn-s" id="print-btn" onclick="setView('print')">&#9776; Print Layout</button>

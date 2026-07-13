@@ -125,7 +125,7 @@ function grPreview(){
 }
 
 function grGenerate(){
-  if(!booklet.length){ grPreview(); return; }
+  if(!booklet.length){ grPreview(); if(typeof toast==='function') toast('Add pages to your booklet first, then Generate.'); return; }
   const ctx=grCtx();
   // apply each entry's opts-based guided choices around its expansion, so mixed entries render with their own settings
   const pages=booklet.flatMap(entry=>{
@@ -138,6 +138,14 @@ function grGenerate(){
     }
   });
   imposeAndRender(pages);
+}
+
+// Renders the booklet, then opens the browser print/PDF dialog. (grGenerate only
+// renders — the greeter had a "Generate / Print" button that never printed.)
+function grPrint(){
+  if(!booklet.length){ if(typeof toast==='function') toast('Add pages to your booklet first.'); return; }
+  grGenerate();
+  window.print();
 }
 
 function grAdd(){
