@@ -94,8 +94,41 @@
     return { pad: nn, sheets: sheets };
   }
 
+  // Custom notebook dimensions are user-typed; clamp to a sane mm range so a
+  // stray 0 / negative / huge value can't produce a broken or invisible page.
+  var NOTEBOOK_MIN_MM = 40;
+  var NOTEBOOK_MAX_MM = 300;
+  function clampNotebookDim(v, def) {
+    var n = parseInt(v, 10);
+    if (!isFinite(n)) return def;
+    if (n < NOTEBOOK_MIN_MM) return NOTEBOOK_MIN_MM;
+    if (n > NOTEBOOK_MAX_MM) return NOTEBOOK_MAX_MM;
+    return n;
+  }
+
+  // Persisted/imported collections may be corrupt (null items, wrong types).
+  // Drop anything that isn't a plain object so later render loops can't throw.
+  function sanitizeCollection(list) {
+    if (!Array.isArray(list)) return [];
+    return list.filter(function (x) { return x && typeof x === 'object'; });
+  }
+
+  // Habits are indexed by weekday via h.days.includes(...); guarantee days is
+  // an array so a malformed habit can't crash daily-page generation.
+  function sanitizeHabits(list) {
+    return sanitizeCollection(list).map(function (h) {
+      if (!Array.isArray(h.days)) h.days = [];
+      return h;
+    });
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
+    NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
+    NOTEBOOK_MAX_MM: NOTEBOOK_MAX_MM,
+    clampNotebookDim: clampNotebookDim,
+    sanitizeCollection: sanitizeCollection,
+    sanitizeHabits: sanitizeHabits,
     futureLogBandCount: futureLogBandCount,
     monthMatrix: monthMatrix,
     paginateMonths: paginateMonths,

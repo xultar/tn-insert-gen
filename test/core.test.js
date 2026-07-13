@@ -174,3 +174,50 @@ test('flatImposition single n=5 pads to 6', () => {
 test('flatImposition n=0: no sheets', () => {
   assert.deepStrictEqual(core.flatImposition(0, 'double'), { pad: 0, sheets: [] });
 });
+
+test('clampNotebookDim: in-range values pass through unchanged', () => {
+  assert.strictEqual(core.clampNotebookDim(89, 124), 89);
+  assert.strictEqual(core.clampNotebookDim('150', 124), 150);
+  assert.strictEqual(core.clampNotebookDim(40, 89), 40);   // lower boundary inclusive
+  assert.strictEqual(core.clampNotebookDim(300, 89), 300); // upper boundary inclusive
+});
+
+test('clampNotebookDim: below 40 clamps up, above 300 clamps down', () => {
+  assert.strictEqual(core.clampNotebookDim(0, 89), 40);
+  assert.strictEqual(core.clampNotebookDim(-5, 89), 40);
+  assert.strictEqual(core.clampNotebookDim(500, 124), 300);
+});
+
+test('clampNotebookDim: non-numeric falls back to the default', () => {
+  assert.strictEqual(core.clampNotebookDim('', 89), 89);
+  assert.strictEqual(core.clampNotebookDim('abc', 124), 124);
+  assert.strictEqual(core.clampNotebookDim(NaN, 124), 124);
+  assert.strictEqual(core.clampNotebookDim(undefined, 89), 89);
+});
+
+test('sanitizeCollection: drops null/undefined/non-object items', () => {
+  assert.deepStrictEqual(
+    core.sanitizeCollection([{ a: 1 }, null, undefined, 3, 'x', { b: 2 }]),
+    [{ a: 1 }, { b: 2 }]
+  );
+});
+
+test('sanitizeCollection: non-array input yields empty array', () => {
+  assert.deepStrictEqual(core.sanitizeCollection('nope'), []);
+  assert.deepStrictEqual(core.sanitizeCollection(undefined), []);
+  assert.deepStrictEqual(core.sanitizeCollection(null), []);
+});
+
+test('sanitizeHabits: drops null items and defaults a missing days array', () => {
+  assert.deepStrictEqual(
+    core.sanitizeHabits([{ name: 'A', days: [1, 2] }, null, { name: 'B' }]),
+    [{ name: 'A', days: [1, 2] }, { name: 'B', days: [] }]
+  );
+});
+
+test('sanitizeHabits: a non-array days field is replaced with an empty array', () => {
+  assert.deepStrictEqual(
+    core.sanitizeHabits([{ name: 'C', days: 'notarray' }]),
+    [{ name: 'C', days: [] }]
+  );
+});

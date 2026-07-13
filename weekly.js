@@ -671,6 +671,8 @@ function sanitizeOpts(o){
   if(!o.elementColors || typeof o.elementColors!=='object') o.elementColors={};
   if(!o.elementFonts || typeof o.elementFonts!=='object') o.elementFonts={};
   if(typeof o.customFont!=='string') o.customFont='';
+  o.customTnW=TNCore.clampNotebookDim(o.customTnW,89);
+  o.customTnH=TNCore.clampNotebookDim(o.customTnH,124);
   return o;
 }
 
@@ -707,16 +709,16 @@ function loadState(){
   try{
     const s=JSON.parse(localStorage.getItem(STORAGE_KEY));
     if(!s || typeof s!=='object') return false;
-    if(Array.isArray(s.habits)) habits=s.habits;
-    if(Array.isArray(s.bottomBoxes)) bottomBoxes=s.bottomBoxes;
+    if(Array.isArray(s.habits)) habits=TNCore.sanitizeHabits(s.habits);
+    if(Array.isArray(s.bottomBoxes)) bottomBoxes=TNCore.sanitizeCollection(s.bottomBoxes);
     if(s.selectedIcon) selectedIcon=s.selectedIcon;
     if(Array.isArray(s.selectedDays)) selectedDays=s.selectedDays;
     if(s.month!=null) $('sel-m').value=s.month;
     if(s.year!=null) $('sel-y').value=s.year;
     if(s.opts && typeof s.opts==='object') opts=sanitizeOpts({...opts,...s.opts});
-    if(Array.isArray(s.graphMetrics)) graphMetrics=s.graphMetrics;
-    if(Array.isArray(s.dailyFields)) dailyFields=s.dailyFields;
-    if(Array.isArray(s.customHolidays)) customHolidays=s.customHolidays;
+    if(Array.isArray(s.graphMetrics)) graphMetrics=TNCore.sanitizeCollection(s.graphMetrics);
+    if(Array.isArray(s.dailyFields)) dailyFields=TNCore.sanitizeCollection(s.dailyFields);
+    if(Array.isArray(s.customHolidays)) customHolidays=TNCore.sanitizeCollection(s.customHolidays);
     return true;
   }catch(e){return false;}
 }
@@ -810,8 +812,8 @@ function applyOptsToUI(){
 function readOptsFromUI(){
   opts.tnsize=$('opt-tnsize').value;
   opts.paperSize=$('opt-papersize').value;
-  opts.customTnW=parseInt($('opt-custom-tn-w').value)||89;
-  opts.customTnH=parseInt($('opt-custom-tn-h').value)||124;
+  opts.customTnW=TNCore.clampNotebookDim($('opt-custom-tn-w').value,89);
+  opts.customTnH=TNCore.clampNotebookDim($('opt-custom-tn-h').value,124);
   $('custom-tn-row').style.display=opts.tnsize==='custom'?'flex':'none';
   opts.font=$('opt-font').value;
   opts.margin=parseInt($('opt-margin').value);
@@ -932,14 +934,14 @@ function importSettings(e){
     try{
       const data=JSON.parse(reader.result);
       if(data==null || typeof data!=='object') throw new Error('not a settings object');
-      if(Array.isArray(data.habits)) habits=data.habits;
-      if(Array.isArray(data.bottomBoxes)) bottomBoxes=data.bottomBoxes;
+      if(Array.isArray(data.habits)) habits=TNCore.sanitizeHabits(data.habits);
+      if(Array.isArray(data.bottomBoxes)) bottomBoxes=TNCore.sanitizeCollection(data.bottomBoxes);
       if(data.selectedIcon) selectedIcon=data.selectedIcon;
       if(Array.isArray(data.selectedDays)) selectedDays=data.selectedDays;
       if(data.opts && typeof data.opts==='object') opts=sanitizeOpts({...opts,...data.opts});
-      if(Array.isArray(data.graphMetrics)) graphMetrics=data.graphMetrics;
-      if(Array.isArray(data.dailyFields)) dailyFields=data.dailyFields;
-      if(Array.isArray(data.customHolidays)) customHolidays=data.customHolidays;
+      if(Array.isArray(data.graphMetrics)) graphMetrics=TNCore.sanitizeCollection(data.graphMetrics);
+      if(Array.isArray(data.dailyFields)) dailyFields=TNCore.sanitizeCollection(data.dailyFields);
+      if(Array.isArray(data.customHolidays)) customHolidays=TNCore.sanitizeCollection(data.customHolidays);
       if(Array.isArray(data.booklet) && typeof booklet!=='undefined'){
         booklet=data.booklet.filter(en=>en && PAGE_TYPES[en.type]);   // drop unknown page types
         if(typeof grRenderTray==='function') grRenderTray();
