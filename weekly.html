@@ -9,11 +9,12 @@
 <script src="core.js"></script>
 </head>
 <body>
+<h1 class="visually-hidden">TN Weekly Planner Generator</h1>
 <button id="menu-toggle" onclick="toggleMenu()" aria-label="Toggle options menu">&#9776;</button>
 <div id="menu-backdrop" onclick="toggleMenu()"></div>
 
 <!-- ══ GREETER ══ -->
-<div id="greeter">
+<div id="greeter" role="region" aria-label="Page builder">
   <div class="gr-title">◆ Build a page</div>
 
   <label class="gr-lbl">Notebook</label>
@@ -45,7 +46,7 @@
 </div>
 
 <!-- ══ CONFIG ══ -->
-<div id="cfg">
+<div id="cfg" role="region" aria-label="All options">
     <div id="cfg-back" onclick="grToggleTools()" style="cursor:pointer;font-size:12px;padding:6px 0;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);">&#8249; Back to greeter</div>
 
     <!-- Month / Year -->
@@ -55,7 +56,7 @@
       </div>
       <div class="coll-body open">
         <div style="display:flex;gap:6px;">
-          <select id="sel-m">
+          <select id="sel-m" aria-label="Month">
             <option value="0">January</option><option value="1">February</option>
             <option value="2">March</option><option value="3">April</option>
             <option value="4">May</option><option value="5">June</option>
@@ -63,7 +64,7 @@
             <option value="8">September</option><option value="9">October</option>
             <option value="10">November</option><option value="11">December</option>
           </select>
-          <input id="sel-y" type="number" value="2026" min="2020" max="2099" style="width:66px;">
+          <input id="sel-y" type="number" value="2026" min="2020" max="2099" style="width:66px;" aria-label="Year">
         </div>
       </div>
     </div>
@@ -271,7 +272,7 @@
             <div id="holiday-list"></div>
             <div class="add-row" style="margin-top:4px;flex-wrap:wrap;gap:4px;">
               <input id="holiday-name" type="text" placeholder="Name" style="width:96px;">
-              <select id="holiday-month" style="width:auto;">
+              <select id="holiday-month" style="width:auto;" aria-label="Holiday month">
                 <option value="0">Jan</option><option value="1">Feb</option>
                 <option value="2">Mar</option><option value="3">Apr</option>
                 <option value="4">May</option><option value="5">Jun</option>
@@ -279,7 +280,7 @@
                 <option value="8">Sep</option><option value="9">Oct</option>
                 <option value="10">Nov</option><option value="11">Dec</option>
               </select>
-              <input id="holiday-day" type="number" min="1" max="31" value="1" style="width:46px;">
+              <input id="holiday-day" type="number" min="1" max="31" value="1" style="width:46px;" aria-label="Holiday day">
               <button class="btn btn-s btn-sm" onclick="addHoliday()">+ Add</button>
             </div>
             <div style="font-size:9px;opacity:.5;margin-top:3px;">Repeats every year. Shown on the calendar and under the weekday on daily pages.</div>
@@ -363,7 +364,7 @@
           </div>
           <div style="margin-top:8px;">
             <h3>Page font</h3>
-            <select id="opt-font" onchange="onOptionChange()" style="width:100%;">
+            <select id="opt-font" onchange="onOptionChange()" style="width:100%;" aria-label="Page font">
               <option value="Georgia">Georgia</option>
               <option value="Garamond">Garamond</option>
               <option value="Palatino">Palatino</option>
@@ -614,7 +615,7 @@
             <h3 style="font-size:10px;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:4px;">Metrics</h3>
             <div id="metric-list"></div>
             <div class="add-row" style="margin-top:4px;">
-              <select id="tracker-preset" onchange="addTrackerPreset(this.value); this.value='';">
+              <select id="tracker-preset" aria-label="Add tracker preset" onchange="addTrackerPreset(this.value); this.value='';">
                 <option value="">+ Add tracker…</option>
                 <option value="sleep">Sleep (0–12)</option>
                 <option value="water">Water (0–8)</option>
@@ -674,9 +675,9 @@
           </div>
           <div class="cfg-row" id="custom-tn-row" style="display:none;gap:4px;">
             <label>W&#215;H (mm)</label>
-            <input type="number" id="opt-custom-tn-w" value="89" min="40" max="300" style="width:60px;" onchange="onOptionChange()">
+            <input type="number" id="opt-custom-tn-w" value="89" min="40" max="300" style="width:60px;" onchange="onOptionChange()" aria-label="Custom width (mm)">
             <span style="opacity:.5;">&#215;</span>
-            <input type="number" id="opt-custom-tn-h" value="124" min="40" max="300" style="width:60px;" onchange="onOptionChange()">
+            <input type="number" id="opt-custom-tn-h" value="124" min="40" max="300" style="width:60px;" onchange="onOptionChange()" aria-label="Custom height (mm)">
           </div>
           <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,.08);padding-top:6px;">
             <div class="cfg-row" style="margin-bottom:6px;">
@@ -770,7 +771,7 @@
 </div>
 
 <!-- ══ PREVIEW ══ -->
-<div id="preview">
+<div id="preview" role="main" aria-label="Page preview">
   <div id="preview-hdr">
     <strong id="pg-count">0</strong>
     <span class="tip" id="paper-tip">A4 landscape &middot; duplex &middot; fold &middot; staple spine &middot; trim edges</span>
@@ -809,7 +810,7 @@
 </div>
 
 <!-- ══ INSPECTOR ══ -->
-<div id="inspector" class="insp-hidden">
+<div id="inspector" class="insp-hidden" role="region" aria-label="Element inspector">
   <div id="insp-empty">
     <span data-lucide="mouse-pointer-click" style="width:28px;height:28px;display:block;"></span>
     <p>Click any element<br>in the preview<br>to inspect it</p>

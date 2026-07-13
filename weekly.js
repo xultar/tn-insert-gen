@@ -469,6 +469,7 @@ function toggleSection(id){
 // unchanged where possible and adds the semantics screen-reader / keyboard users
 // need. Click-only custom controls become keyboard-operable via role=button +
 // tabindex; the global keydown delegate (see init) activates them on Enter/Space.
+let _a11ySeq=0;
 function enhanceA11y(){
   document.querySelectorAll('.coll-hdr').forEach(h=>{
     h.setAttribute('role','button');
@@ -490,6 +491,36 @@ function enhanceA11y(){
   // (more reliably announced, and independent of hover).
   document.querySelectorAll('button[title]').forEach(b=>{
     if(!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.getAttribute('title'));
+  });
+
+  // Visible sibling <label>s (e.g. "Notebook" before a <select>) aren't
+  // programmatically tied to their control, so screen readers announce the
+  // control with no name. Pair each unassociated, non-wrapping label with the
+  // nearest following form control that doesn't already have a name.
+  const namedCtl=new Set();
+  document.querySelectorAll('#cfg label, #greeter label').forEach(lbl=>{
+    if(lbl.htmlFor || lbl.getAttribute('for')) return;
+    if(lbl.querySelector('input,select,textarea')) return;   // wrapping label = implicit association
+    if(!lbl.textContent.trim()) return;
+    const scope=lbl.closest('#cfg,#greeter'); if(!scope) return;
+    let target=null;
+    for(const c of scope.querySelectorAll('input,select,textarea')){
+      if(namedCtl.has(c) || c.type==='hidden' || c.type==='file') continue;
+      if(lbl.compareDocumentPosition(c) & Node.DOCUMENT_POSITION_FOLLOWING){ target=c; break; }
+    }
+    if(!target) return;
+    if(target.getAttribute('aria-label') || (target.labels && target.labels.length)){ namedCtl.add(target); return; }
+    if(!target.id) target.id='a11y-ctl-'+(++_a11ySeq);
+    lbl.htmlFor=target.id;
+    namedCtl.add(target);
+  });
+
+  // Fallback: a still-unnamed control that has placeholder text borrows it as an
+  // accessible name (a placeholder alone is not reliably announced as a name).
+  document.querySelectorAll('#cfg [placeholder], #greeter [placeholder]').forEach(c=>{
+    if(c.getAttribute('aria-label') || (c.labels && c.labels.length)) return;
+    const ph=(c.getAttribute('placeholder')||'').replace(/[.…]+$/,'').trim();
+    if(ph) c.setAttribute('aria-label', ph);
   });
 }
 
@@ -553,6 +584,7 @@ function renderMetrics(){
     const row=el('div','metric-item');
     const inp=document.createElement('input');
     inp.type='text';inp.value=m.title;inp.style.cssText='width:76px;font-size:11px;padding:3px 6px;';
+    inp.setAttribute('aria-label','Tracker name');
     inp.onchange=function(){ m.title=this.value; onOptionChange(); };
     row.appendChild(inp);
 
@@ -617,6 +649,7 @@ function renderDailyFields(){
     const row=el('div','daily-field-item');
     const inp=document.createElement('input');
     inp.type='text';inp.value=f.label;
+    inp.setAttribute('aria-label','Daily field name');
     inp.onchange=function(){ f.label=this.value; onOptionChange(); };
     row.appendChild(inp);
     const del=el('button','btn btn-d','x');

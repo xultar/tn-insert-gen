@@ -463,3 +463,19 @@ input[type=range]:focus-visible{outline:2px solid #3b82f6;outline-offset:1px;}
 #cfg{display:none;}
 body.show-tools #greeter{display:none;}
 body.show-tools #cfg{display:flex;}
+
+/* Screen-reader-only: present in the a11y tree, invisible on screen. */
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
+
+/* ── REDUCED MOTION ──────────────── */
+/* Honor the OS "reduce motion" setting: neutralize slide/rotate/scale
+   transitions and animations (menu drawer, section arrows, toasts, sliders)
+   without disabling functionality. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+    scroll-behavior:auto!important;
+  }
+}
