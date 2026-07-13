@@ -84,6 +84,8 @@ function grRenderTypes(){
     const b=document.createElement('div');
     b.className='gr-type'+(type===greeterSel.type?' on':'');
     b.textContent=PAGE_TYPES[type].label;
+    b.setAttribute('role','button'); b.tabIndex=0;
+    b.setAttribute('aria-pressed', type===greeterSel.type?'true':'false');
     b.onclick=()=>{ greeterSel={type}; grRenderTypes(); grRenderGuided(); grPreview(); };
     grid.appendChild(b);
   });
@@ -99,6 +101,8 @@ function grRenderGuided(){
       const chip=document.createElement('div');
       chip.className='gr-chip'+(opts[spec.opt]===val?' on':'');
       chip.textContent=text;
+      chip.setAttribute('role','button'); chip.tabIndex=0;
+      chip.setAttribute('aria-pressed', opts[spec.opt]===val?'true':'false');
       chip.onclick=()=>{ opts[spec.opt]=val; grRenderGuided(); grPreview(); };
       row.appendChild(chip);
     });

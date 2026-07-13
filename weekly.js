@@ -431,6 +431,19 @@ function toggleSection(id){
   const body=sec.querySelector('.coll-body');
   hdr.classList.toggle('open');
   body.classList.toggle('open');
+  hdr.setAttribute('aria-expanded', hdr.classList.contains('open')?'true':'false');
+}
+
+// Accessibility enhancements applied at init (and re-callable). Keeps the markup
+// unchanged where possible and adds the semantics screen-reader / keyboard users
+// need. Click-only custom controls become keyboard-operable via role=button +
+// tabindex; the global keydown delegate (see init) activates them on Enter/Space.
+function enhanceA11y(){
+  document.querySelectorAll('.coll-hdr').forEach(h=>{
+    h.setAttribute('role','button');
+    if(!h.hasAttribute('tabindex')) h.tabIndex=0;
+    h.setAttribute('aria-expanded', h.classList.contains('open')?'true':'false');
+  });
 }
 
 /* ══════════════════════════════════════════════
@@ -3533,6 +3546,18 @@ try{
 }catch(err){
   console.error('Init render failed (corrupt saved state?) — continuing with partial UI.',err);
 }
+try{ enhanceA11y(); }catch(err){ console.error('enhanceA11y failed',err); }
+
+// Make click-only custom controls (role=button divs: section headers, greeter
+// tiles/chips) keyboard-operable — activate on Enter/Space like a native button.
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+  const t=e.target;
+  if(t && t.getAttribute && t.getAttribute('role')==='button' && t.tagName!=='BUTTON' && t.tagName!=='A'){
+    e.preventDefault();
+    t.click();
+  }
+});
 
 $('sel-m').addEventListener('change',()=>generate());
 $('sel-y').addEventListener('change',()=>generate());
