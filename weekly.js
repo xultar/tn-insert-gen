@@ -947,6 +947,7 @@ function importSettings(e){
       if(data.month!=null) $('sel-m').value=data.month;
       if(data.year!=null) $('sel-y').value=data.year;
       applyOptsToUI();
+      applyAppSkin();
       buildThemeGrid();
       buildColorOverrides();
       renderMetrics();
@@ -3584,12 +3585,15 @@ if(!loadState()){
   ];
 }
 
+// Style the app chrome first, in its own guard, so a later UI-sync/render
+// failure can't leave the app unskinned (it only reads opts, not the DOM).
+try{ applyAppSkin(); }catch(err){ console.error('applyAppSkin failed',err); }
+
 // Backstop: if a corrupt saved value slips past validation and a render throws,
 // don't let it abort the rest of init — the event listeners below must still
 // attach so the app stays interactive (and the user can Reset).
 try{
   applyOptsToUI();
-  applyAppSkin();
   orderCfgSections();
   buildThemeGrid();
   buildColorOverrides();
