@@ -435,6 +435,24 @@ function applyAppSkin(){
   document.body.style.fontFamily=`'${opts.appFont||'Georgia'}',serif`;
 }
 
+function onAppSkinChange(){
+  opts.appTheme=$('opt-apptheme').value;
+  opts.appFont=$('opt-appfont').value;
+  applyAppSkin();
+  saveState();
+}
+function toggleAppSettings(e){
+  if(e) e.stopPropagation();
+  const p=$('app-settings-panel'), b=$('app-settings-btn');
+  const open=p.classList.toggle('open');
+  b.setAttribute('aria-expanded', open?'true':'false');
+}
+function closeAppSettings(){
+  const p=$('app-settings-panel'); if(!p || !p.classList.contains('open')) return;
+  p.classList.remove('open');
+  $('app-settings-btn').setAttribute('aria-expanded','false');
+}
+
 /* ══════════════════════════════════════════════
    COLLAPSIBLE SECTIONS
    ══════════════════════════════════════════════ */
@@ -710,6 +728,8 @@ function applyOptsToUI(){
   $('opt-custom-tn-h').value=opts.customTnH;
   $('custom-tn-row').style.display=opts.tnsize==='custom'?'flex':'none';
   $('opt-font').value=opts.font;
+  $('opt-apptheme').value=opts.appTheme;
+  $('opt-appfont').value=opts.appFont;
   $('opt-margin').value=opts.margin;
   $('opt-checkbox').value=opts.checkbox;
   $('opt-cbsize').value=opts.cbsize;
@@ -3626,6 +3646,11 @@ $('page-preview').addEventListener('click',function(e){
 });
 
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeInspector(); });
+document.addEventListener('click',e=>{
+  if(e.target.closest('#app-settings-panel') || e.target.closest('#app-settings-btn')) return;
+  closeAppSettings();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAppSettings(); });
 
 // Ctrl+wheel zoom
 $('preview').addEventListener('wheel',e=>{

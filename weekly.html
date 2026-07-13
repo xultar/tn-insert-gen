@@ -779,6 +779,29 @@
       <span id="zoom-level">100%</span>
       <button class="zoom-btn" onclick="adjustZoom(0.1)" title="Zoom in">+</button>
     </div>
+    <div class="app-settings-wrap">
+      <button id="app-settings-btn" class="zoom-btn" aria-label="App settings" aria-haspopup="true" aria-expanded="false" onclick="toggleAppSettings(event)">&#9881;</button>
+      <div id="app-settings-panel">
+        <label class="as-lbl" for="opt-apptheme">App theme</label>
+        <select id="opt-apptheme" onchange="onAppSkinChange()">
+          <option value="Classic Warm">Classic Warm</option>
+          <option value="Cool Gray">Cool Gray</option>
+          <option value="Midnight Blue">Midnight Blue</option>
+          <option value="Forest">Forest</option>
+          <option value="Rose">Rose</option>
+          <option value="Minimal B&amp;W">Minimal B&amp;W</option>
+        </select>
+        <label class="as-lbl" for="opt-appfont">App font</label>
+        <select id="opt-appfont" onchange="onAppSkinChange()">
+          <option value="Georgia">Georgia</option>
+          <option value="Garamond">Garamond</option>
+          <option value="Palatino">Palatino</option>
+          <option value="Helvetica">Helvetica</option>
+          <option value="Inter">Inter</option>
+          <option value="Courier New">Courier New</option>
+        </select>
+      </div>
+    </div>
   </div>
   <div id="print-area"></div>
   <div id="page-preview"></div>
