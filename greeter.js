@@ -162,13 +162,13 @@ function grRenderTray(){
   const tray=$('gr-tray'); tray.innerHTML='';
   booklet.forEach(entry=>{
     const row=document.createElement('div'); row.className='gr-trow';
-    const up=document.createElement('button'); up.textContent='▲'; up.title='Move up';
+    const up=document.createElement('button'); up.textContent='▲'; up.title='Move up'; up.setAttribute('aria-label','Move up');
     up.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,-1); grRenderTray(); saveState(); };
-    const dn=document.createElement('button'); dn.textContent='▼'; dn.title='Move down';
+    const dn=document.createElement('button'); dn.textContent='▼'; dn.title='Move down'; dn.setAttribute('aria-label','Move down');
     dn.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,1); grRenderTray(); saveState(); };
     const lab=document.createElement('span'); lab.className='gr-tlabel'; lab.textContent=grEntryLabel(entry);
     const ct=document.createElement('span'); ct.className='gr-tct'; ct.textContent=entry.pageCount+'p';
-    const rm=document.createElement('button'); rm.textContent='✕'; rm.title='Remove';
+    const rm=document.createElement('button'); rm.textContent='✕'; rm.title='Remove'; rm.setAttribute('aria-label','Remove from booklet');
     rm.onclick=()=>{ booklet=TNCore.bookletRemove(booklet,entry.id); grRenderTray(); saveState(); };
     row.appendChild(up); row.appendChild(dn); row.appendChild(lab); row.appendChild(ct); row.appendChild(rm);
     tray.appendChild(row);

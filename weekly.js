@@ -444,6 +444,22 @@ function enhanceA11y(){
     if(!h.hasAttribute('tabindex')) h.tabIndex=0;
     h.setAttribute('aria-expanded', h.classList.contains('open')?'true':'false');
   });
+
+  // Custom toggle switches: the visible text is a sibling of the <label>, so the
+  // checkbox itself has no accessible name. Label it from that adjacent text.
+  document.querySelectorAll('.toggle-sw input[type=checkbox]').forEach(cb=>{
+    if(cb.getAttribute('aria-label')) return;
+    const sw=cb.closest('.toggle-sw');
+    const txt=sw && sw.nextElementSibling;
+    const name=txt && txt.textContent.trim();
+    if(name) cb.setAttribute('aria-label', name);
+  });
+
+  // Icon-only buttons carry their meaning in `title` only; mirror it to aria-label
+  // (more reliably announced, and independent of hover).
+  document.querySelectorAll('button[title]').forEach(b=>{
+    if(!b.getAttribute('aria-label')) b.setAttribute('aria-label', b.getAttribute('title'));
+  });
 }
 
 /* ══════════════════════════════════════════════
