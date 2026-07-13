@@ -143,7 +143,7 @@ function grGenerate(){
 // Renders the booklet, then opens the browser print/PDF dialog. (grGenerate only
 // renders — the greeter had a "Generate / Print" button that never printed.)
 function grPrint(){
-  if(!booklet.length){ if(typeof toast==='function') toast('Add pages to your booklet first.'); return; }
+  if(!booklet.length){ grPreview(); if(typeof toast==='function') toast('Add pages to your booklet first, then Print.'); return; }
   grGenerate();
   window.print();
 }
