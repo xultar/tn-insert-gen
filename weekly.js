@@ -1557,13 +1557,16 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
   } else if(hasRange){
     const {min,max,step}=metric;
     s+=`<line x1="${plotX}" y1="${headerH}" x2="${plotX+plotW}" y2="${headerH}" stroke="${c.dim}" stroke-width=".4"/>`;
-    // Cap ticks: a wide range with a tiny step (e.g. Steps 0–15000 step 1) would
-    // emit thousands of SVG nodes per keystroke and freeze the tab.
+    // Cap ticks so a wide range with a tiny step (e.g. Steps 0–15000 step 1)
+    // can't emit thousands of SVG nodes and freeze the tab. When the natural
+    // count exceeds the cap, spread the ticks evenly across the range via an
+    // effective step (so they don't cluster at the left edge). For normal
+    // metrics (count <= cap) `eff` equals the user's step — output unchanged.
     const numSteps=Math.min(40, Math.round((max-min)/step));
+    const eff=(max-min)/numSteps;
     for(let i=0;i<=numSteps;i++){
-      const v=+(min+i*step).toFixed(8);
-      if(v>max+step*0.001) break;
-      const xRatio=(v-min)/(max-min);
+      const v=+(min+i*eff).toFixed(8);
+      const xRatio=i/numSteps;
       const lx=+(plotX+xRatio*plotW).toFixed(2);
       s+=`<line x1="${lx}" y1="${headerH-1}" x2="${lx}" y2="${headerH}" stroke="${c.dim}" stroke-width=".3"/>`;
       s+=`<text x="${lx}" y="${+(headerH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="2.8" fill="${c.dim}">${v%1===0?v:v.toFixed(1)}</text>`;
