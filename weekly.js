@@ -1557,7 +1557,9 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
   } else if(hasRange){
     const {min,max,step}=metric;
     s+=`<line x1="${plotX}" y1="${headerH}" x2="${plotX+plotW}" y2="${headerH}" stroke="${c.dim}" stroke-width=".4"/>`;
-    const numSteps=Math.round((max-min)/step);
+    // Cap ticks: a wide range with a tiny step (e.g. Steps 0–15000 step 1) would
+    // emit thousands of SVG nodes per keystroke and freeze the tab.
+    const numSteps=Math.min(40, Math.round((max-min)/step));
     for(let i=0;i<=numSteps;i++){
       const v=+(min+i*step).toFixed(8);
       if(v>max+step*0.001) break;
@@ -3163,7 +3165,10 @@ function pushDaily(els, page, dateLabel, colors){
 function generate(){
   saveState();
   const m=parseInt($('sel-m').value);
-  const y=parseInt($('sel-y').value);
+  let y=parseInt($('sel-y').value);
+  // A cleared year field parses to NaN, which makes daysInMonth(NaN) drop every
+  // daily page (and persists year:NaN). Fall back to the current year.
+  if(!Number.isFinite(y)){ y=new Date().getFullYear(); if($('sel-y')) $('sel-y').value=y; }
   const colors=getColors();
   const els=[];
 
