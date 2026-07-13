@@ -19,6 +19,17 @@ function adjustZoom(delta){
   if(lbl) lbl.textContent=Math.round(z*100)+'%';
 }
 
+// Printing/PDF export must always be 1:1. The on-screen preview zoom is applied
+// as an inline `zoom` on #print-area (see adjustZoom), and CSS zoom carries into
+// print output — so without this, zooming the preview out silently shrinks the
+// exported PDF. Reset to 100% for print, then restore the preview zoom after.
+window.addEventListener('beforeprint',function(){
+  const p=document.getElementById('print-area'); if(p) p.style.zoom=1;
+});
+window.addEventListener('afterprint',function(){
+  const p=document.getElementById('print-area'); if(p) p.style.zoom=previewZoom;
+});
+
 /* ══════════════════════════════════════════════
    STATE & DEFAULTS
    ══════════════════════════════════════════════ */
