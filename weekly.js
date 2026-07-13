@@ -2461,11 +2461,29 @@ function mkFutureLogYear(y, m, colors){
   return [p];
 }
 
-function generateFutureLog(){
+const PAGE_PREVIEWS = {
+  cover:     (y,m,c)=>mkCover(y,m,c),
+  backcover: (y,m,c)=>mkBackCover(y,m,c),
+  calendar:  (y,m,c)=>mkCalendar(y,m,c),      // returns a spread (array); renderSinglePage handles arrays
+  notes:     (y,m,c)=>mkMonthNotes(y,m,c),
+  futurelog: (y,m,c)=>mkFutureLog(y,m,c),     // array
+  goals:     (y,m,c)=>mkGoalsPage(y,m,c),
+  braindump: (y,m,c)=>mkMonthBrainDump(y,m,c),
+  habitmap:  (y,m,c)=>mkHabitMap(y,m,c),
+  moodcal:   (y,m,c)=>mkMoodCalendar(y,m,c),
+  expenses:  (y,m,c)=>mkExpenseTracker(y,m,c),
+  reflection:(y,m,c)=>mkReflection(y,m,c),
+  trackers:  (y,m,c)=>mkMonthGraphs(y,m,c),
+  daily:     (y,m,c)=>{ const d=Math.min(15, daysInMonth(y,m));
+                        return opts.dailyLayout==='timeblock' ? mkTimeBlockDay(y,m,d,c) : mkDay(y,m,d,c); },
+};
+
+function previewPage(key){
+  const build = PAGE_PREVIEWS[key];
+  if(!build) return;
   saveState();
-  const m = parseInt($('sel-m').value);
-  const y = parseInt($('sel-y').value);
-  renderSinglePage(mkFutureLog(y, m, getColors()));
+  const m = parseInt($('sel-m').value), y = parseInt($('sel-y').value);
+  renderSinglePage(build(y, m, getColors()));
 }
 
 function mkCalendar(y,m,c){
