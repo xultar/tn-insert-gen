@@ -30,6 +30,18 @@ window.addEventListener('afterprint',function(){
   const p=document.getElementById('print-area'); if(p) p.style.zoom=previewZoom;
 });
 
+// Lightweight, dependency-free toast for user feedback (export/import/save errors).
+function toast(msg,type){
+  let wrap=document.getElementById('toast-wrap');
+  if(!wrap){ wrap=document.createElement('div'); wrap.id='toast-wrap'; document.body.appendChild(wrap); }
+  const t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  t.textContent=msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),250); }, 2600);
+}
+
 /* ══════════════════════════════════════════════
    STATE & DEFAULTS
    ══════════════════════════════════════════════ */
@@ -827,6 +839,7 @@ function exportSettings(){
   a.download='tn-weekly-settings.json';
   a.click();
   URL.revokeObjectURL(a.href);
+  toast('Settings exported');
 }
 
 function importSettings(e){
@@ -860,13 +873,15 @@ function importSettings(e){
       renderBottomBoxes();
       buildDayPick();
       generate();
-    }catch(err){ alert('Invalid settings file.'); }
+      toast('Settings imported');
+    }catch(err){ toast('Couldn’t read that settings file — is it a settings export?','warn'); }
   };
   reader.readAsText(file);
   e.target.value='';
 }
 
 function resetAll(){
+  if(!confirm('Reset everything?\n\nThis permanently clears all your settings, habits, trackers, custom holidays, cover images, and the booklet. This cannot be undone.')) return;
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 }
