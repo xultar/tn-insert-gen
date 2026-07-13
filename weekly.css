@@ -415,6 +415,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-ra
 /* ── GREETER PANEL ─────────────────────── */
 #greeter{background:var(--acc);color:#f0ede6;border-right:3px solid #1f1f1f;width:300px;min-width:280px;height:100vh;overflow-y:auto;padding:14px 16px 18px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
 #greeter *{color:#f0ede6;}
+/* Selected chips + primary buttons have a solid cream background; the blanket
+   `#greeter *` rule above would paint their text cream too (invisible). Restore
+   the intended dark accent text at a specificity that beats `#greeter *`. */
+#greeter .gr-type.on,
+#greeter .gr-guided .gr-chip.on,
+#greeter .btn-p{color:var(--acc);}
 .gr-title{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.85;margin-bottom:4px;}
 .gr-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.6;margin-top:6px;}
 .gr-row{display:flex;align-items:center;gap:8px;}
