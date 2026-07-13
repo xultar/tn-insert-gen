@@ -280,11 +280,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;background:#f0ede6;cursor:pointer;}
 
 /* ── Keyboard focus visibility ── */
-:focus-visible{outline:2px solid #7aa2ff;outline-offset:2px;}
+:focus-visible{outline:2px solid #3b82f6;outline-offset:2px;}
 /* the real checkbox is 0×0/opacity:0, so put the ring on its visible slider */
-.toggle-sw input:focus-visible + .slider{outline:2px solid #7aa2ff;outline-offset:2px;}
+.toggle-sw input:focus-visible + .slider{outline:2px solid #3b82f6;outline-offset:2px;}
 /* range inputs set outline:none above — restore a ring on keyboard focus */
-input[type=range]:focus-visible{outline:2px solid #7aa2ff;outline-offset:1px;}
+input[type=range]:focus-visible{outline:2px solid #3b82f6;outline-offset:1px;}
 .range-row{display:flex;align-items:center;gap:6px;}
 .range-val{font-size:11px;min-width:34px;text-align:right;opacity:.8;flex-shrink:0;}
 

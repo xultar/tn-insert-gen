@@ -86,7 +86,10 @@ function grRenderTypes(){
     b.textContent=PAGE_TYPES[type].label;
     b.setAttribute('role','button'); b.tabIndex=0;
     b.setAttribute('aria-pressed', type===greeterSel.type?'true':'false');
-    b.onclick=()=>{ greeterSel={type}; grRenderTypes(); grRenderGuided(); grPreview(); };
+    b.onclick=()=>{ greeterSel={type}; grRenderTypes(); grRenderGuided(); grPreview();
+      // re-render replaces this node; keep keyboard focus on the now-selected tile
+      const sel=$('gr-types').querySelector('.gr-type.on'); if(sel) sel.focus();
+    };
     grid.appendChild(b);
   });
 }
@@ -103,7 +106,12 @@ function grRenderGuided(){
       chip.textContent=text;
       chip.setAttribute('role','button'); chip.tabIndex=0;
       chip.setAttribute('aria-pressed', opts[spec.opt]===val?'true':'false');
-      chip.onclick=()=>{ opts[spec.opt]=val; grRenderGuided(); grPreview(); };
+      chip.dataset.opt=spec.opt; chip.dataset.val=String(val);
+      chip.onclick=()=>{ opts[spec.opt]=val; grRenderGuided(); grPreview();
+        // re-render replaces this node; keep keyboard focus on the chosen chip
+        const sel=$('gr-guided').querySelector('.gr-chip[data-opt="'+spec.opt+'"][data-val="'+String(val)+'"]');
+        if(sel) sel.focus();
+      };
       row.appendChild(chip);
     });
     box.appendChild(row);
