@@ -82,8 +82,10 @@ let opts = {
   customTnW: 89,
   customTnH: 124,
   theme: 'Minimal B&W',
+  appTheme: 'Minimal B&W',
   colors: {},
   font: 'Georgia',
+  appFont: 'Georgia',
   margin: 6,
   checkbox: 'square',
   cbsize: 5,
@@ -420,6 +422,17 @@ function getColors(){
   const merged = {...base};
   COLOR_VARS.forEach(k=>{ if(opts.colors && opts.colors[k]) merged[k]=opts.colors[k]; });
   return merged;
+}
+
+// Sole styler of the APP chrome (independent of the page theme/font). Sets the
+// root color vars from the app theme and the body font from the app font. The
+// pages get their colors/font from the `colors` object + inline styles, not
+// these root vars, so this never affects the printed output.
+function applyAppSkin(){
+  const root=document.documentElement;
+  const t=THEMES[opts.appTheme]||THEMES['Minimal B&W'];
+  COLOR_VARS.forEach(k=>root.style.setProperty('--'+k,t[k]));
+  document.body.style.fontFamily=`'${opts.appFont||'Georgia'}',serif`;
 }
 
 /* ══════════════════════════════════════════════
@@ -3265,7 +3278,6 @@ function alignFacingRuns(els, colors){
 function imposeAndRender(pageEls){
   const colors=getColors();
   const root=document.documentElement;
-  COLOR_VARS.forEach(k=>root.style.setProperty('--'+k,colors[k]));
   const sz=tnSize();
   const paper=getPaperSize();
   const layout2up=(opts.outputMode==='booklet' && opts.savePaper)?getSavePaperLayout(sz,paper):null;
@@ -3315,7 +3327,6 @@ function imposeAndRender(pageEls){
                     : opts.outputMode==='flatSingle' ? 'single-sided · cut · stack · trim edges'
                     : 'duplex · cut · stack · trim edges';
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · '+tipAssembly;
-  document.body.style.fontFamily=`'${activeFont()}',serif`;
 
   const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, colors) : pageEls;
 
@@ -3558,6 +3569,7 @@ if(!loadState()){
 // attach so the app stays interactive (and the user can Reset).
 try{
   applyOptsToUI();
+  applyAppSkin();
   orderCfgSections();
   buildThemeGrid();
   buildColorOverrides();
