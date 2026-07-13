@@ -2473,7 +2473,7 @@ const PAGE_PREVIEWS = {
   moodcal:   (y,m,c)=>mkMoodCalendar(y,m,c),
   expenses:  (y,m,c)=>mkExpenseTracker(y,m,c),
   reflection:(y,m,c)=>mkReflection(y,m,c),
-  trackers:  (y,m,c)=>mkMonthGraphs(y,m,c),
+  trackers:  (y,m,c)=>graphMetrics.length?mkMonthGraphs(y,m,c):null,
   daily:     (y,m,c)=>{ const d=Math.min(15, daysInMonth(y,m));
                         return opts.dailyLayout==='timeblock' ? mkTimeBlockDay(y,m,d,c) : mkDay(y,m,d,c); },
 };
@@ -2483,7 +2483,8 @@ function previewPage(key){
   if(!build) return;
   saveState();
   const m = parseInt($('sel-m').value), y = parseInt($('sel-y').value);
-  renderSinglePage(build(y, m, getColors()));
+  const page = build(y, m, getColors());
+  if(page) renderSinglePage(page);
 }
 
 function mkCalendar(y,m,c){
