@@ -418,7 +418,7 @@ function onHolidayCountryChange(){
 function getColors(){
   const base = THEMES[opts.theme] || THEMES['Classic Warm'];
   const merged = {...base};
-  COLOR_VARS.forEach(k=>{ if(opts.colors[k]) merged[k]=opts.colors[k]; });
+  COLOR_VARS.forEach(k=>{ if(opts.colors && opts.colors[k]) merged[k]=opts.colors[k]; });
   return merged;
 }
 
@@ -603,6 +603,18 @@ function addHoliday(){
 /* ══════════════════════════════════════════════
    PERSISTENCE
    ══════════════════════════════════════════════ */
+// Guard the object/string opts that render code dereferences without checks
+// (getColors reads opts.colors[k]; activeFont reads opts.customFont), so a
+// corrupt saved/imported value can't null them out and crash every page build.
+function sanitizeOpts(o){
+  if(!o.colors || typeof o.colors!=='object') o.colors={};
+  if(!o.elementColors || typeof o.elementColors!=='object') o.elementColors={};
+  if(!o.elementFonts || typeof o.elementFonts!=='object') o.elementFonts={};
+  if(typeof o.customFont!=='string') o.customFont='';
+  return o;
+}
+
+let _quotaWarned=false;
 function saveState(){
   try{
     // `booklet` lives in greeter.js, which loads AFTER this file's init generate()->saveState().
@@ -620,23 +632,31 @@ function saveState(){
       opts, graphMetrics, dailyFields, customHolidays,
       booklet: bk
     }));
-  }catch(e){}
+    _quotaWarned=false;
+  }catch(e){
+    // Most likely QuotaExceededError — a large cover image data-URL blowing the
+    // ~5MB budget. Warn once instead of silently losing all future persistence.
+    if((e && (e.name==='QuotaExceededError' || e.code===22)) && !_quotaWarned && typeof toast==='function'){
+      _quotaWarned=true;
+      toast('Couldn’t save — storage is full (a cover image may be too large).','warn');
+    }
+  }
 }
 
 function loadState(){
   try{
     const s=JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if(!s) return false;
-    if(s.habits) habits=s.habits;
-    if(s.bottomBoxes) bottomBoxes=s.bottomBoxes;
+    if(!s || typeof s!=='object') return false;
+    if(Array.isArray(s.habits)) habits=s.habits;
+    if(Array.isArray(s.bottomBoxes)) bottomBoxes=s.bottomBoxes;
     if(s.selectedIcon) selectedIcon=s.selectedIcon;
-    if(s.selectedDays) selectedDays=s.selectedDays;
+    if(Array.isArray(s.selectedDays)) selectedDays=s.selectedDays;
     if(s.month!=null) $('sel-m').value=s.month;
     if(s.year!=null) $('sel-y').value=s.year;
-    if(s.opts) opts={...opts,...s.opts};
-    if(s.graphMetrics) graphMetrics=s.graphMetrics;
-    if(s.dailyFields) dailyFields=s.dailyFields;
-    if(s.customHolidays) customHolidays=s.customHolidays;
+    if(s.opts && typeof s.opts==='object') opts=sanitizeOpts({...opts,...s.opts});
+    if(Array.isArray(s.graphMetrics)) graphMetrics=s.graphMetrics;
+    if(Array.isArray(s.dailyFields)) dailyFields=s.dailyFields;
+    if(Array.isArray(s.customHolidays)) customHolidays=s.customHolidays;
     return true;
   }catch(e){return false;}
 }
@@ -849,14 +869,15 @@ function importSettings(e){
   reader.onload=function(){
     try{
       const data=JSON.parse(reader.result);
-      if(data.habits) habits=data.habits;
-      if(data.bottomBoxes) bottomBoxes=data.bottomBoxes;
+      if(data==null || typeof data!=='object') throw new Error('not a settings object');
+      if(Array.isArray(data.habits)) habits=data.habits;
+      if(Array.isArray(data.bottomBoxes)) bottomBoxes=data.bottomBoxes;
       if(data.selectedIcon) selectedIcon=data.selectedIcon;
-      if(data.selectedDays) selectedDays=data.selectedDays;
-      if(data.opts) opts={...opts,...data.opts};
-      if(data.graphMetrics) graphMetrics=data.graphMetrics;
-      if(data.dailyFields) dailyFields=data.dailyFields;
-      if(data.customHolidays) customHolidays=data.customHolidays;
+      if(Array.isArray(data.selectedDays)) selectedDays=data.selectedDays;
+      if(data.opts && typeof data.opts==='object') opts=sanitizeOpts({...opts,...data.opts});
+      if(Array.isArray(data.graphMetrics)) graphMetrics=data.graphMetrics;
+      if(Array.isArray(data.dailyFields)) dailyFields=data.dailyFields;
+      if(Array.isArray(data.customHolidays)) customHolidays=data.customHolidays;
       if(Array.isArray(data.booklet) && typeof booklet!=='undefined'){
         booklet=data.booklet.filter(en=>en && PAGE_TYPES[en.type]);   // drop unknown page types
         if(typeof grRenderTray==='function') grRenderTray();
@@ -1094,7 +1115,7 @@ function tnSize(){
   return TN_SIZES[opts.tnsize]||TN_SIZES.passport;
 }
 function getPaperSize(){ return PAPER_SIZES[opts.paperSize]||PAPER_SIZES.a4; }
-function activeFont(){ return opts.customFont.trim()||opts.font||'Georgia'; }
+function activeFont(){ return String(opts.customFont||'').trim()||opts.font||'Georgia'; }
 function coverAccent(){ return COVER_ACCENTS[opts.coverAccent]||COVER_ACCENTS.gold; }
 
 function handleImageUpload(inputId, optsKey){
@@ -3486,17 +3507,24 @@ if(!loadState()){
   ];
 }
 
-applyOptsToUI();
-orderCfgSections();
-buildThemeGrid();
-buildColorOverrides();
-renderMetrics();
-renderDailyFields();
-renderHolidays();
-renderHabits();
-renderBottomBoxes();
-buildDayPick();
-lucide.createIcons();
+// Backstop: if a corrupt saved value slips past validation and a render throws,
+// don't let it abort the rest of init — the event listeners below must still
+// attach so the app stays interactive (and the user can Reset).
+try{
+  applyOptsToUI();
+  orderCfgSections();
+  buildThemeGrid();
+  buildColorOverrides();
+  renderMetrics();
+  renderDailyFields();
+  renderHolidays();
+  renderHabits();
+  renderBottomBoxes();
+  buildDayPick();
+  lucide.createIcons();
+}catch(err){
+  console.error('Init render failed (corrupt saved state?) — continuing with partial UI.',err);
+}
 
 $('sel-m').addEventListener('change',()=>generate());
 $('sel-y').addEventListener('change',()=>generate());
@@ -3557,8 +3585,8 @@ $('preview').addEventListener('touchmove',e=>{
 },{passive:false});
 $('preview').addEventListener('touchend',()=>{ _pinchDist=null; },{passive:true});
 
-generate();
-setView(currentView);
+try{ generate(); setView(currentView); }
+catch(err){ console.error('Initial generate failed (corrupt saved state?).',err); }
 
 // If holidays already enabled, pull worldwide library + full country list, then refresh.
 if(opts.holidays){
