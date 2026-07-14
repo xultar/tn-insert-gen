@@ -1765,7 +1765,7 @@ function mkCover(y,m,c){
   const p=pg('cover',colors);
   p.classList.add('cover-pg');
   const titleText=opts.covertitle||'My Journal';
-  const sub=`${MONTHS[m]} ${y}`;
+  const sub=opts.undated?'':`${MONTHS[m]} ${y}`;   // undated: no month/year subtitle
   const fz=opts.coverFontSize||12;
   const acc=coverAccent();
 
@@ -1775,9 +1775,11 @@ function mkCover(y,m,c){
     overlay.style.cssText=`position:absolute;inset:0;background:rgba(0,0,0,.35);`;
     p.appendChild(overlay);
     p.appendChild(mkCoverTitle('cover-title',`color:#fff;font-size:${fz}pt;position:relative;z-index:1;text-shadow:0 1px 4px rgba(0,0,0,.6);`,titleText));
-    const cs=el('div','cover-subtitle',sub);
-    cs.style.cssText=`color:rgba(255,255,255,.8);position:relative;z-index:1;`;
-    p.appendChild(cs);
+    if(sub){
+      const cs=el('div','cover-subtitle',sub);
+      cs.style.cssText=`color:rgba(255,255,255,.8);position:relative;z-index:1;`;
+      p.appendChild(cs);
+    }
     return p;
   }
 
@@ -1785,17 +1787,21 @@ function mkCover(y,m,c){
     case 'simple':
       p.style.cssText+=getFillStyle(colors);
       p.appendChild(mkCoverTitle('cover-title',`color:${getElemColor('coverTitle',colors.ink)};font-size:${fz}pt;`,titleText));
-      const ss=el('div','cover-subtitle',sub);
-      ss.style.color=colors.dim;
-      p.appendChild(ss);
+      if(sub){
+        const ss=el('div','cover-subtitle',sub);
+        ss.style.color=colors.dim;
+        p.appendChild(ss);
+      }
       break;
     case 'minimal': {
       const wrap=el('div','');
       wrap.style.cssText=`position:absolute;bottom:${opts.margin+2}mm;left:${opts.margin+2}mm;`;
       wrap.appendChild(mkCoverTitle('',`font-size:${Math.max(8,fz-1)}pt;font-weight:700;color:${colors.ink};letter-spacing:.04em;`,titleText));
-      const ms=el('div','',sub);
-      ms.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.12em;color:${colors.dim};margin-top:1mm;`;
-      wrap.appendChild(ms);
+      if(sub){
+        const ms=el('div','',sub);
+        ms.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.12em;color:${colors.dim};margin-top:1mm;`;
+        wrap.appendChild(ms);
+      }
       p.appendChild(wrap);
       const line=el('div','');
       line.style.cssText=`position:absolute;bottom:${opts.margin+1}mm;left:${opts.margin+2}mm;right:${opts.margin+2}mm;border-bottom:.5pt solid ${colors.line};`;
@@ -1807,9 +1813,11 @@ function mkCover(y,m,c){
       const band=el('div','');
       band.style.cssText=`position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);background:${colors.page};padding:5mm ${opts.margin+2}mm;border-top:.6pt solid ${colors.line};border-bottom:.6pt solid ${colors.line};text-align:center;`;
       band.appendChild(mkCoverTitle('',`font-size:${fz+1}pt;font-weight:700;color:${colors.ink};letter-spacing:.06em;`,titleText));
-      const bs=el('div','',sub);
-      bs.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.12em;color:${colors.dim};margin-top:1.5mm;`;
-      band.appendChild(bs);
+      if(sub){
+        const bs=el('div','',sub);
+        bs.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.12em;color:${colors.dim};margin-top:1.5mm;`;
+        band.appendChild(bs);
+      }
       p.appendChild(band);
       break;
     }
@@ -1872,9 +1880,11 @@ function mkCover(y,m,c){
       db.style.cssText=`display:flex;align-items:center;justify-content:center;gap:2mm;margin-top:3mm;`;
       db.innerHTML=da.innerHTML;
       tw.appendChild(db);
-      const vs=el('div','',sub);
-      vs.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.15em;color:${goldDim};margin-top:2.5mm;`;
-      tw.appendChild(vs);
+      if(sub){
+        const vs=el('div','',sub);
+        vs.style.cssText=`font-size:6pt;text-transform:uppercase;letter-spacing:.15em;color:${goldDim};margin-top:2.5mm;`;
+        tw.appendChild(vs);
+      }
       p.appendChild(tw);
       break;
     }
@@ -1888,9 +1898,11 @@ function mkCover(y,m,c){
       inner.style.borderColor=colors.line;
       p.appendChild(inner);
       p.appendChild(mkCoverTitle('cover-title',`color:${getElemColor('coverTitle',colors.ink)};font-size:${fz+2}pt;`,titleText));
-      const fs=el('div','cover-subtitle',sub);
-      fs.style.color=colors.dim;
-      p.appendChild(fs);
+      if(sub){
+        const fs=el('div','cover-subtitle',sub);
+        fs.style.color=colors.dim;
+        p.appendChild(fs);
+      }
       break;
     }
   }
@@ -2019,13 +2031,13 @@ function mkHabitMap(y,m,c){
   const side=margin+1;
   const contentW=sz.w-2*side;
   const contentH=sz.h-2*margin;
-  const days=daysInMonth(y,m);
+  const days=opts.undated?31:daysInMonth(y,m);
   const habList=habits.length>0?habits:[{icon:'star',name:'Habit 1',days:[0,1,2,3,4,5,6]},{icon:'droplets',name:'Habit 2',days:[0,1,2,3,4,5,6]}];
   const nHabs=Math.min(habList.length,8);
   const font=activeFont();
 
   // Header
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Circle Habit Tracker`);
+  const hdr=el('div','sh'); hdr.appendChild(monthTitleFrag(y,m,'Circle Habit Tracker',colors));
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};font-size:5pt;`;
   p.appendChild(hdr);
 
@@ -2343,7 +2355,7 @@ function mkReflection(y,m,c){
   const colors=c||getColors();
   const p=pg('reflection',colors);
   p.classList.add('fcol');
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Reflection`);
+  const hdr=el('div','sh'); hdr.appendChild(monthTitleFrag(y,m,'Reflection',colors));
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
   p.appendChild(hdr);
   p.appendChild(reflectionBody(colors));
@@ -2366,7 +2378,7 @@ function mkMonthBrainDump(y,m,c){
   const p=pg('braindump',colors);
   p.classList.add('fcol');
 
-  const hdr=el('div','sh',`${MONTHS[m]} ${y} — Master Action List`);
+  const hdr=el('div','sh'); hdr.appendChild(monthTitleFrag(y,m,'Master Action List',colors));
   hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
   p.appendChild(hdr);
 
@@ -2510,9 +2522,26 @@ function mkPrintGuide(pageCount,sheetCount){
   return d;
 }
 
+// Section-header content for month-labeled pages: "July 2026 — Suffix" when
+// dated, or "Month: ______ — Suffix" (write-in rule) when opts.undated.
+function monthTitleFrag(y,m,suffix,colors){
+  const frag=document.createDocumentFragment();
+  if(opts.undated){
+    frag.appendChild(document.createTextNode('Month:'));
+    const line=el('span','');
+    line.style.cssText=`display:inline-block;width:20mm;margin-left:1.5mm;border-bottom:.3pt solid ${colors.dim};`;
+    frag.appendChild(line);
+    if(suffix) frag.appendChild(document.createTextNode(' — '+suffix));
+  }else{
+    frag.appendChild(document.createTextNode(`${MONTHS[m]} ${y}`+(suffix?` — ${suffix}`:'')));
+  }
+  return frag;
+}
+
 function mkCalendarGrid(page,colors,wdayLabels,weeks){
+  const undated=!!opts.undated;
   const y=parseInt($('sel-y').value),m=parseInt($('sel-m').value);
-  const hmap=holidayMap(y,m);
+  const hmap=undated?{}:holidayMap(y,m);
   const grid=el('div','cal-grid');
   grid.style.gridTemplateRows=`auto repeat(${weeks.length},1fr)`;
   wdayLabels.forEach(lbl=>{
@@ -2522,6 +2551,13 @@ function mkCalendarGrid(page,colors,wdayLabels,weeks){
   });
   weeks.forEach(wk=>{
     wk.forEach(d=>{
+      if(undated){
+        const cell=el('div','cal-cell');
+        cell.style.borderColor=colors.line;
+        cell.style.color=colors.ink;
+        grid.appendChild(cell);
+        return;
+      }
       if(d===0){ grid.appendChild(el('div','cal-cell empty')); return; }
       const dayOfWeek=dow(y,m,d);
       const isWeekend=(dayOfWeek===0||dayOfWeek===6);
@@ -2671,6 +2707,14 @@ function previewPage(key){
 
 function mkCalendar(y,m,c){
   const colors=c||getColors();
+  if(opts.undated){
+    const p=pg('calendar',colors); p.classList.add('fcol');
+    const hdr=el('div','sh'); hdr.appendChild(monthTitleFrag(y,m,'',colors));
+    hdr.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};background:${colors.page};`;
+    p.appendChild(hdr);
+    mkCalendarGrid(p,colors,getWdayLabels(),TNCore.blankMonthMatrix());
+    return [p];   // undated ignores calSpread: one fill-in grid page
+  }
   const wdayLabels=getWdayLabels();
   const startOffset=opts.weekstart==='sunday'?0:1;
   const firstDay=firstDow(y,m);
@@ -2781,7 +2825,7 @@ function mkMonthNotes(y,m,c){
   const colors=c||getColors();
   const p=pg('monthly-notes',colors);
   p.style.cssText+=getFillStyle(colors);
-  const h=el('div','sh',`${MONTHS[m]} ${y} — Notes`);
+  const h=el('div','sh'); h.appendChild(monthTitleFrag(y,m,'Notes',colors));
   h.style.cssText=`color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};background:${colors.page};`;
   p.appendChild(h);
   return p;
@@ -2819,7 +2863,8 @@ function mkMonthListPage(y,m,colors,days,rows,rowMm,headerText){
   };
   let used=0;
   if(headerText){
-    const hdr=el('div','sh',headerText);
+    const hdr=el('div','sh');
+    hdr.appendChild(headerText);   // DocumentFragment from monthTitleFrag ('' pages pass falsy)
     hdr.style.cssText=`text-align:center;color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};`;
     p.appendChild(hdr);
   }
@@ -2827,14 +2872,18 @@ function mkMonthListPage(y,m,colors,days,rows,rowMm,headerText){
   const labels=el('div','ml-labels');
   if(headerText){ labels.appendChild(mkRow('')); used++; }   // skip a row after the header
   days.forEach(d=>{
-    const w=dow(y,m,d);
+    // Undated: keep the 1–31 numbers but drop weekday letters + weekend
+    // shading — both depend on knowing the actual month.
+    const w=opts.undated?-1:dow(y,m,d);
     const row=mkRow(w===0||w===6?'ml-weekend':'');
     const num=el('span','ml-num',String(d));
     num.style.color=colors.ink;
-    const wd=el('span','ml-wd',WK[w]);
-    wd.style.color=colors.dim;
     row.appendChild(num);
-    row.appendChild(wd);
+    if(w>=0){
+      const wd=el('span','ml-wd',WK[w]);
+      wd.style.color=colors.dim;
+      row.appendChild(wd);
+    }
     labels.appendChild(row);
   });
   used+=days.length;
@@ -2852,11 +2901,11 @@ function mkMonthListPage(y,m,colors,days,rows,rowMm,headerText){
 function mkMonthList(y,m,c){
   const colors=c||getColors();
   const sz=tnSize();
-  const dim=daysInMonth(y,m);
+  const dim=opts.undated?31:daysInMonth(y,m);
   const g=opts.dotgrid||5;                 // row height tracks the ruling spacing
   const margin=opts.margin||6;
   const rowsFor=(hasHeader)=>Math.max(4, Math.floor((sz.h - margin*2 - (hasHeader?10:1))/g));
-  const title=`${MONTHS[m]} ${y}`;
+  const title=monthTitleFrag(y,m,'',colors);
   const allDays=[];
   for(let d=1;d<=dim;d++) allDays.push(d);
   const rows1=rowsFor(true);
