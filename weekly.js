@@ -342,6 +342,7 @@ const HOLIDAY_SETS = {
 
 // ── Worldwide holiday library (date-holidays), lazy-loaded from CDN ──
 let holidayLibPromise=null;
+let holidayLibFailed=false;   // true only after a load ATTEMPT failed (not while in flight)
 function ensureHolidayLib(){
   if(typeof window.Holidays==='function') return Promise.resolve(true);
   if(holidayLibPromise) return holidayLibPromise;
@@ -354,9 +355,10 @@ function ensureHolidayLib(){
       if(window.Holidays && typeof window.Holidays!=='function' && typeof window.Holidays.default==='function'){
         window.Holidays=window.Holidays.default;
       }
+      holidayLibFailed = typeof window.Holidays!=='function';
       res(typeof window.Holidays==='function');
     };
-    s.onerror=()=>res(false);
+    s.onerror=()=>{ holidayLibFailed=true; res(false); };
     document.head.appendChild(s);
   });
   return holidayLibPromise;
@@ -3456,6 +3458,14 @@ function generate(){
 
   imposeAndRender(els);
   updateTrackersHint();
+  updateHolidayLibHint();
+}
+
+// When the CDN holiday library is unavailable, holidayMap silently falls back
+// to a built-in US list regardless of the selected country — say so.
+function updateHolidayLibHint(){
+  const h=$('holiday-lib-hint');
+  if(h) h.style.display=(opts.holidays && holidayLibFailed && typeof window.Holidays!=='function')?'':'none';
 }
 
 // Explain the "toggled on but nothing appears" case: the trackers page only
@@ -3895,5 +3905,5 @@ catch(err){ console.error('Initial generate failed (corrupt saved state?).',err)
 
 // If holidays already enabled, pull worldwide library + full country list, then refresh.
 if(opts.holidays){
-  ensureHolidayLib().then(ok=>{ if(ok){ populateHolidayCountries(); applyOptsToUI(); generate(); } });
+  ensureHolidayLib().then(ok=>{ if(ok){ populateHolidayCountries(); applyOptsToUI(); generate(); } else { updateHolidayLibHint(); } });
 }
