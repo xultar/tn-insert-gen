@@ -1682,7 +1682,9 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
     s+=`<line x1="${plotX}" y1="${headerH}" x2="${plotX+plotW}" y2="${headerH}" stroke="${c.dim}" stroke-width=".4"/>`;
     labs.forEach((lab,i)=>{
       const xRatio = labs.length===1 ? 0.5 : i/(labs.length-1);
-      const lx=+(plotX+xRatio*plotW).toFixed(2);
+      // Snap each tick to the nearest column gridline so a written-in mark
+      // lines up with its label (ticks used to spread evenly regardless).
+      const lx=+(plotX+Math.round(xRatio*nCols)*colW).toFixed(2);
       s+=`<line x1="${lx}" y1="${headerH-1}" x2="${lx}" y2="${headerH}" stroke="${c.dim}" stroke-width=".3"/>`;
       s+=`<text x="${lx}" y="${+(headerH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="2.8" fill="${c.dim}">${TNCore.escapeXML(lab)}</text>`;
     });
