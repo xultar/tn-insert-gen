@@ -823,6 +823,7 @@ function applyOptsToUI(){
   $('opt-trackers').checked=opts.trackers;
   $('opt-savepaper').checked=opts.savePaper;
   $('opt-outputmode').value=opts.outputMode;
+  $('opt-undated').checked=!!opts.undated;
   $('opt-futurelog').checked=opts.futureLog;
   $('opt-fllayout').value=opts.flLayout;
   $('opt-flmonthcount').value=opts.flMonthCount;
@@ -910,6 +911,7 @@ function readOptsFromUI(){
   opts.flip=document.querySelector('input[name="flip"]:checked')?.value||'long';
   opts.savePaper=$('opt-savepaper').checked;
   opts.outputMode=$('opt-outputmode').value;
+  opts.undated=$('opt-undated').checked;
   opts.futureLog=$('opt-futurelog').checked;
   opts.flLayout=$('opt-fllayout').value;
   opts.flMonthCount=parseInt($('opt-flmonthcount').value)||12;
