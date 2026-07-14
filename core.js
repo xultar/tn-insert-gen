@@ -150,6 +150,18 @@
     return 'Your booklet — ' + pageCount + (pageCount === 1 ? ' page' : ' pages');
   }
 
+  // Flatten a {day: [names]} holiday map (holidayMap's shape) into
+  // render-ready {day, name} entries sorted ascending by day.
+  function holidayListEntries(map) {
+    if (!map || typeof map !== 'object') return [];
+    var out = [];
+    Object.keys(map).map(Number).sort(function (a, b) { return a - b; })
+      .forEach(function (d) {
+        (map[d] || []).forEach(function (name) { out.push({ day: d, name: name }); });
+      });
+    return out;
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
@@ -162,6 +174,7 @@
     blankMonthMatrix: blankMonthMatrix,
     clampDailyCount: clampDailyCount,
     canvasBannerText: canvasBannerText,
+    holidayListEntries: holidayListEntries,
     paginateMonths: paginateMonths,
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,

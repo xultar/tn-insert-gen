@@ -255,3 +255,18 @@ test('canvasBannerText: booklet mode shows page total with pluralization', () =>
   assert.strictEqual(core.canvasBannerText('booklet', null, 7), 'Your booklet — 7 pages');
   assert.strictEqual(core.canvasBannerText('booklet', null, 1), 'Your booklet — 1 page');
 });
+
+test('holidayListEntries: flattens a {day:[names]} map sorted by day', () => {
+  const entries = core.holidayListEntries({ 15: ['Assumption'], 1: ["New Year's Day", 'Kwanzaa ends'] });
+  assert.deepStrictEqual(entries, [
+    { day: 1, name: "New Year's Day" },
+    { day: 1, name: 'Kwanzaa ends' },
+    { day: 15, name: 'Assumption' }
+  ]);
+});
+
+test('holidayListEntries: empty or garbage input gives []', () => {
+  assert.deepStrictEqual(core.holidayListEntries({}), []);
+  assert.deepStrictEqual(core.holidayListEntries(null), []);
+  assert.deepStrictEqual(core.holidayListEntries(undefined), []);
+});
