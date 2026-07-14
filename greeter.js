@@ -18,14 +18,19 @@ function monthsOf(ctx){
   return list;
 }
 
+// Shared guided specs: every dated page type offers Undated; Daily also gets
+// a page-count input that only shows when Undated is on.
+const GR_UNDATED={opt:'undated',label:'Dating',choices:[[false,'Dated'],[true,'Undated']]};
+const GR_DAILY_COUNT={opt:'dailyCount',label:'Pages',input:'number',min:1,max:93,showIf:(o)=>!!o.undated};
+
 const PAGE_TYPES = {
-  cover:      { label:'Cover',              expand:(c)=>[mkCover(c.year,c.month,c.colors)] },
-  futureLog:  { label:'Future Log',         expand:(c)=>mkFutureLog(c.year,c.month,c.colors), guided:[{opt:'flLayout',label:'Layout',choices:[['stacked','Stacked'],['columns','Column'],['year','Year grid']]}] },
-  monthly:    { label:'Monthly calendar',   expand:(c)=>monthsOf(c).flatMap(mm=>mkCalendar(mm.year,mm.month,c.colors)) },
-  monthlog:   { label:'Monthly Log',        expand:(c)=>monthsOf(c).flatMap(mm=>mkMonthList(mm.year,mm.month,c.colors)) },
-  habit:      { label:'Circle habit tracker',expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)) },
-  masterlist: { label:'Master Action List', expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)) },
-  reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)) },
+  cover:      { label:'Cover',              expand:(c)=>[mkCover(c.year,c.month,c.colors)], guided:[GR_UNDATED] },
+  futureLog:  { label:'Future Log',         expand:(c)=>mkFutureLog(c.year,c.month,c.colors), guided:[{opt:'flLayout',label:'Layout',choices:[['stacked','Stacked'],['columns','Column'],['year','Year grid']]},GR_UNDATED] },
+  monthly:    { label:'Monthly calendar',   expand:(c)=>monthsOf(c).flatMap(mm=>mkCalendar(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  monthlog:   { label:'Monthly Log',        expand:(c)=>monthsOf(c).flatMap(mm=>mkMonthList(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  habit:      { label:'Circle habit tracker',expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  masterlist: { label:'Master Action List', expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
   daily:      { label:'Daily',              expand:(c)=>monthsOf(c).flatMap(mm=>{
                  const out=[]; const dim=new Date(mm.year,mm.month+1,0).getDate();
                  for(let d=1;d<=dim;d++){
@@ -36,10 +41,11 @@ const PAGE_TYPES = {
                  return out; }),
                  guided:[
                    {opt:'dailyLayout',label:'Layout',choices:[['standard','Standard'],['timeblock','Time-block']]},
-                   {opt:'dailyFacingNotes',label:'Facing notes',choices:[[false,'Off'],[true,'On']]}
+                   {opt:'dailyFacingNotes',label:'Facing notes',choices:[[false,'Off'],[true,'On']]},
+                   GR_UNDATED, GR_DAILY_COUNT
                  ] },
   plain:      { label:'Plain',              expand:(c)=>[mkPlain(c.year,c.month,c.colors)], guided:[{opt:'fillPattern',label:'Ruling',choices:[['dots','Dotted'],['grid','Squared'],['lines','Ruled'],['hex','Hex'],['empty','Blank']]}] },
-  notes:      { label:'Notes',              expand:(c)=>{ const n=c.count||1; const out=[]; for(let i=0;i<n;i++) out.push(mkMonthNotes(c.year,c.month,c.colors)); return out; } }
+  notes:      { label:'Notes',              expand:(c)=>{ const n=c.count||1; const out=[]; for(let i=0;i<n;i++) out.push(mkMonthNotes(c.year,c.month,c.colors)); return out; }, guided:[GR_UNDATED] }
 };
 
 let booklet = [];
@@ -116,8 +122,20 @@ function grRenderGuided(){
   const box=$('gr-guided'); box.innerHTML='';
   const g=(PAGE_TYPES[greeterSel.type]||{}).guided||[];
   g.forEach(spec=>{
+    if(spec.showIf && !spec.showIf(opts)) return;
     const lbl=document.createElement('div'); lbl.className='gr-lbl'; lbl.textContent=spec.label; box.appendChild(lbl);
     const row=document.createElement('div'); row.className='gr-opt';
+    if(spec.input==='number'){
+      const inp=document.createElement('input');
+      inp.type='number'; inp.min=spec.min; inp.max=spec.max;
+      inp.style.width='56px';
+      inp.value=TNCore.clampDailyCount(opts[spec.opt]);
+      inp.setAttribute('aria-label',spec.label);
+      inp.onchange=()=>{ opts[spec.opt]=TNCore.clampDailyCount(inp.value); inp.value=opts[spec.opt]; grPreview(); };
+      row.appendChild(inp);
+      box.appendChild(row);
+      return;
+    }
     spec.choices.forEach(([val,text])=>{
       const chip=document.createElement('div');
       chip.className='gr-chip'+(opts[spec.opt]===val?' on':'');
@@ -183,8 +201,10 @@ function grEntryLabel(entry){
   let l=PAGE_TYPES[entry.type].label;
   const g=(PAGE_TYPES[entry.type].guided||[]);
   const parts=g.map(spec=>{
+    if(spec.showIf && !spec.showIf(entry.config)) return null; // hidden option → not in label
     const v=entry.config[spec.opt];
     if(v===false || v==null || v==='') return null;         // skip off/unset (e.g. Facing notes Off)
+    if(spec.input==='number') return spec.label+' '+v;      // e.g. "Pages 20"
     const choice=(spec.choices||[]).find(ch=>ch[0]===v);
     return choice?choice[1]:v;                              // display text, fallback to raw value
   }).filter(Boolean);
