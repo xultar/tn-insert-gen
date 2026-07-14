@@ -1,11 +1,45 @@
 # Print output too small — investigation context & handoff
 
-**Status: UNRESOLVED.** The two prior "fixes" in git did **not** solve the real
-problem. This document exists so a fresh session (Fable) can start clean without
-inheriting the earlier mistaken conclusions. Read the "Why the earlier work
-misled us" section before doing anything.
+**Status: RESOLVED (2026-07-13, late evening).** The fix was `5db6203` (scope
+the mobile media queries to `screen`) after all — this document's earlier
+"UNRESOLVED" conclusion was based on stale evidence. Proof, from two
+user-produced real-Chrome print-dialog PDFs measured with
+`print-tests/measure_pdfs.py` (rasterized, per the measurement protocol below):
 
-Written 2026-07-13.
+- **Buggy PDF** (`print-tests/…_previous.pdf`, created 15:50 EDT — **3.5 h
+  BEFORE `5db6203` merged at 19:29 EDT**): sheet label and full-height fold
+  line print at normal size while the spread + its crop marks are shrunk to
+  **exactly 0.32×**, centered on the fold. That is the unique signature of
+  `.spread-container{transform:scale(0.32)}` from the then-unscoped mobile
+  media query — a dialog paper/scale mismatch would have scaled *everything*
+  uniformly, fold line included.
+- **Post-fix PDF** (`…_fixed.pdf`, created 22:20 EDT, current master, real
+  print dialog): dark-ink span 197.6 mm vs ~198.6 mm expected on all 6 pages —
+  **scale 0.99 ≈ 1:1. Fixed.**
+
+Two corrections to the analysis below:
+
+1. "The symptom persists in a real browser" was **never re-verified after
+   `5db6203`** — the photo and the saved PDF both predate the merge.
+2. The claim "real Chrome at A4 landscape never matches `max-width:768px`"
+   is wrong in general: Chrome's print layout width is
+   `paperWidth × 100 / Scale%`, so a dialog Scale >~146% (1122/768) — or any
+   setting that narrows the effective layout — makes the query match in a
+   real browser too. The empirical 0.32× signature settles that it *did*
+   match. With the queries scoped to `screen` the rule can never apply in
+   print, regardless of dialog settings.
+
+Residual notes (not blockers): the "reproduces in the upstream app" claim was
+never independently verified and may reflect upstream's own analogous mobile
+CSS or the same stale-evidence confusion. The by-design imposition (passport
+spread = ~60% of an A4 sheet, cut/fold margins) still *looks* small to a user
+expecting full-page output — a "scale to fill paper" option or clearer guidance
+remains a valid, separate UX idea. The rest of this doc is kept as history; its
+headless/measurement warnings remain valid and are worth keeping.
+
+---
+
+Written 2026-07-13 (original handoff below).
 
 ---
 
