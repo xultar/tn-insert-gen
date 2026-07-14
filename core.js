@@ -122,6 +122,26 @@
     });
   }
 
+  // Undated pages: a full 6-week grid with no day numbers — the user writes
+  // dates in by hand (31-day convention; extras get struck out).
+  function blankMonthMatrix() {
+    var weeks = [];
+    for (var w = 0; w < 6; w++) {
+      var row = [];
+      for (var d = 0; d < 7; d++) row.push(null);
+      weeks.push(row);
+    }
+    return weeks;
+  }
+
+  // Undated Daily generates a user-chosen number of pages. Garbage → 31
+  // (a month's worth); otherwise clamp to [1, 93].
+  function clampDailyCount(raw) {
+    var n = parseInt(raw, 10);
+    if (isNaN(n)) return 31;
+    return Math.min(93, Math.max(1, n));
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
@@ -131,6 +151,8 @@
     sanitizeHabits: sanitizeHabits,
     futureLogBandCount: futureLogBandCount,
     monthMatrix: monthMatrix,
+    blankMonthMatrix: blankMonthMatrix,
+    clampDailyCount: clampDailyCount,
     paginateMonths: paginateMonths,
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,

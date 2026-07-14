@@ -221,3 +221,25 @@ test('sanitizeHabits: a non-array days field is replaced with an empty array', (
     [{ name: 'C', days: [] }]
   );
 });
+
+test('blankMonthMatrix: 6 weeks of 7 nulls', () => {
+  const weeks = core.blankMonthMatrix();
+  assert.strictEqual(weeks.length, 6);
+  weeks.forEach((w) => {
+    assert.strictEqual(w.length, 7);
+    assert.ok(w.every((d) => d === null));
+  });
+  // rows must be independent arrays (no shared reference)
+  weeks[0][0] = 1;
+  assert.strictEqual(weeks[1][0], null);
+});
+
+test('clampDailyCount: clamps to [1,93], defaults 31 on garbage', () => {
+  assert.strictEqual(core.clampDailyCount(10), 10);
+  assert.strictEqual(core.clampDailyCount('10'), 10);
+  assert.strictEqual(core.clampDailyCount(0), 1);
+  assert.strictEqual(core.clampDailyCount(-5), 1);
+  assert.strictEqual(core.clampDailyCount(200), 93);
+  assert.strictEqual(core.clampDailyCount(undefined), 31);
+  assert.strictEqual(core.clampDailyCount('abc'), 31);
+});
