@@ -218,6 +218,21 @@ input::placeholder{color:rgba(255,255,255,.4);}
   .crop-mark{display:block;}
   .spread-container{position:relative!important;top:auto!important;left:auto!important;transform:scale(0.32)!important;transform-origin:center!important;flex-shrink:0;outline:none!important;}
   .zoom-ctrl{display:none;}
+
+  /* Touch targets: the weekday picker (20px) and per-habit day toggles (10px)
+     are far below the ~44px comfortable tap size. Enlarge them and related
+     small buttons on touch/narrow viewports. The habit day toggles can't fit
+     7-across at tap size inline, so the habit row wraps them to their own
+     full-width line (delete button kept on line 1 via flex order). */
+  .day-pick{gap:4px;flex-wrap:wrap;}
+  .day-btn{width:40px;height:40px;font-size:12px;border-radius:4px;}
+  .h-item{flex-wrap:wrap;}
+  .h-days{order:5;width:100%;gap:4px;margin-top:3px;}
+  .h-day{flex:1;height:34px;font-size:11px;border-radius:3px;}
+  .btn-sm{min-height:38px;padding:8px 12px;}
+  .btn-d{min-height:38px;padding:6px 12px;font-size:13px;}
+  .icon-opt{min-width:40px;min-height:40px;padding:8px;}
+  .icon-opt svg{width:18px;height:18px;}
 }
 
 /* ── PRINT ───────────────────────── */
