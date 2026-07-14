@@ -2582,8 +2582,14 @@ function mkCalendarGrid(page,colors,wdayLabels,weeks){
 function mkMiniMonth(y, m, c){
   const colors = c || getColors();
   const wrap = el('div','mini-month');
-  const cap = el('div','mini-month-cap', MONTHS[m]);
+  const cap = el('div','mini-month-cap', opts.undated ? '' : MONTHS[m]);
   cap.style.color = getElemColor('sectionHdr', colors.dim);
+  if(opts.undated){
+    // blank write-in rule where the month name would print
+    const line = el('span','');
+    line.style.cssText = `display:inline-block;width:12mm;border-bottom:.3pt solid ${colors.dim};`;
+    cap.appendChild(line);
+  }
   wrap.appendChild(cap);
   const grid = el('div','mini-month-grid');
   getWdayLabels().forEach(lbl=>{
@@ -2591,7 +2597,7 @@ function mkMiniMonth(y, m, c){
     h.style.color = colors.dot;
     grid.appendChild(h);
   });
-  TNCore.monthMatrix(y, m, opts.weekstart).forEach(week=>{
+  (opts.undated ? TNCore.blankMonthMatrix() : TNCore.monthMatrix(y, m, opts.weekstart)).forEach(week=>{
     week.forEach(d=>{
       const cell = el('div','mini-month-day', d==null ? '' : String(d));
       cell.style.color = colors.ink;
@@ -2665,7 +2671,7 @@ function mkFutureLogYear(y, m, colors){
   const months = TNCore.paginateMonths(y, m, count, count)[0];
   const p = pg('future-log', colors);
   p.classList.add('fl-year');
-  const hdr = el('div','sh', 'Future Log — ' + y);
+  const hdr = el('div','sh', opts.undated ? 'Future Log' : 'Future Log — ' + y);
   hdr.style.cssText = `color:${getElemColor('sectionHdr',colors.dim)};border-bottom:.3pt solid ${colors.line};background:${colors.page};`;
   p.appendChild(hdr);
   const grid = el('div','fl-year-grid');
