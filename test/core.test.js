@@ -270,3 +270,15 @@ test('holidayListEntries: empty or garbage input gives []', () => {
   assert.deepStrictEqual(core.holidayListEntries(null), []);
   assert.deepStrictEqual(core.holidayListEntries(undefined), []);
 });
+
+test('escapeXML: escapes the five XML special characters', () => {
+  assert.strictEqual(core.escapeXML('Sleep & Rest'), 'Sleep &amp; Rest');
+  assert.strictEqual(core.escapeXML('<b>"hi"</b>'), '&lt;b&gt;&quot;hi&quot;&lt;/b&gt;');
+  assert.strictEqual(core.escapeXML("it's"), 'it&#39;s');
+});
+
+test('escapeXML: non-strings stringify, null/undefined give empty string', () => {
+  assert.strictEqual(core.escapeXML(5), '5');
+  assert.strictEqual(core.escapeXML(null), '');
+  assert.strictEqual(core.escapeXML(undefined), '');
+});

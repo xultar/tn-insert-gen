@@ -162,6 +162,18 @@
     return out;
   }
 
+  // User-typed text (tracker titles/labels, habit names) is interpolated into
+  // SVG markup strings; escape it so "&" or "<" can't break the parse.
+  function escapeXML(v) {
+    if (v == null) return '';
+    return String(v)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
@@ -175,6 +187,7 @@
     clampDailyCount: clampDailyCount,
     canvasBannerText: canvasBannerText,
     holidayListEntries: holidayListEntries,
+    escapeXML: escapeXML,
     paginateMonths: paginateMonths,
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,

@@ -1684,7 +1684,7 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
       const xRatio = labs.length===1 ? 0.5 : i/(labs.length-1);
       const lx=+(plotX+xRatio*plotW).toFixed(2);
       s+=`<line x1="${lx}" y1="${headerH-1}" x2="${lx}" y2="${headerH}" stroke="${c.dim}" stroke-width=".3"/>`;
-      s+=`<text x="${lx}" y="${+(headerH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="2.8" fill="${c.dim}">${lab}</text>`;
+      s+=`<text x="${lx}" y="${+(headerH/2).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="2.8" fill="${c.dim}">${TNCore.escapeXML(lab)}</text>`;
     });
   } else if(hasRange){
     const {min,max,step}=metric;
@@ -1709,7 +1709,7 @@ function buildGraphSVG(days, metric, colors, yr, mo, graphW){
   s+=`<text transform="rotate(-90,${tc},${totalH})" x="${tc}" y="${totalH}"
     text-anchor="start" dominant-baseline="middle"
     font-size="3" font-weight="700" letter-spacing=".5"
-    fill="${c.dim}">${title.toUpperCase()}</text>`;
+    fill="${c.dim}">${TNCore.escapeXML((title||'').toUpperCase())}</text>`;
 
   for(let col=0;col<=nCols;col++){
     const x=+(plotX+col*colW).toFixed(2);
@@ -2136,7 +2136,7 @@ function mkHabitMap(y,m,c){
     if(habits[h]){
       const yText=+(cy-rMid).toFixed(3);
       const fs=+(Math.max(2,Math.min(3.5,habRingT*0.55))).toFixed(1);
-      svg+=`<text x="1" y="${yText}" dominant-baseline="middle" font-size="${fs}" font-family="${font},sans-serif" fill="${colors.ink}">${habits[h].name}</text>`;
+      svg+=`<text x="1" y="${yText}" dominant-baseline="middle" font-size="${fs}" font-family="${font},sans-serif" fill="${colors.ink}">${TNCore.escapeXML(habits[h].name)}</text>`;
     }
   }
 
