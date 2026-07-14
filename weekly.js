@@ -3,8 +3,22 @@
 function toggleMenu(){
   const cfg=document.getElementById('cfg');
   const bd=document.getElementById('menu-backdrop');
+  const opening=!cfg.classList.contains('open');
   cfg.classList.toggle('open');
-  bd.style.display=cfg.classList.contains('open')?'block':'none';
+  bd.style.display=opening?'block':'none';
+  // Greeter and wall are two views of ONE document sharing the global `opts`.
+  // On mobile the wall is a drawer opened here (not via grToggleTools), so reseed
+  // on each transition to keep the two views consistent: wall <- opts on open,
+  // greeter <- opts on close back to the base view. Both reseeds are idempotent.
+  try{
+    if(opening){
+      if(typeof applyOptsToUI==='function') applyOptsToUI();
+    }else{
+      if(typeof grInitSize==='function') grInitSize();
+      if(typeof grRenderGuided==='function') grRenderGuided();
+      if(typeof grPreview==='function') grPreview();
+    }
+  }catch(e){ console.error('toggleMenu reseed failed',e); }
 }
 
 let previewZoom=1;
