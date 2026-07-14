@@ -84,8 +84,9 @@ that type (no multiplication).
 
 - `blankMonthMatrix(weekstart)` → 6 rows × 7 nulls (or equivalent helper the
   calendar builder consumes when undated).
-- `undatedPageCount(type, monthCount, dailyCount)` — page-count math used by
-  `grAdd`/expansion so tray counts match generated output.
+- `clampDailyCount(raw)` — clamp to [1, 93], defaulting 31 on garbage; used by
+  the guided input and the Daily expansion. (Tray page counts need no helper:
+  `grAdd` already counts by expanding.)
 - Tests in `test/core.test.js` for both, plus existing tests stay green.
 
 ### Persistence / migration
