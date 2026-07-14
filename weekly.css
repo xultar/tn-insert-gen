@@ -239,7 +239,7 @@ input::placeholder{color:rgba(255,255,255,.4);}
 
 /* ── PRINT ───────────────────────── */
 @media print{
-  #greeter,#cfg,#preview-hdr,#page-preview,#book-view,#menu-toggle,#menu-backdrop,#toast-wrap{display:none!important;}
+  #greeter,#cfg,#preview-hdr,#page-preview,#book-view,#menu-toggle,#menu-backdrop,#toast-wrap,#inspector{display:none!important;}
   body{background:white;display:block;height:auto;overflow:visible;}
   #preview{padding:0;background:none;height:auto;overflow:visible;}
   #print-area{display:flex!important;flex-direction:column;gap:0;position:static;}
