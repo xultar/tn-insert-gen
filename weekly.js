@@ -1015,6 +1015,22 @@ function lucideEl(name, w, h){
   return s;
 }
 
+// Upgrade the per-page preview buttons from a plain ▣ glyph to a Lucide "eye"
+// icon — a clearer "view/preview" affordance than the square. The ▣ stays in
+// the HTML as a fallback if the icon library fails to load; the init block's
+// lucide.createIcons() call (right after this runs) converts the placeholders.
+function iconifyPreviewButtons(){
+  if(typeof lucideEl!=='function') return;
+  document.querySelectorAll('button[onclick^="previewPage"]').forEach(b=>{
+    const labelled=/Preview this page/i.test(b.textContent);
+    b.textContent='';
+    b.style.display='inline-flex'; b.style.alignItems='center'; b.style.gap='4px';
+    b.appendChild(lucideEl('eye','14px','14px'));
+    if(labelled) b.appendChild(document.createTextNode('Preview this page'));
+    if(!b.getAttribute('aria-label')) b.setAttribute('aria-label','Preview this page');
+  });
+}
+
 /* ══════════════════════════════════════════════
    ICON PICKER
    ══════════════════════════════════════════════ */
@@ -3638,6 +3654,7 @@ try{
   renderHabits();
   renderBottomBoxes();
   buildDayPick();
+  iconifyPreviewButtons();
   lucide.createIcons();
 }catch(err){
   console.error('Init render failed (corrupt saved state?) — continuing with partial UI.',err);
