@@ -166,10 +166,21 @@ function grRenderGuided(){
   });
 }
 
+// Snapshot the current opts-based guided choices for a page type (what grAdd
+// stores on the entry, and what the preview banner labels).
+function grSnapshotConfig(type){
+  const cfg={};
+  (PAGE_TYPES[type].guided||[]).forEach(spec=>{ cfg[spec.opt]=opts[spec.opt]; });
+  return cfg;
+}
+
 function grPreview(){
   const ctx=grCtx();
-  const pages=PAGE_TYPES[greeterSel.type].expand(Object.assign({}, ctx));
+  const type=greeterSel.type;
+  const pages=PAGE_TYPES[type].expand(Object.assign({}, ctx));
   renderSinglePage(pages);
+  const label=grEntryLabel({ type, config:grSnapshotConfig(type) });
+  setCanvasMode(TNCore.canvasBannerText('preview', label, pages.length), 'preview');
 }
 
 function grGenerate(){
@@ -186,6 +197,7 @@ function grGenerate(){
     }
   });
   imposeAndRender(pages);
+  setCanvasMode(TNCore.canvasBannerText('booklet', null, TNCore.bookletTotalPages(booklet)), 'booklet');
 }
 
 // Renders the booklet, then opens the browser print/PDF dialog. (grGenerate only
@@ -198,15 +210,17 @@ function grPrint(){
 
 function grAdd(){
   const ctx=grCtx();
-  const cfg={};
   const type=greeterSel.type;
   // snapshot the opts-based guided choices onto the entry so the label + count reflect them
-  const g=(PAGE_TYPES[type].guided||[]);
-  g.forEach(spec=>{ cfg[spec.opt]=opts[spec.opt]; });
+  const cfg=grSnapshotConfig(type);
   const pageCount=PAGE_TYPES[type].expand(Object.assign({}, ctx, cfg)).length;
   const entry={ id:'e'+(++grUid), type, config:cfg, pageCount };
   booklet=TNCore.bookletAdd(booklet, entry);
   grRenderTray(); saveState();
+  // Show the whole booklet after every Add, so the canvas always reflects the
+  // tray — a later selection preview replacing it was read as "my pages were
+  // overridden" when the booklet itself was intact.
+  grGenerate();
 }
 
 function grEntryLabel(entry){
@@ -229,13 +243,16 @@ function grRenderTray(){
   booklet.forEach(entry=>{
     const row=document.createElement('div'); row.className='gr-trow';
     const up=document.createElement('button'); up.textContent='▲'; up.title='Move up'; up.setAttribute('aria-label','Move up');
-    up.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,-1); grRenderTray(); saveState(); };
+    up.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,-1); grRenderTray(); saveState(); grGenerate(); };
     const dn=document.createElement('button'); dn.textContent='▼'; dn.title='Move down'; dn.setAttribute('aria-label','Move down');
-    dn.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,1); grRenderTray(); saveState(); };
+    dn.onclick=()=>{ booklet=TNCore.bookletMove(booklet,entry.id,1); grRenderTray(); saveState(); grGenerate(); };
     const lab=document.createElement('span'); lab.className='gr-tlabel'; lab.textContent=grEntryLabel(entry);
     const ct=document.createElement('span'); ct.className='gr-tct'; ct.textContent=entry.pageCount+'p';
     const rm=document.createElement('button'); rm.textContent='✕'; rm.title='Remove'; rm.setAttribute('aria-label','Remove from booklet');
-    rm.onclick=()=>{ booklet=TNCore.bookletRemove(booklet,entry.id); grRenderTray(); saveState(); };
+    rm.onclick=()=>{ booklet=TNCore.bookletRemove(booklet,entry.id); grRenderTray(); saveState();
+      // keep the canvas in sync with the tray; empty tray falls back to a preview
+      if(booklet.length) grGenerate(); else grPreview();
+    };
     row.appendChild(up); row.appendChild(dn); row.appendChild(lab); row.appendChild(ct); row.appendChild(rm);
     tray.appendChild(row);
   });
@@ -251,7 +268,10 @@ function initGreeter(){
   booklet = booklet.filter(e=>e && PAGE_TYPES[e.type]);
   // Avoid id collisions with restored entries (ids look like 'e3').
   booklet.forEach(e=>{ const n=parseInt(String(e.id).replace(/\D/g,''))||0; if(n>grUid) grUid=n; });
-  grInitSize(); grSeedDate(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
+  grInitSize(); grSeedDate(); grRenderTypes(); grRenderGuided(); grRenderTray();
+  // A restored booklet is what the user cares about on load; only fall back to
+  // a selection preview when the tray is empty.
+  if(booklet.length) grGenerate(); else grPreview();
 }
 
 initGreeter();

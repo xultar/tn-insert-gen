@@ -142,6 +142,14 @@
     return Math.min(93, Math.max(1, n));
   }
 
+  // Text for the canvas-mode banner: the pages canvas shows either a preview
+  // of the current selection or the assembled booklet, and the banner is what
+  // tells the user which one they're looking at.
+  function canvasBannerText(mode, label, pageCount) {
+    if (mode === 'preview') return 'Previewing: ' + label + ' — not in booklet yet';
+    return 'Your booklet — ' + pageCount + (pageCount === 1 ? ' page' : ' pages');
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
@@ -153,6 +161,7 @@
     monthMatrix: monthMatrix,
     blankMonthMatrix: blankMonthMatrix,
     clampDailyCount: clampDailyCount,
+    canvasBannerText: canvasBannerText,
     paginateMonths: paginateMonths,
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,

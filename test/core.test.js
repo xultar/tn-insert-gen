@@ -243,3 +243,15 @@ test('clampDailyCount: clamps to [1,93], defaults 31 on garbage', () => {
   assert.strictEqual(core.clampDailyCount(undefined), 31);
   assert.strictEqual(core.clampDailyCount('abc'), 31);
 });
+
+test('canvasBannerText: preview mode names the selection and flags it as not added', () => {
+  assert.strictEqual(
+    core.canvasBannerText('preview', 'Future Log · Year grid', 1),
+    'Previewing: Future Log · Year grid — not in booklet yet'
+  );
+});
+
+test('canvasBannerText: booklet mode shows page total with pluralization', () => {
+  assert.strictEqual(core.canvasBannerText('booklet', null, 7), 'Your booklet — 7 pages');
+  assert.strictEqual(core.canvasBannerText('booklet', null, 1), 'Your booklet — 1 page');
+});

@@ -2611,6 +2611,17 @@ function mkMiniMonth(y, m, c){
   return wrap;
 }
 
+// The pages canvas is shared by "preview one page type" and "assembled booklet"
+// flows; the banner says which one is on screen. Both shared renderers clear it,
+// so only callers that opt in (the greeter) ever show it.
+function setCanvasMode(text, kind){
+  const b=$('canvas-mode');
+  if(!b) return;
+  b.textContent=text||'';
+  b.className='canvas-mode'+(kind?' canvas-mode-'+kind:'');
+  b.style.display=text?'':'none';
+}
+
 function renderSinglePage(pageEls){
   const els = Array.isArray(pageEls) ? pageEls : [pageEls];
   const prev = $('page-preview');
@@ -2622,6 +2633,7 @@ function renderSinglePage(pageEls){
   lucide.createIcons();
   setView('pages');
   $('pg-count').textContent = els.length;
+  setCanvasMode('');
 }
 
 function mkFutureLog(y, m, c){
@@ -3716,6 +3728,7 @@ function imposeAndRender(pageEls){
                  : opts.outputMode==='flatSingle' ? 'cut · stack (single-sided) · trim'
                  : 'cut · stack · trim';
   $('pg-count').textContent=`${n+separateCovers.length} pages · ${physSides} print sides${upNote}${coverNote} · ${assembly}`;
+  setCanvasMode('');
 }
 
 /* ══════════════════════════════════════════════
