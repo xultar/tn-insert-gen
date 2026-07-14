@@ -3069,6 +3069,22 @@ function mkHabitRow(h,colors){
   return row;
 }
 
+// Undated daily header: "Date:" + a write-in rule, replacing weekday name,
+// day number, holidays and moon phase (all meaningless without a real date).
+function mkUndatedDayHdr(colors){
+  const hdr=el('div','d-hdr');
+  hdr.style.cssText=`border-bottom:.3pt solid ${colors.line};`;
+  const dowWrap=el('div','d-dow-wrap');
+  const dowEl=el('span','d-dow','Date:');
+  dowEl.style.color=getElemColor('dayName',colors.dim);
+  dowWrap.appendChild(dowEl);
+  const line=el('span','');
+  line.style.cssText=`display:inline-block;width:24mm;margin-left:1.5mm;border-bottom:.3pt solid ${colors.dim};`;
+  dowWrap.appendChild(line);
+  hdr.appendChild(dowWrap);
+  return hdr;
+}
+
 function mkDay(y,m,d,c){
   const colors=c||getColors();
   const p=pg(`${m+1}/${d}`,colors);
@@ -3076,6 +3092,9 @@ function mkDay(y,m,d,c){
   const w=dow(y,m,d);
   const wdayIdx=opts.weekstart==='sunday' ? w : (w+6)%7;
 
+  if(opts.undated){
+    p.appendChild(mkUndatedDayHdr(colors));
+  }else{
   const hdr=el('div','d-hdr');
   hdr.style.cssText=`border-bottom:.3pt solid ${colors.line};`;
   const dowWrap=el('div','d-dow-wrap');
@@ -3100,6 +3119,7 @@ function mkDay(y,m,d,c){
   numEl.style.color=getElemColor('dayNum',colors.line);
   hdr.appendChild(numEl);
   p.appendChild(hdr);
+  }
 
   function mkDailyField(f){
     const field=el('div','d-field');
@@ -3239,6 +3259,9 @@ function mkTimeBlockDay(y,m,d,c){
   const wdayIdx=opts.weekstart==='sunday' ? w : (w+6)%7;
 
   // Header — weekday + day number (same look as the standard daily page).
+  if(opts.undated){
+    p.appendChild(mkUndatedDayHdr(colors));
+  }else{
   const hdr=el('div','d-hdr');
   hdr.style.cssText=`border-bottom:.3pt solid ${colors.line};`;
   const dowWrap=el('div','d-dow-wrap');
@@ -3256,6 +3279,7 @@ function mkTimeBlockDay(y,m,d,c){
   numEl.style.color=getElemColor('dayNum',colors.line);
   hdr.appendChild(numEl);
   p.appendChild(hdr);
+  }
 
   // Curated trackers: mood faces + today's habits (reuse the daily helpers).
   if(opts.mood){

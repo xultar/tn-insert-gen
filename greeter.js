@@ -31,14 +31,26 @@ const PAGE_TYPES = {
   habit:      { label:'Circle habit tracker',expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
   masterlist: { label:'Master Action List', expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
   reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  daily:      { label:'Daily',              expand:(c)=>monthsOf(c).flatMap(mm=>{
+  daily:      { label:'Daily',              expand:(c)=>{
+                 if(opts.undated){
+                   // user-chosen count; Months multiplier does not apply
+                   const n=TNCore.clampDailyCount(opts.dailyCount);
+                   const out=[];
+                   for(let i=0;i<n;i++){
+                     const page=opts.dailyLayout==='timeblock'?mkTimeBlockDay(c.year,c.month,1,c.colors):mkDay(c.year,c.month,1,c.colors);
+                     if(opts.dailyFacingNotes){ out.push(...facingPair(page,'',c.colors)); }
+                     else out.push(page);
+                   }
+                   return out;
+                 }
+                 return monthsOf(c).flatMap(mm=>{
                  const out=[]; const dim=new Date(mm.year,mm.month+1,0).getDate();
                  for(let d=1;d<=dim;d++){
                    const page=opts.dailyLayout==='timeblock'?mkTimeBlockDay(mm.year,mm.month,d,c.colors):mkDay(mm.year,mm.month,d,c.colors);
                    if(opts.dailyFacingNotes){ out.push(...facingPair(page, DOW_ABB3[dow(mm.year,mm.month,d)]+' '+d, c.colors)); }
                    else out.push(page);
                  }
-                 return out; }),
+                 return out; }); },
                  guided:[
                    {opt:'dailyLayout',label:'Layout',choices:[['standard','Standard'],['timeblock','Time-block']]},
                    {opt:'dailyFacingNotes',label:'Facing notes',choices:[[false,'Off'],[true,'On']]},
