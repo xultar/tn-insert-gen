@@ -3534,7 +3534,24 @@ function imposeAndRender(pageEls){
                     : 'duplex · cut · stack · trim edges';
   $('paper-tip').textContent=paper.label+' '+orientStr+upLabel+' · '+tipAssembly;
 
-  const els = opts.outputMode==='booklet' ? alignFacingRuns(pageEls, colors) : pageEls;
+  // Facing alignment must match the ASSEMBLED book. Inline covers are part of
+  // the printed sequence, so the aligner sees them. A separate cover sheet is
+  // printed single-sided and folded around the body — its blank inside face
+  // sits between cover and body page 1 — so there the body must be aligned
+  // alone (body-local parity == assembled parity), with covers hoisted out
+  // exactly as the print path extracts them later.
+  let els;
+  if(opts.outputMode!=='booklet'){
+    els = pageEls;
+  } else if(opts.coverSheet){
+    const lbl = e=>(e.dataset && e.dataset.lbl) || '';
+    const fronts = pageEls.filter(e=>lbl(e)==='cover');
+    const backs  = pageEls.filter(e=>lbl(e)==='back-cover');
+    const body   = pageEls.filter(e=>lbl(e)!=='cover' && lbl(e)!=='back-cover');
+    els = [...fronts, ...alignFacingRuns(body, colors), ...backs];
+  } else {
+    els = alignFacingRuns(pageEls, colors);
+  }
 
   if(opts.pagenums){
     let pgNum=1;
