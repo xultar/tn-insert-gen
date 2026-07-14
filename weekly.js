@@ -2601,6 +2601,9 @@ function mkMiniMonth(y, m, c){
     week.forEach(d=>{
       const cell = el('div','mini-month-day', d==null ? '' : String(d));
       cell.style.color = colors.ink;
+      // Undated cells are empty text → invisible; outline them so a fillable
+      // grid still prints where the calendar would be.
+      if(opts.undated) cell.style.cssText += `border:.2pt solid ${colors.line};min-height:2mm;`;
       grid.appendChild(cell);
     });
   });

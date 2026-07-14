@@ -70,7 +70,7 @@ min:1, max:93, showIf:(o)=>o.undated}`. Default `opts.dailyCount = 31`.
 | `mkMonthList` (monthlog) | Title `Month:` + blank. Rows numbered 1–31; weekday letters dropped. |
 | `mkHabitMap` | Month name → `Month:` blank; renders 31 days. |
 | `mkMonthBrainDump`, `mkReflection`, `mkMonthNotes` | Month-name header → `Month:` + blank line. |
-| `mkFutureLog` (all three layouts) | Month-name labels → blank write-in lines; band/cell structure unchanged. |
+| `mkFutureLog` (all three layouts) | Month-name labels → blank write-in lines; mini-month day cells keep no numbers but get visible outlines (`.2pt` border, 2mm min-height) so a fillable grid still prints (rev 2026-07-14: user feedback — numberless cells with no outline made the calendars vanish). |
 | `facingPair` | Accepts a blank/`Date:` label when undated. |
 
 Convention: undated month-shaped pages assume **31 days / 6 weeks** (user
