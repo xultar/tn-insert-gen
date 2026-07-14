@@ -2593,6 +2593,7 @@ function mkMiniMonth(y, m, c){
     cap.appendChild(line);
   }
   wrap.appendChild(cap);
+  const hmap = opts.undated ? {} : holidayMap(y, m);
   const grid = el('div','mini-month-grid');
   getWdayLabels().forEach(lbl=>{
     const h = el('div','mini-month-dow', lbl.charAt(0));
@@ -2603,6 +2604,8 @@ function mkMiniMonth(y, m, c){
     week.forEach(d=>{
       const cell = el('div','mini-month-day', d==null ? '' : String(d));
       cell.style.color = colors.ink;
+      // Holiday mark: bold + thin underline survives 3.6pt cells and B&W themes.
+      if(d!=null && hmap[d]){ cell.style.fontWeight='700'; cell.style.borderBottom=`.3pt solid ${colors.ink}`; }
       // Undated cells are empty text → invisible; outline them so a fillable
       // grid still prints where the calendar would be.
       if(opts.undated) cell.style.cssText += `border:.2pt solid ${colors.line};min-height:2mm;`;
@@ -2638,6 +2641,21 @@ function renderSinglePage(pageEls){
   setCanvasMode('');
 }
 
+// Pre-printed holiday lines ("1 · New Year's Day") for a Future Log month's
+// writing area. Returns null when undated or the month has no holidays.
+function mkFLHolidayLines(y, m, colors){
+  if(opts.undated) return null;
+  const entries=TNCore.holidayListEntries(holidayMap(y,m));
+  if(!entries.length) return null;
+  const box=el('div','fl-hols');
+  entries.forEach(en=>{
+    const line=el('div','fl-hol-line', en.day+' · '+en.name);
+    line.style.color=colors.dim;
+    box.appendChild(line);
+  });
+  return box;
+}
+
 function mkFutureLog(y, m, c){
   const colors = c || getColors();
   const layout = opts.flLayout || 'stacked';
@@ -2658,6 +2676,8 @@ function mkFutureLogStacked(y, m, colors){
       band.style.cssText += getFillStyle(colors);
       band.style.borderColor = colors.line;
       band.appendChild(mkMiniMonth(mm.year, mm.month, colors));
+      const hl=mkFLHolidayLines(mm.year, mm.month, colors);
+      if(hl) band.appendChild(hl);
       p.appendChild(band);
     });
     return p;
@@ -2674,6 +2694,8 @@ function mkFutureLogColumns(y, m, colors){
       const col = el('div','fl-col');
       col.style.borderColor = colors.line;
       col.appendChild(mkMiniMonth(mm.year, mm.month, colors));
+      const hl=mkFLHolidayLines(mm.year, mm.month, colors);
+      if(hl) col.appendChild(hl);
       const write = el('div','fl-write');
       write.style.cssText = getFillStyle(colors);
       col.appendChild(write);
