@@ -76,6 +76,12 @@ function grToggleTools(){
   }else{
     grInitSize(); grRenderGuided(); grPreview();     // greeter ← opts
   }
+  // On mobile the wall is a slide-in drawer opened by the hamburger; switching
+  // panels (e.g. the wall's "Back to greeter" link) should also close it.
+  const cfgEl=document.getElementById('cfg');
+  if(cfgEl) cfgEl.classList.remove('open');
+  const bd=document.getElementById('menu-backdrop');
+  if(bd) bd.style.display='none';
 }
 
 function grRenderTypes(){
