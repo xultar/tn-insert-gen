@@ -174,6 +174,13 @@
       .replace(/'/g, '&#39;');
   }
 
+  // Tray-label period text for a booklet entry's snapshotted date:
+  // "Jul 2026", with a "×N" months multiplier only when it matters.
+  function periodLabel(monthName, year, monthCount) {
+    var n = monthCount || 1;
+    return monthName + ' ' + year + (n > 1 ? ' ×' + n : '');
+  }
+
   var api = {
     NOTEBOOK_SIZES: NOTEBOOK_SIZES,
     NOTEBOOK_MIN_MM: NOTEBOOK_MIN_MM,
@@ -188,6 +195,7 @@
     canvasBannerText: canvasBannerText,
     holidayListEntries: holidayListEntries,
     escapeXML: escapeXML,
+    periodLabel: periodLabel,
     paginateMonths: paginateMonths,
     bookletAdd: bookletAdd,
     bookletRemove: bookletRemove,

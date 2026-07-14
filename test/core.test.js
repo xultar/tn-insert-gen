@@ -282,3 +282,9 @@ test('escapeXML: non-strings stringify, null/undefined give empty string', () =>
   assert.strictEqual(core.escapeXML(null), '');
   assert.strictEqual(core.escapeXML(undefined), '');
 });
+
+test('periodLabel: "Mon YYYY", with xN multiplier only when count > 1', () => {
+  assert.strictEqual(core.periodLabel('Jul', 2026, 1), 'Jul 2026');
+  assert.strictEqual(core.periodLabel('Jul', 2026, 3), 'Jul 2026 ×3');
+  assert.strictEqual(core.periodLabel('Jan', 2027, undefined), 'Jan 2027');
+});

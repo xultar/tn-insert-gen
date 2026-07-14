@@ -26,12 +26,12 @@ const GR_DAILY_COUNT={opt:'dailyCount',label:'Pages',input:'number',min:1,max:93
 const PAGE_TYPES = {
   cover:      { label:'Cover',              expand:(c)=>[mkCover(c.year,c.month,c.colors)], guided:[GR_UNDATED] },
   futureLog:  { label:'Future Log',         expand:(c)=>mkFutureLog(c.year,c.month,c.colors), guided:[{opt:'flLayout',label:'Layout',choices:[['stacked','Stacked'],['columns','Column'],['year','Year grid']]},GR_UNDATED] },
-  monthly:    { label:'Monthly calendar',   expand:(c)=>monthsOf(c).flatMap(mm=>mkCalendar(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  monthlog:   { label:'Monthly Log',        expand:(c)=>monthsOf(c).flatMap(mm=>mkMonthList(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  habit:      { label:'Circle habit tracker',expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  masterlist: { label:'Master Action List', expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  reflection: { label:'Reflection',         expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
-  daily:      { label:'Daily',              expand:(c)=>{
+  monthly:    { label:'Monthly calendar',   months:true, expand:(c)=>monthsOf(c).flatMap(mm=>mkCalendar(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  monthlog:   { label:'Monthly Log',        months:true, expand:(c)=>monthsOf(c).flatMap(mm=>mkMonthList(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  habit:      { label:'Circle habit tracker',months:true, expand:(c)=>monthsOf(c).map(mm=>mkHabitMap(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  masterlist: { label:'Master Action List', months:true, expand:(c)=>monthsOf(c).map(mm=>mkMonthBrainDump(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  reflection: { label:'Reflection',         months:true, expand:(c)=>monthsOf(c).map(mm=>mkReflection(mm.year,mm.month,c.colors)), guided:[GR_UNDATED] },
+  daily:      { label:'Daily',              months:true, expand:(c)=>{
                  if(opts.undated){
                    // user-chosen count; Months multiplier does not apply
                    const n=TNCore.clampDailyCount(opts.dailyCount);
@@ -191,7 +191,7 @@ function grGenerate(){
     const g=(PAGE_TYPES[entry.type].guided||[]);
     const saved={}; g.forEach(spec=>{ saved[spec.opt]=opts[spec.opt]; opts[spec.opt]=entry.config[spec.opt]; });
     try{
-      return PAGE_TYPES[entry.type].expand(Object.assign({}, ctx, entry.config||{}));
+      return PAGE_TYPES[entry.type].expand(Object.assign({}, ctx, entry.when||{}, entry.config||{}));
     }finally{
       g.forEach(spec=>{ opts[spec.opt]=saved[spec.opt]; });  // restore even if expand throws
     }
@@ -214,7 +214,11 @@ function grAdd(){
   // snapshot the opts-based guided choices onto the entry so the label + count reflect them
   const cfg=grSnapshotConfig(type);
   const pageCount=PAGE_TYPES[type].expand(Object.assign({}, ctx, cfg)).length;
-  const entry={ id:'e'+(++grUid), type, config:cfg, pageCount };
+  // Snapshot the date so the entry keeps its period when the greeter date
+  // changes later — booklets can mix periods. (Older persisted entries have
+  // no `when` and keep following the current date until re-added.)
+  const when={ year:ctx.year, month:ctx.month, monthCount:ctx.monthCount };
+  const entry={ id:'e'+(++grUid), type, config:cfg, when, pageCount };
   booklet=TNCore.bookletAdd(booklet, entry);
   grRenderTray(); saveState();
   // Show the whole booklet after every Add, so the canvas always reflects the
@@ -234,6 +238,12 @@ function grEntryLabel(entry){
     const choice=(spec.choices||[]).find(ch=>ch[0]===v);
     return choice?choice[1]:v;                              // display text, fallback to raw value
   }).filter(Boolean);
+  // Snapshotted period ("Jul 2026", "Jul 2026 ×3") — dated entries only;
+  // undated pages have no meaningful date.
+  if(entry.when && !entry.config.undated){
+    const mc=PAGE_TYPES[entry.type].months ? entry.when.monthCount : 1;
+    parts.unshift(TNCore.periodLabel(MONTHS[entry.when.month].slice(0,3), entry.when.year, mc));
+  }
   if(parts.length) l+=' · '+parts.join(' · ');
   return l;
 }
