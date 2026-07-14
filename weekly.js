@@ -114,6 +114,8 @@ let opts = {
   futureLog: false,
   flMonthCount: 12,
   dailyFacingNotes: false,
+  undated: false,
+  dailyCount: 31,
   mood: true,
   moodfaces: 5,
   notes: 1,

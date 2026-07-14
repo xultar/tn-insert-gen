@@ -64,6 +64,18 @@ function grInitSize(){
 function grOnSizeChange(){ opts.tnsize=$('gr-size').value; grPreview(); }
 function grOnMonthsChange(){ grPreview(); }
 
+// The wall's sel-m/sel-y stay the single source of truth (grCtx reads them);
+// the greeter inputs are a mirror synced both ways.
+function grSeedDate(){
+  $('gr-m').value=$('sel-m').value;
+  $('gr-y').value=$('sel-y').value;
+}
+function grOnDateChange(){
+  $('sel-m').value=$('gr-m').value;
+  $('sel-y').value=$('gr-y').value;
+  saveState(); grPreview();
+}
+
 function grToggleTools(){
   const cb=$('gr-tools');
   // if called from the wall's back link, the checkbox is still checked → force off
@@ -74,7 +86,7 @@ function grToggleTools(){
   if(cb.checked){
     applyOptsToUI();                                 // wall inputs ← opts
   }else{
-    grInitSize(); grRenderGuided(); grPreview();     // greeter ← opts
+    grInitSize(); grSeedDate(); grRenderGuided(); grPreview();  // greeter ← opts/wall
   }
   // On mobile the wall is a slide-in drawer opened by the hamburger; switching
   // panels (e.g. the wall's "Back to greeter" link) should also close it.
@@ -207,7 +219,7 @@ function initGreeter(){
   booklet = booklet.filter(e=>e && PAGE_TYPES[e.type]);
   // Avoid id collisions with restored entries (ids look like 'e3').
   booklet.forEach(e=>{ const n=parseInt(String(e.id).replace(/\D/g,''))||0; if(n>grUid) grUid=n; });
-  grInitSize(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
+  grInitSize(); grSeedDate(); grRenderTypes(); grRenderGuided(); grRenderTray(); grPreview();
 }
 
 initGreeter();
