@@ -1,0 +1,82 @@
+<style>
+  .gd, .gd *{color:#16161f !important;box-sizing:border-box;}
+  .gd h2{font-weight:800 !important;}
+  .gd .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .gd .stage{display:flex;gap:18px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+  /* sidebar mock */
+  .sb{width:250px;background:#4a4262;border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:9px;color:#f0ede6 !important;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+  .sb *{color:#f0ede6 !important}
+  .sb .ttl{font-size:11px;font-weight:800 !important;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+  .step{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:7px 9px}
+  .step .k{font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;opacity:.6;margin-bottom:3px}
+  .step .v{font-size:12px;font-weight:600 !important}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+  .chip{font-size:9.5px;border:1px solid rgba(255,255,255,.25);border-radius:11px;padding:3px 7px;background:rgba(255,255,255,.05)}
+  .chip.on{background:#f0ede6;color:#4a4262 !important;border-color:#f0ede6;font-weight:700}
+  .addbtn{background:#f0ede6;color:#4a4262 !important;border-radius:6px;text-align:center;padding:7px;font-size:11px;font-weight:800 !important}
+  .tray{background:rgba(0,0,0,.16);border-radius:6px;padding:7px}
+  .tray .th{font-size:8.5px;text-transform:uppercase;letter-spacing:.1em;opacity:.6;display:flex;justify-content:space-between;margin-bottom:5px}
+  .trow{display:flex;align-items:center;gap:6px;font-size:10.5px;padding:3px 4px;border-radius:4px;background:rgba(255,255,255,.06);margin-bottom:3px}
+  .trow .grip{opacity:.5}
+  .trow .ct{margin-left:auto;opacity:.65;font-size:9px}
+  .toggle-row{display:flex;align-items:center;gap:7px;font-size:10.5px;border-top:1px solid rgba(255,255,255,.12);padding-top:9px;margin-top:2px}
+  .sw{width:30px;height:15px;border-radius:9px;background:rgba(255,255,255,.25);position:relative;flex-shrink:0}
+  .sw::after{content:"";position:absolute;width:11px;height:11px;border-radius:50%;background:#fff;top:2px;left:2px}
+  /* preview mock */
+  .pv{width:210px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .page{width:150px;height:215px;background:#fffdf8;border:1.5px solid #4a4262;border-radius:3px;box-shadow:0 4px 14px rgba(0,0,0,.14);padding:8px;display:flex;flex-direction:column;gap:5px}
+  .page .ph{font-size:7px;font-weight:800 !important;border-bottom:1px solid #4a4262;padding-bottom:2px}
+  .page .body{flex:1;background-image:radial-gradient(circle,rgba(74,66,98,.35) .6px,transparent .6px);background-size:8px 8px;background-position:4px 4px}
+  .pvcap{font-size:11px;font-weight:700 !important;color:#3a3a48 !important}
+  .legend{max-width:640px;margin:16px auto 0;font-size:12.5px;line-height:1.65;font-weight:500 !important;color:#2a2a34 !important}
+  .legend b{color:#16161f !important}
+</style>
+
+<div class="gd">
+<h2>The greeter — how it all fits</h2>
+<p class="subtitle">Sidebar swaps to this calm flow by default (option A). You pick a page, see it, add it to the booklet, repeat. Full tools are one toggle away.</p>
+
+<div class="stage">
+  <div class="sb">
+    <div class="ttl">◆ Build a page</div>
+    <div class="step"><div class="k">1 · Notebook</div><div class="v">Regular · 110×210</div></div>
+    <div class="step"><div class="k">2 · Dates</div><div class="v">Jan 1 – Jan 31, 2026</div></div>
+    <div class="step">
+      <div class="k">3 · Page type</div>
+      <div class="chips">
+        <span class="chip on">Future Log</span><span class="chip">Daily</span><span class="chip">Monthly</span>
+        <span class="chip">Habit</span><span class="chip">Master list</span><span class="chip">Reflection</span>
+        <span class="chip">Cover</span><span class="chip">Plain</span><span class="chip">Notes</span>
+      </div>
+    </div>
+    <div class="step"><div class="k">Guided · Future Log</div>
+      <div class="chips"><span class="chip on">Stacked</span><span class="chip">Column</span><span class="chip">Year grid</span></div>
+    </div>
+    <div class="addbtn">+ Add to booklet</div>
+    <div class="tray">
+      <div class="th"><span>Booklet</span><span>7 pages</span></div>
+      <div class="trow"><span class="grip">⋮⋮</span> Cover <span class="ct">1p</span></div>
+      <div class="trow"><span class="grip">⋮⋮</span> Future Log · stacked <span class="ct">4p</span></div>
+      <div class="trow"><span class="grip">⋮⋮</span> Master Action List <span class="ct">1p</span></div>
+      <div class="trow"><span class="grip">⋮⋮</span> Weekly Reflection <span class="ct">1p</span></div>
+    </div>
+    <div class="addbtn" style="background:rgba(255,255,255,.14);color:#f0ede6 !important">⎙ Generate / Print</div>
+    <div class="toggle-row"><span class="sw"></span> Show all tools</div>
+  </div>
+
+  <div class="pv">
+    <div class="page">
+      <div class="ph">JANUARY 2026 — FUTURE LOG</div>
+      <div class="body"></div>
+    </div>
+    <div class="pvcap">Live preview of the selected page</div>
+  </div>
+</div>
+
+<div class="legend">
+  <b>Flow:</b> ① notebook size → ② date range → ③ page type → a couple of <b>guided</b> options → the preview updates live → <b>Add to booklet</b>.<br>
+  <b>Smart-expand:</b> adding “Daily” over Jan adds 31 day-pages; “Future Log” adds its 4; each row shows its page count, and the booklet totals them.<br>
+  <b>Booklet tray:</b> the running collection — drag to reorder, click to remove, <b>Generate/Print</b> outputs it.<br>
+  <b>Show all tools:</b> flips this same panel to the full existing wall for deep control (nothing removed).
+</div>
+</div>

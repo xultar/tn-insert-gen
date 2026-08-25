@@ -1,0 +1,61 @@
+<style>
+  .om, .om *{color:#16161f !important;}
+  .om h2{font-weight:800 !important;}
+  .om .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .om .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px}
+  .om .card{border:1.5px solid rgba(0,0,0,.18);border-radius:12px;overflow:hidden;background:#fff}
+  .om .card h3{font-weight:800 !important;font-size:15px;margin:0}
+  .om .card p{font-size:12px;font-weight:500 !important;color:#3a3a48 !important;opacity:1 !important;margin-top:3px}
+  .om .card-body{padding:12px 14px}
+  .om .card-image{background:#f6f4ef;padding:20px;display:flex;justify-content:center;align-items:center;min-height:160px;border-bottom:1px solid rgba(0,0,0,.1)}
+  .pg{background:#fffdf8;border:1.5px solid #4a4262;border-radius:2px;display:flex;flex-direction:column;padding:6px;gap:4px}
+  .pg .t{font-size:6px;font-weight:800 !important;letter-spacing:.05em}
+  .pg .ln{height:1px;background:rgba(74,66,98,.3)}
+  .single{width:70px;height:132px}
+  /* double = one landscape sheet, center fold, two panels */
+  .sheet{position:relative;display:flex;gap:0;background:#fff;border:1.5px solid #7a7788;border-radius:3px;padding:7px;width:150px;height:118px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+  .sheet::after{content:"";position:absolute;left:50%;top:6px;bottom:6px;border-left:1px dashed #b3b0bd}
+  .panel{flex:1;display:flex;flex-direction:column;padding:0 6px;gap:3px;justify-content:center}
+  .panel .t{font-size:6px;font-weight:800 !important}
+  .mini{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin:2px 0}
+  .mini span{width:3px;height:3px;background:rgba(74,66,98,.4);border-radius:50%}
+  .booklet{position:relative;width:120px;height:120px}
+  .booklet .s{position:absolute;background:#fffdf8;border:1.5px solid #4a4262;border-radius:3px;width:96px;height:104px}
+  .booklet .s:nth-child(1){transform:rotate(-6deg);left:0;top:6px;opacity:.55}
+  .booklet .s:nth-child(2){transform:rotate(-2deg);left:8px;top:3px;opacity:.8}
+  .booklet .s:nth-child(3){left:16px;top:0}
+  .booklet .staple{position:absolute;left:16px;top:0;width:1.5px;height:104px;background:#8a8794}
+</style>
+
+<div class="om">
+<h2>Three output modes</h2>
+<p class="subtitle">Same pages, different destinations. "Double" reuses the two panels the engine already puts on one landscape sheet.</p>
+
+<div class="cards">
+  <div class="card" data-choice="single" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="pg single"><div class="t">FUTURE LOG</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+    </div>
+    <div class="card-body"><h3>Single</h3><p>One page. Print, trim, tip into your notebook.</p></div>
+  </div>
+
+  <div class="card" data-choice="double" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sheet">
+        <div class="panel"><div class="t">MONTH</div><div class="mini"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div></div>
+        <div class="panel"><div class="t">DAILY</div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div><div class="ln" style="height:1px;background:rgba(74,66,98,.3)"></div></div>
+      </div>
+    </div>
+    <div class="card-body"><h3>Double</h3><p>Two pages side-by-side on one sheet &mdash; any two types. Month+Daily, two Dailies, 6-month Future Log.</p></div>
+  </div>
+
+  <div class="card" data-choice="booklet" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="booklet"><div class="s"></div><div class="s"></div><div class="s"></div><div class="staple"></div></div>
+    </div>
+    <div class="card-body"><h3>Booklet</h3><p>Many pages imposed, folded &amp; stapled into a full insert. The existing engine path.</p></div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px;text-align:center">Double is the only net-new composition &mdash; and it lands on infrastructure that already exists.</p>
+</div>

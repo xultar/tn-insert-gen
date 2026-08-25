@@ -1,0 +1,147 @@
+<style>
+  .fw, .fw *{color:#16161f !important;}
+  .fw h2{font-weight:800 !important;}
+  .fw .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .flowstrip{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:6px 0 20px}
+  .fs-node{border:1.5px solid #4a4262;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:700;background:#fff}
+  .fs-node.hot{background:#4a4262;color:#fff !important}
+  .fs-node.hot *{color:#fff !important}
+  .fs-arrow{opacity:.4;font-weight:800}
+  .fw .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .fw .card{border:1.5px solid rgba(0,0,0,.18);border-radius:12px;overflow:hidden;background:#fff}
+  .fw .card h3{font-weight:800 !important;font-size:15px;margin:0}
+  .fw .card p{font-size:12px;font-weight:500 !important;color:#3a3a48 !important;opacity:1 !important;margin-top:3px}
+  .fw .card-body{padding:12px 14px}
+  .fw .card-image{background:#f6f4ef;padding:18px;display:flex;justify-content:center;min-height:190px;border-bottom:1px solid rgba(0,0,0,.1)}
+  /* page + minical */
+  .pg{background:#fffdf8;border:1.5px solid #4a4262;border-radius:2px;padding:7px;display:flex}
+  .mlabel{font-size:7px;font-weight:800 !important;letter-spacing:.06em}
+  .minical{width:64px}
+  .mc-head{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:2px}
+  .mc-head span{font-size:4.5px;font-weight:700 !important;text-align:center;color:#8a8794 !important}
+  .mc-body{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:1px}
+  .mc-body span{font-size:5px;text-align:center;line-height:1.5}
+  .mc-body span.blank{color:transparent !important}
+  .ln{height:1px;background:rgba(74,66,98,.3);margin:3px 0}
+  /* stacked */
+  .stacked{flex-direction:column;width:150px;height:150px;gap:6px}
+  .stacked .band{flex:1;display:flex;gap:8px}
+  .band .events{flex:1;display:flex;flex-direction:column;justify-content:center}
+  .band .events .mlabel{margin-bottom:2px}
+  /* columns */
+  .cols{gap:4px;width:180px;height:150px}
+  .cols .col{flex:1;background:#fffdf8;border:1.5px solid #4a4262;border-radius:2px;padding:5px;display:flex;flex-direction:column;align-items:center}
+  .cols .col .minical{width:100%}
+  .cols .col .lines{width:100%;margin-top:4px}
+</style>
+
+<div class="fw">
+<h2>Dates first &mdash; then the mini-month magic</h2>
+<p class="subtitle">Step 2 is now the date range. For a Future Log, that range fills each month band with a <em>real</em> mini calendar you can write beside.</p>
+
+<div class="flowstrip">
+  <span class="fs-node">1 · Size</span>
+  <span class="fs-arrow">&rarr;</span>
+  <span class="fs-node hot">2 · Dates</span>
+  <span class="fs-arrow">&rarr;</span>
+  <span class="fs-node">3 · Page type</span>
+  <span class="fs-arrow">&rarr;</span>
+  <span class="fs-node">4 · Guided / Tools</span>
+</div>
+
+<div class="cards">
+  <div class="card" data-choice="stacked-mini" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="pg stacked">
+        <div class="band">
+          <div class="minical">
+            <div class="mlabel">JAN</div>
+            <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            <div class="mc-body">
+              <span class="blank">.</span><span class="blank">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+              <span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span>
+              <span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span>
+              <span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span class="blank">.</span><span class="blank">.</span>
+            </div>
+          </div>
+          <div class="events"><div class="mlabel">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        </div>
+        <div class="band">
+          <div class="minical">
+            <div class="mlabel">FEB</div>
+            <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            <div class="mc-body">
+              <span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span>1</span><span>2</span>
+              <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+              <span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span>
+              <span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+              <span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span class="blank">.</span><span class="blank">.</span>
+            </div>
+          </div>
+          <div class="events"><div class="mlabel">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Stacked + mini-month</h3>
+      <p>Each month: a real calendar on the left, event lines on the right. Circle a date, jot the plan beside it.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="columns-mini" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="pg cols">
+        <div class="col">
+          <div class="minical">
+            <div class="mlabel" style="text-align:center">JAN</div>
+            <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            <div class="mc-body">
+              <span class="blank">.</span><span class="blank">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+              <span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span>
+              <span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span>
+              <span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span class="blank">.</span><span class="blank">.</span>
+            </div>
+          </div>
+          <div class="lines"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        </div>
+        <div class="col">
+          <div class="minical">
+            <div class="mlabel" style="text-align:center">FEB</div>
+            <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            <div class="mc-body">
+              <span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span>1</span><span>2</span>
+              <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+              <span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span>
+              <span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+              <span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span class="blank">.</span><span class="blank">.</span>
+            </div>
+          </div>
+          <div class="lines"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        </div>
+        <div class="col">
+          <div class="minical">
+            <div class="mlabel" style="text-align:center">MAR</div>
+            <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            <div class="mc-body">
+              <span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span class="blank">.</span><span>1</span><span>2</span>
+              <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+              <span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span>
+              <span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span>
+              <span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span>
+            </div>
+          </div>
+          <div class="lines"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Column + mini-month</h3>
+      <p>Mini calendar on top of each column, event lines below. 3&ndash;6 months across a spread.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px">Same engine either way &mdash; the mini-month is one new builder that both layouts share.</p>
+</div>

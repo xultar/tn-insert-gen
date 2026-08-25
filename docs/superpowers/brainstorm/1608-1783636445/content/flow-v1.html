@@ -1,0 +1,65 @@
+<h2>Is this the shape of it?</h2>
+<p class="subtitle">A page-at-a-time creator, not a booklet generator. Start minimal, branch when you're ready. Tell me in the terminal what's wrong.</p>
+
+<style>
+  .flow-step{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.12);border-radius:12px;padding:18px 20px;margin:0 auto;max-width:640px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .flow-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#4a4262;color:#fff;font-size:13px;font-weight:600;margin-right:8px}
+  .flow-title{font-weight:600;font-size:15px}
+  .flow-hint{font-size:12px;opacity:.6;margin-top:2px;margin-left:32px}
+  .arrow{text-align:center;font-size:20px;opacity:.35;margin:6px 0}
+  .nb-row{display:flex;gap:14px;align-items:flex-end;justify-content:center;margin-top:14px;flex-wrap:wrap}
+  .nb{display:flex;flex-direction:column;align-items:center;gap:5px}
+  .nb-box{border:1.5px solid #4a4262;border-radius:3px;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(74,66,98,.06) 6px,rgba(74,66,98,.06) 7px)}
+  .nb-lbl{font-size:10px;opacity:.7;text-align:center;line-height:1.2}
+  .pt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+  .pt{border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:10px 8px;text-align:center;font-size:12px}
+  .pt small{display:block;opacity:.5;font-size:10px;margin-top:2px}
+  .fork{display:flex;gap:16px;max-width:640px;margin:0 auto;flex-wrap:wrap}
+  .fork > div{flex:1;min-width:220px;border:1px solid rgba(0,0,0,.14);border-radius:12px;padding:16px}
+  .fork h4{font-size:14px;margin-bottom:4px}
+  .fork p{font-size:12px;opacity:.7}
+  .fork-a{background:rgba(74,66,98,.05)}
+</style>
+
+<div class="flow-step">
+  <div><span class="flow-num">1</span><span class="flow-title">Which notebook?</span></div>
+  <div class="nb-row">
+    <div class="nb"><div class="nb-box" style="width:41px;height:57px"></div><div class="nb-lbl">Passport<br>89×124</div></div>
+    <div class="nb"><div class="nb-box" style="width:42px;height:83px"></div><div class="nb-lbl">B6 Slim<br>91×182</div></div>
+    <div class="nb"><div class="nb-box" style="width:43px;height:78px"></div><div class="nb-lbl">Personal<br>95×171</div></div>
+    <div class="nb"><div class="nb-box" style="width:48px;height:96px"></div><div class="nb-lbl">A5 Slim<br>105×210</div></div>
+    <div class="nb"><div class="nb-box" style="width:50px;height:96px"></div><div class="nb-lbl">Regular<br>110×210</div></div>
+    <div class="nb"><div class="nb-box" style="width:46px;height:70px;border-style:dashed;background:none"></div><div class="nb-lbl">Custom…</div></div>
+  </div>
+</div>
+
+<div class="arrow">&#8595;</div>
+
+<div class="flow-step">
+  <div><span class="flow-num">2</span><span class="flow-title">What kind of page?</span></div>
+  <div class="flow-hint">One page type at a time — the list here is a guess, we'll define the real set together.</div>
+  <div class="pt-grid">
+    <div class="pt">Daily<small>one day</small></div>
+    <div class="pt">Weekly<small>spread</small></div>
+    <div class="pt">Monthly<small>calendar</small></div>
+    <div class="pt">Habit tracker<small>grid</small></div>
+    <div class="pt">Notes / list<small>lined · dot</small></div>
+    <div class="pt">Blank canvas<small>freeform</small></div>
+  </div>
+</div>
+
+<div class="arrow">&#8595;</div>
+
+<div class="flow-step" style="border:none;box-shadow:none;padding-top:0">
+  <div style="text-align:center;margin-bottom:12px"><span class="flow-title">Then you choose how to build it</span></div>
+  <div class="fork">
+    <div class="fork-a">
+      <h4>&#9755; Guided</h4>
+      <p>Answer a few questions and I assemble the page for you. Good when you want it done.</p>
+    </div>
+    <div>
+      <h4>&#9998; Layout editor</h4>
+      <p>Skip the questions, go straight to a canvas and place things yourself. Good when you already see it.</p>
+    </div>
+  </div>
+</div>

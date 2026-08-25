@@ -1,0 +1,64 @@
+<h2>Getting closer — like this?</h2>
+<p class="subtitle">Clean greeter by default. The full wall of tools is still there, just one toggle away for when you want it.</p>
+
+<style>
+  .card2{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.12);border-radius:12px;padding:16px 18px;margin:0 auto 12px;max-width:660px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.55;margin-bottom:10px}
+  .nb-row{display:flex;gap:12px;align-items:flex-end;justify-content:center;flex-wrap:wrap}
+  .nb{display:flex;flex-direction:column;align-items:center;gap:5px}
+  .nb-box{border:1.5px solid #4a4262;border-radius:3px;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(74,66,98,.06) 6px,rgba(74,66,98,.06) 7px)}
+  .nb-lbl{font-size:10px;opacity:.7;text-align:center;line-height:1.2}
+  .pt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .pt{position:relative;border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:12px 8px;text-align:center;font-size:13px;font-weight:500}
+  .pt small{display:block;opacity:.5;font-size:10px;margin-top:3px;font-weight:400}
+  .pt.new{border-color:#4a4262;background:rgba(74,66,98,.06)}
+  .badge{position:absolute;top:-8px;right:-6px;background:#4a4262;color:#fff;font-size:9px;padding:2px 6px;border-radius:10px;letter-spacing:.03em}
+  .toggle-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,0,0,.2);border-radius:20px;padding:7px 14px;font-size:13px}
+  .sw{width:34px;height:18px;border-radius:10px;background:#4a4262;position:relative;flex-shrink:0}
+  .sw::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;right:2px}
+  .wall{max-width:660px;margin:0 auto;border:1px dashed rgba(0,0,0,.25);border-radius:12px;padding:14px;opacity:.7}
+  .wall-row{height:9px;background:rgba(74,66,98,.18);border-radius:3px;margin:6px 0}
+  .plain-styles{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .chip{font-size:10px;border:1px solid rgba(0,0,0,.15);border-radius:12px;padding:3px 9px;opacity:.75}
+</style>
+
+<div class="card2">
+  <div class="kicker">Step 1 · Notebook size</div>
+  <div class="nb-row">
+    <div class="nb"><div class="nb-box" style="width:41px;height:57px"></div><div class="nb-lbl">Passport</div></div>
+    <div class="nb"><div class="nb-box" style="width:42px;height:83px"></div><div class="nb-lbl">B6 Slim</div></div>
+    <div class="nb"><div class="nb-box" style="width:43px;height:78px"></div><div class="nb-lbl">Personal</div></div>
+    <div class="nb"><div class="nb-box" style="width:48px;height:96px"></div><div class="nb-lbl">A5 Slim</div></div>
+    <div class="nb"><div class="nb-box" style="width:50px;height:96px"></div><div class="nb-lbl">Regular</div></div>
+    <div class="nb"><div class="nb-box" style="width:46px;height:70px;border-style:dashed;background:none"></div><div class="nb-lbl">Custom</div></div>
+  </div>
+</div>
+
+<div class="card2">
+  <div class="kicker">Step 2 · Page type</div>
+  <div class="pt-grid">
+    <div class="pt new"><span class="badge">NEW</span>Future Log<small>build from scratch</small></div>
+    <div class="pt">Monthly<small>exists</small></div>
+    <div class="pt">Daily<small>exists</small></div>
+    <div class="pt">Habit<small>exists</small></div>
+    <div class="pt">Cover<small>exists</small></div>
+    <div class="pt">Plain<small>exists</small></div>
+  </div>
+  <div class="plain-styles">
+    <span style="font-size:10px;opacity:.5">Plain =</span>
+    <span class="chip">dotted</span><span class="chip">squared</span><span class="chip">ruled</span><span class="chip">hex</span><span class="chip">blank</span>
+  </div>
+</div>
+
+<div class="card2" style="text-align:center">
+  <div class="kicker" style="margin-bottom:8px">The move you asked for</div>
+  <div class="toggle-chip"><span class="sw"></span> Show all tools</div>
+  <p style="font-size:12px;opacity:.65;margin-top:10px">Off by default → you get the clean guided flow.<br>Flip it on → the whole current sidebar (the "wall") slides in.</p>
+  <div class="wall" style="margin-top:12px">
+    <div style="font-size:10px;opacity:.5;text-align:left;margin-bottom:4px">the wall, revealed</div>
+    <div class="wall-row" style="width:80%"></div>
+    <div class="wall-row" style="width:95%"></div>
+    <div class="wall-row" style="width:70%"></div>
+    <div class="wall-row" style="width:88%"></div>
+  </div>
+</div>

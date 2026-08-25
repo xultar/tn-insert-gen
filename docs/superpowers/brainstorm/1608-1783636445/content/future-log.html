@@ -1,0 +1,96 @@
+<style>
+  .fl-wrap, .fl-wrap *{color:#16161f !important;}
+  .fl-wrap h2{font-weight:800 !important;}
+  .fl-wrap .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .fl-wrap .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .fl-wrap .card{border:1.5px solid rgba(0,0,0,.18);border-radius:12px;overflow:hidden;background:#fff}
+  .fl-wrap .card h3{font-weight:800 !important;font-size:15px;margin:0}
+  .fl-wrap .card p{font-size:12px;font-weight:500 !important;color:#3a3a48 !important;opacity:1 !important;margin-top:3px}
+  .fl-wrap .card-body{padding:12px 14px}
+  .fl-wrap .card-image{background:#f6f4ef;padding:16px;display:flex;justify-content:center;align-items:center;min-height:150px;border-bottom:1px solid rgba(0,0,0,.1)}
+  /* wireframe pieces */
+  .pg{background:#fffdf8;border:1.5px solid #4a4262;border-radius:2px;padding:6px;display:flex;flex-direction:column}
+  .mlabel{font-size:7px;font-weight:800 !important;letter-spacing:.05em;border-bottom:1px solid #4a4262;padding-bottom:2px;margin-bottom:3px}
+  .ln{height:1px;background:rgba(74,66,98,.35);margin:2.5px 0}
+  .col-spread{display:flex;gap:3px;width:170px;height:120px}
+  .col-spread .pg{flex:1}
+  .stacked{width:78px;height:130px;gap:5px}
+  .stacked .band{flex:1;display:flex;flex-direction:column}
+  .grid6{display:grid;grid-template-columns:repeat(2,1fr);gap:4px;width:120px;height:128px}
+  .grid6 .mini{border:1px solid #4a4262;border-radius:2px;padding:3px;display:flex;flex-direction:column}
+  .dotmatrix{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:1.5px;margin-top:2px}
+  .dotmatrix span{width:2px;height:2px;border-radius:50%;background:rgba(74,66,98,.5)}
+</style>
+
+<div class="fl-wrap">
+<h2>Which Future Log fits your brain?</h2>
+<p class="subtitle">The one page type we build from scratch. Pick a starting layout — click a card, or describe what's in your head.</p>
+
+<div class="cards">
+  <div class="card" data-choice="stacked" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="pg stacked">
+        <div class="band"><div class="mlabel">JAN</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        <div class="band"><div class="mlabel">FEB</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        <div class="band"><div class="mlabel">MAR</div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Stacked bands</h3>
+      <p>Classic Bullet Journal. 3&ndash;4 months as horizontal blocks down one page. Fits a narrow TN beautifully.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="columns" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="col-spread">
+        <div class="pg"><div class="mlabel">JAN</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        <div class="pg"><div class="mlabel">FEB</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        <div class="pg"><div class="mlabel">MAR</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+        <div class="pg"><div class="mlabel">APR</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Column spread</h3>
+      <p>Months as vertical columns across a 2-page spread. 4&ndash;6 months visible at once, more room per month.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="grid" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="grid6">
+        <div class="mini"><div class="mlabel" style="font-size:6px">JAN</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="mini"><div class="mlabel" style="font-size:6px">FEB</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="mini"><div class="mlabel" style="font-size:6px">MAR</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="mini"><div class="mlabel" style="font-size:6px">APR</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="mini"><div class="mlabel" style="font-size:6px">MAY</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="mini"><div class="mlabel" style="font-size:6px">JUN</div><div class="dotmatrix">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Mini-month grid</h3>
+      <p>Year-at-a-glance. 6 or 12 tiny calendars in a grid &mdash; dates you can circle, less writing room.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px">Not sure? "Stacked bands" is the most TN-friendly and the truest to Bullet Journal &mdash; that's my pick if you want me to just choose.</p>
+</div>

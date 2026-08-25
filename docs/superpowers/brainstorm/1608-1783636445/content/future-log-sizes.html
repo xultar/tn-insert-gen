@@ -1,0 +1,90 @@
+<style>
+  .sw2, .sw2 *{color:#16161f !important;}
+  .sw2 h2{font-weight:800 !important;}
+  .sw2 .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .devices{display:flex;gap:44px;justify-content:center;align-items:flex-end;margin:24px 0 8px;flex-wrap:wrap}
+  .device{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .dev-lbl{font-size:13px;font-weight:800 !important;text-align:center}
+  .dev-sub{font-size:11px;font-weight:600 !important;color:#6a6776 !important}
+  .page{background:#fffdf8;border:2px solid #4a4262;border-radius:3px;padding:6px;display:flex;flex-direction:column;gap:5px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  .band{flex:1;display:flex;gap:6px;border-bottom:1px dashed rgba(74,66,98,.25);padding-bottom:4px}
+  .band:last-child{border-bottom:none}
+  .mini{flex-shrink:0}
+  .mlabel{font-size:6.5px;font-weight:800 !important;letter-spacing:.05em}
+  .mc-head{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;margin-top:1px}
+  .mc-head span{font-size:4px;font-weight:700 !important;text-align:center;color:#9a97a4 !important}
+  .mc-body{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+  .mc-body span{font-size:4.5px;text-align:center;line-height:1.4}
+  .mc-body span.b{color:transparent !important}
+  .events{flex:1;display:flex;flex-direction:column;justify-content:center;gap:0}
+  .ev-lbl{font-size:5.5px;font-weight:700 !important;color:#8a8794 !important;margin-bottom:2px}
+  .ln{height:1px;background:rgba(74,66,98,.28);margin:2.5px 0}
+  .rule{max-width:520px;margin:14px auto 0;border:1px solid rgba(0,0,0,.14);border-radius:10px;overflow:hidden}
+  .rule div{display:flex;justify-content:space-between;padding:6px 14px;font-size:12px;font-weight:600 !important}
+  .rule div:nth-child(odd){background:rgba(74,66,98,.05)}
+</style>
+
+<div class="sw2">
+<h2>The render <em>is</em> the notebook</h2>
+<p class="subtitle">Month bands auto-fit the page you chose. Pick a 12-month range and it flows across as many pages as needed.</p>
+
+<div class="devices">
+  <!-- Passport: 89x124mm  -> 2 bands -->
+  <div class="device">
+    <div class="page" style="width:107px;height:149px">
+      <div class="band">
+        <div class="mini" style="width:52px"><div class="mlabel">JANUARY</div>
+          <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="mc-body"><span class="b">.</span><span class="b">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span></div>
+        </div>
+        <div class="events"><div class="ev-lbl">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+      <div class="band">
+        <div class="mini" style="width:52px"><div class="mlabel">FEBRUARY</div>
+          <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="mc-body"><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span></div>
+        </div>
+        <div class="events"><div class="ev-lbl">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+    </div>
+    <div><div class="dev-lbl">Passport</div><div class="dev-sub">89&times;124mm &middot; 2 months / page</div></div>
+  </div>
+
+  <!-- Regular: 110x210mm -> 3 bands -->
+  <div class="device">
+    <div class="page" style="width:132px;height:252px">
+      <div class="band">
+        <div class="mini" style="width:58px"><div class="mlabel">JANUARY</div>
+          <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="mc-body"><span class="b">.</span><span class="b">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span></div>
+        </div>
+        <div class="events"><div class="ev-lbl">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+      <div class="band">
+        <div class="mini" style="width:58px"><div class="mlabel">FEBRUARY</div>
+          <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="mc-body"><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span></div>
+        </div>
+        <div class="events"><div class="ev-lbl">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+      <div class="band">
+        <div class="mini" style="width:58px"><div class="mlabel">MARCH</div>
+          <div class="mc-head"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div class="mc-body"><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span class="b">.</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span></div>
+        </div>
+        <div class="events"><div class="ev-lbl">events</div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+      </div>
+    </div>
+    <div><div class="dev-lbl">Regular (standard TN)</div><div class="dev-sub">110&times;210mm &middot; 3 months / page</div></div>
+  </div>
+</div>
+
+<div class="rule">
+  <div><span>Passport &middot; 89&times;124</span><span>2 / page</span></div>
+  <div><span>Personal &middot; 95&times;171</span><span>3 / page</span></div>
+  <div><span>B6 Slim &middot; 91&times;182</span><span>3 / page</span></div>
+  <div><span>Regular &middot; 110&times;210</span><span>3 / page</span></div>
+  <div><span>A5 Slim &middot; 105&times;210</span><span>3&ndash;4 / page</span></div>
+</div>
+<p class="subtitle" style="margin-top:12px;text-align:center">Defaults shown &mdash; and still overridable in the tools if you want denser or roomier.</p>
+</div>

@@ -1,0 +1,83 @@
+<style>
+  .gw, .gw *{color:#16161f !important;}
+  .gw h2{font-weight:800 !important;}
+  .gw .subtitle{color:#3a3a48 !important;font-weight:600 !important;opacity:1 !important;}
+  .gw .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  .gw .card{border:1.5px solid rgba(0,0,0,.18);border-radius:12px;overflow:hidden;background:#fff}
+  .gw .card h3{font-weight:800 !important;font-size:15px;margin:0}
+  .gw .card p{font-size:12px;font-weight:500 !important;color:#3a3a48 !important;opacity:1 !important;margin-top:4px}
+  .gw .card.rec{border-color:#4a4262;box-shadow:0 0 0 2px rgba(74,66,98,.15)}
+  .gw .tag{display:inline-block;background:#4a4262;color:#fff !important;font-size:9px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle}
+  .gw .card-body{padding:12px 14px}
+  .gw .wf{background:#f6f4ef;padding:14px;display:flex;justify-content:center;min-height:150px;border-bottom:1px solid rgba(0,0,0,.1)}
+  /* mini app wireframe */
+  .app{display:flex;width:190px;height:120px;border:1.5px solid #4a4262;border-radius:3px;overflow:hidden;background:#fffdf8;position:relative}
+  .side{width:74px;background:#efeaf3;border-right:1.5px solid #4a4262;padding:6px;display:flex;flex-direction:column;gap:4px}
+  .side.wall .row{height:5px;background:rgba(74,66,98,.25);border-radius:2px}
+  .side.greet{background:#fff;align-items:center;gap:6px}
+  .gstep{width:100%;height:12px;border:1px solid #4a4262;border-radius:3px;background:#faf8fc}
+  .gstep.hot{background:#4a4262}
+  .prev{flex:1;background:#fffdf8;background-image:radial-gradient(circle,rgba(74,66,98,.25) .6px,transparent .6px);background-size:7px 7px;background-position:3px 3px}
+  .toggle{position:absolute;bottom:5px;left:5px;width:26px;height:12px;border-radius:8px;background:#4a4262}
+  .toggle::after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;top:1.5px;left:1.5px}
+  .overlay{position:absolute;inset:0;background:rgba(30,25,45,.45);display:flex;align-items:center;justify-content:center}
+  .modal{width:120px;height:78px;background:#fff;border:1.5px solid #4a4262;border-radius:5px;padding:8px;display:flex;flex-direction:column;gap:5px;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .modal .gstep{height:11px}
+</style>
+
+<div class="gw">
+<h2>Where should the greeter live?</h2>
+<p class="subtitle">The app today is a left sidebar (the tools "wall") + preview. The greeter is the calm front door. Three ways it can sit against the existing UI — click one.</p>
+
+<div class="cards">
+  <div class="card rec" data-choice="swap" onclick="toggleSelect(this)">
+    <div class="wf">
+      <div class="app">
+        <div class="side greet">
+          <div class="gstep hot"></div><div class="gstep"></div><div class="gstep"></div><div class="gstep"></div>
+        </div>
+        <div class="prev"></div>
+        <div class="toggle"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Swap the sidebar<span class="tag">REC</span></h3>
+      <p>The left panel shows the calm greeter by default (size→dates→type→guided/tools). Flipping "Show all tools" swaps that same panel to the full wall. Preview stays put.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="overlay" onclick="toggleSelect(this)">
+    <div class="wf">
+      <div class="app">
+        <div class="side wall"><div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div></div>
+        <div class="prev"></div>
+        <div class="overlay"><div class="modal"><div class="gstep hot"></div><div class="gstep"></div><div class="gstep"></div></div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Full-screen intro</h3>
+      <p>A centered welcome takes over on load (size→dates→type). Pick, and it dismisses into the app — "guided" runs a Q&A, "tools" reveals the sidebar. Most onboarding-like.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="stack" onclick="toggleSelect(this)">
+    <div class="wf">
+      <div class="app">
+        <div class="side greet" style="justify-content:flex-start">
+          <div class="gstep hot"></div><div class="gstep"></div>
+          <div style="width:100%;border-top:1px dashed #9a97a4;margin:3px 0"></div>
+          <div class="row" style="width:100%;height:5px;background:rgba(74,66,98,.25);border-radius:2px"></div>
+          <div class="row" style="width:100%;height:5px;background:rgba(74,66,98,.25);border-radius:2px"></div>
+        </div>
+        <div class="prev"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Stacked in sidebar</h3>
+      <p>Greeter sits at the top of the sidebar; the tools live collapsed right below it. Everything's on one panel — least "calm," most immediate access to the wall.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px">My lean is <strong>A</strong> — it matches the spec's "the wall is one toggle away," keeps the preview always visible, and needs no new full-screen layer. But B feels more like a product if you want a true welcome moment.</p>
+</div>
